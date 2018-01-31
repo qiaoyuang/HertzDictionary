@@ -9,7 +9,7 @@
     </style>
 
     <style name="ToolBarTheme" parent="Theme.AppCompat.Light.NoActionBar">
-        <item name="colorControlNormal">@android:color/white</item>
+        <item name="android:textColorPrimary">@android:color/white</item>
     </style>
 
     <style name="Dialog_Fullscreen">
