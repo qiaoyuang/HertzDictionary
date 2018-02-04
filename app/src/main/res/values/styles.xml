@@ -8,9 +8,11 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
-    <style name="ToolBarTheme" parent="Theme.AppCompat.Light.NoActionBar">
-        <item name="android:textColorPrimary">@android:color/white</item>
+    <style name="NewTheme" parent="AppTheme" >
+        <item name="android:statusBarColor">@android:color/transparent</item>
     </style>
+
+    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
 
     <style name="Dialog_Fullscreen">
         <item name="android:windowFullscreen">true</item>

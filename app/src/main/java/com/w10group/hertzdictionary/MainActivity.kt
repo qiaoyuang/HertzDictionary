@@ -37,17 +37,18 @@ class MainActivity : AppCompatActivity() {
         drawerLayout {
 
             coordinatorLayout {
-                backgroundColorResource = R.color.deepWhite
                 fitsSystemWindows = true
+                backgroundColorResource = R.color.deepWhite
 
                 appBarLayout {
                     translationZ = dip(4).toFloat()
                     elevation = dip(4).toFloat()
                     fitsSystemWindows = true
+                    setTheme(R.style.AppTheme_AppBarOverlay)
 
                     collapsingToolbarLayout {
                         fitsSystemWindows = true
-                        contentScrim = ContextCompat.getDrawable(this@MainActivity, R.color.blue2)
+                        contentScrim = ContextCompat.getDrawable(this@MainActivity, R.color.blue1)
                         setExpandedTitleTextColor(ContextCompat.getColorStateList(this@MainActivity, android.R.color.transparent)!!)
 
                         editText {
@@ -63,10 +64,7 @@ class MainActivity : AppCompatActivity() {
                             collapseMode = CollapsingToolbarLayout.LayoutParams.COLLAPSE_MODE_PARALLAX
                         }
 
-                        mToolBar = toolbar {
-                            backgroundColorResource = R.color.blue2
-                            setTheme(R.style.ToolBarTheme)
-                        }.lparams(matchParent, actionBarSize) {
+                        mToolBar = toolbar {}.lparams(matchParent, actionBarSize) {
                             collapseMode = CollapsingToolbarLayout.LayoutParams.COLLAPSE_MODE_PIN
                         }
 
@@ -80,6 +78,7 @@ class MainActivity : AppCompatActivity() {
 
             navigationView {
                 inflateMenu(R.menu.menu_main)
+                backgroundColorResource = android.R.color.white
             }.lparams(dip(256), matchParent) {
                 gravity = Gravity.START
             }
