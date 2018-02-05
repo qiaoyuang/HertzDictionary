@@ -5,6 +5,8 @@ import android.os.Bundle
 import android.support.design.widget.CollapsingToolbarLayout
 import android.support.v4.app.Fragment
 import android.support.v4.content.ContextCompat
+import android.support.v4.view.GravityCompat
+import android.support.v4.widget.DrawerLayout
 import android.support.v7.widget.Toolbar
 import android.view.Gravity
 import android.view.Menu
@@ -25,6 +27,7 @@ class MainActivity : AppCompatActivity() {
 
     var fragmentStatus = MAIN
 
+    private lateinit var mDrawerLayout: DrawerLayout
     private lateinit var mToolBar: Toolbar
 
 
@@ -34,7 +37,7 @@ class MainActivity : AppCompatActivity() {
         val actionBarSize = styledAttributes.getDimension(0, 0f).toInt()
         styledAttributes.recycle()
 
-        drawerLayout {
+        mDrawerLayout = drawerLayout {
 
             coordinatorLayout {
                 fitsSystemWindows = true
@@ -76,9 +79,14 @@ class MainActivity : AppCompatActivity() {
 
             }.lparams(matchParent, matchParent)
 
-            navigationView {
-                inflateMenu(R.menu.menu_main)
-                backgroundColorResource = android.R.color.white
+            verticalLayout {
+                imageView {
+                    backgroundColorResource = R.color.blue1
+                }.lparams(matchParent, dip(184))
+                navigationView {
+                    inflateMenu(R.menu.menu_main)
+                    backgroundColorResource = android.R.color.white
+                }.lparams(matchParent, matchParent)
             }.lparams(dip(256), matchParent) {
                 gravity = Gravity.START
             }
@@ -106,25 +114,22 @@ class MainActivity : AppCompatActivity() {
     /*override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.menu_main, menu)
         return super.onCreateOptionsMenu(menu)
-    }
+    }*/
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
-            R.id.main_menu_button -> {
-            }
+            android.R.id.home -> { mDrawerLayout.openDrawer(GravityCompat.START) }
         }
         return super.onOptionsItemSelected(item)
     }
 
     override fun onPrepareOptionsMenu(menu: Menu): Boolean {
-        val item = menu.findItem(R.id.main_menu_button)
         when (fragmentStatus) {
             MAIN -> {
                 mToolBar.title = "赫兹词典"
-                item.isVisible = true
             }
         }
         return super.onPrepareOptionsMenu(menu)
-    }*/
+    }
 
 }
