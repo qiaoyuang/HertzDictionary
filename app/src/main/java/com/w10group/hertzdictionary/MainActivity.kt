@@ -28,6 +28,7 @@ class MainActivity : AppCompatActivity() {
     var fragmentStatus = MAIN
 
     private lateinit var mDrawerLayout: DrawerLayout
+    private lateinit var mCollapsingToolbarLayout: CollapsingToolbarLayout
     private lateinit var mToolBar: Toolbar
 
 
@@ -49,7 +50,7 @@ class MainActivity : AppCompatActivity() {
                     fitsSystemWindows = true
                     setTheme(R.style.AppTheme_AppBarOverlay)
 
-                    collapsingToolbarLayout {
+                    mCollapsingToolbarLayout = collapsingToolbarLayout {
                         fitsSystemWindows = true
                         contentScrim = ContextCompat.getDrawable(this@MainActivity, R.color.blue1)
                         setExpandedTitleTextColor(ContextCompat.getColorStateList(this@MainActivity, android.R.color.transparent)!!)
@@ -86,6 +87,8 @@ class MainActivity : AppCompatActivity() {
                 navigationView {
                     inflateMenu(R.menu.menu_main)
                     backgroundColorResource = android.R.color.white
+                    itemTextColor = ContextCompat.getColorStateList(this@MainActivity, android.R.color.tertiary_text_dark)
+                    itemIconTintList = null
                 }.lparams(matchParent, matchParent)
             }.lparams(dip(256), matchParent) {
                 gravity = Gravity.START
@@ -126,7 +129,7 @@ class MainActivity : AppCompatActivity() {
     override fun onPrepareOptionsMenu(menu: Menu): Boolean {
         when (fragmentStatus) {
             MAIN -> {
-                mToolBar.title = "赫兹词典"
+                mCollapsingToolbarLayout.title = "赫兹词典"
             }
         }
         return super.onPrepareOptionsMenu(menu)
