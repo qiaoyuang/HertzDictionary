@@ -5,8 +5,11 @@ package com.w10group.hertzdictionary.model
  * 用户实体类
  */
 data class User(val userID: String,
+                val token: String,
                 val username: String,
                 val password: String,
-                val avatarID: Int,
-                val phoneNumber: String? = null,
+                val avatarID: String,
+                val phoneNumber: String,
                 val wordList: List<Int>)
+
+var appUser: User? = null

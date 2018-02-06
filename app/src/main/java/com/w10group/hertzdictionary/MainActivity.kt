@@ -80,19 +80,14 @@ class MainActivity : AppCompatActivity() {
 
             }.lparams(matchParent, matchParent)
 
-            verticalLayout {
-                imageView {
-                    backgroundColorResource = R.color.blue1
-                }.lparams(matchParent, dip(184))
-                navigationView {
-                    inflateMenu(R.menu.menu_main)
-                    backgroundColorResource = android.R.color.white
-                    itemTextColor = ContextCompat.getColorStateList(this@MainActivity, android.R.color.tertiary_text_dark)
-                    itemIconTintList = null
-                }.lparams(matchParent, matchParent)
-            }.lparams(dip(256), matchParent) {
-                gravity = Gravity.START
-            }
+            navigationView {
+                inflateMenu(R.menu.menu_main)
+                backgroundColorResource = android.R.color.white
+                itemTextColor = ContextCompat.getColorStateList(this@MainActivity, android.R.color.tertiary_text_dark)
+                itemIconTintList = null
+                addHeaderView(createHeaderView())
+            }.lparams(dip(256), matchParent) { gravity = Gravity.START }
+
         }
 
         setSupportActionBar(mToolBar)
@@ -100,7 +95,17 @@ class MainActivity : AppCompatActivity() {
             it.setDisplayHomeAsUpEnabled(true)
             it.setHomeAsUpIndicator(R.drawable.ic_menu_white_24dp)
         }
+
+
+
     }
+
+    private fun createHeaderView() =
+            AnkoContext.create(this).apply {
+                verticalLayout {
+                    imageView { backgroundColorResource = R.color.blue1 }.lparams(matchParent, dip(184))
+                }
+            }.view
 
     private fun setFragment(fragment: Fragment) {
         val transaction = supportFragmentManager.beginTransaction()

@@ -50,4 +50,5 @@ class MainFragment : Fragment() {
         mActivity.fragmentStatus = mActivity.MAIN
         mActivity.invalidateOptionsMenu()
     }
+
 }
