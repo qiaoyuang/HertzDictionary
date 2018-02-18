@@ -97,7 +97,6 @@ class MainActivity : AppCompatActivity() {
         }
 
 
-
     }
 
     private fun createHeaderView() =

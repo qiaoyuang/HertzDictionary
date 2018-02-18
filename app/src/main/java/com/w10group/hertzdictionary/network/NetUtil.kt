@@ -12,12 +12,11 @@ import retrofit2.converter.gson.GsonConverterFactory
  */
 object NetUtil {
 
-    val BASE_URL: String
+    val BASE_URL: String = "http://101.37.37.36/"
 
     val mRetrofit: Retrofit
 
     init {
-        BASE_URL = "http://101.37.37.36/"
         mRetrofit = Retrofit.Builder()
                 .baseUrl(BASE_URL)
                 .addConverterFactory(GsonConverterFactory.create())
@@ -30,5 +29,7 @@ object NetUtil {
         val networkInfo = connectivityManager.activeNetworkInfo
         return networkInfo != null && networkInfo.isAvailable
     }
+
+    inline fun <reified T> create(): T = mRetrofit.create(T :: class.java)
 
 }
