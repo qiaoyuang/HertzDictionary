@@ -1,4 +1,4 @@
-package com.w10group.hertzdictionary
+package com.w10group.hertzdictionary.ui
 
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
@@ -11,6 +11,7 @@ import android.support.v7.widget.Toolbar
 import android.view.Gravity
 import android.view.Menu
 import android.view.MenuItem
+import com.w10group.hertzdictionary.R
 import org.jetbrains.anko.*
 import org.jetbrains.anko.appcompat.v7.toolbar
 import org.jetbrains.anko.design.appBarLayout
@@ -96,7 +97,7 @@ class MainActivity : AppCompatActivity() {
             it.setHomeAsUpIndicator(R.drawable.ic_menu_white_24dp)
         }
 
-
+        Login(this, mCollapsingToolbarLayout).start()
     }
 
     private fun createHeaderView() =

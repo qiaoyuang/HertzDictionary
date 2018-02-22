@@ -1,15 +1,17 @@
 package com.w10group.hertzdictionary.model
 
+import com.google.gson.annotations.SerializedName
+
 /**
  * Created by Administrator on 2018/1/31 0031.
  * 用户实体类
  */
-data class User(val userID: String,
-                val token: String,
-                val username: String,
-                val password: String,
-                val avatarID: String,
-                val phoneNumber: String,
-                val wordList: List<Int>)
+data class User(@SerializedName("user_id") val userID: String,
+                @SerializedName("user_token") val token: String,
+                @SerializedName("user_name") val username: String,
+                @SerializedName("user_avatar_id") val avatarID: String,
+                @SerializedName("user_phone_number") val phoneNumber: String,
+                @SerializedName("word_list") val wordList: List<Int>,
+                val password: String?)
 
 var appUser: User? = null

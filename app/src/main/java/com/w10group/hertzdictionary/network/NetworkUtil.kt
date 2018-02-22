@@ -10,7 +10,7 @@ import retrofit2.converter.gson.GsonConverterFactory
  * Created by Administrator on 2018/2/6 0006.
  * 网络工具类
  */
-object NetUtil {
+object NetworkUtil {
 
     val BASE_URL: String = "http://101.37.37.36/"
 

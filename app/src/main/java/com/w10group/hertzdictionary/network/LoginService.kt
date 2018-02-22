@@ -22,7 +22,7 @@ object LoginService {
 
     fun get(): ILoginService =
             if (reference == null || reference!!.get() == null) {
-                reference = WeakReference(NetUtil.create())
+                reference = WeakReference(NetworkUtil.create())
                 reference!!.get()!!
             } else {
                 reference!!.get()!!
