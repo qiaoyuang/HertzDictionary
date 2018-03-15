@@ -54,7 +54,7 @@ class Login(private val mContext: Context, private val mView: View) {
     //自动登录的网络连接函数
     private fun autoLogin(userId: String) {
         val password = mSharedPreferences.getString("user_password", "")
-        AutoLoginService.get().login(userId, password)
+        NetworkUtil.create<AutoLoginService>().login(userId, password)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeBy(
@@ -82,7 +82,7 @@ class Login(private val mContext: Context, private val mView: View) {
 
     //登录的网络连接函数
     private fun startLogin() {
-        LoginService.get().login(mPhoneNumber, mPassword)
+        NetworkUtil.create<LoginService>().login(mPhoneNumber, mPassword)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeBy(
