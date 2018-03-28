@@ -2,6 +2,7 @@ package com.w10group.hertzdictionary.ui
 
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import android.support.design.widget.AppBarLayout
 import android.support.design.widget.CollapsingToolbarLayout
 import android.support.v4.app.Fragment
 import android.support.v4.content.ContextCompat
@@ -60,7 +61,7 @@ class MainActivity : AppCompatActivity() {
                             hint = "点击可输入文本"
                             hintTextColor = ContextCompat.getColor(this@MainActivity, R.color.deepWhite)
                             textColor = ContextCompat.getColor(this@MainActivity, android.R.color.white)
-                            textSize = sp(10).toFloat()
+                            textSize = 20f
                             maxLines = 5
                             background = null
                         }.lparams(matchParent, dip(96)) {
@@ -74,7 +75,7 @@ class MainActivity : AppCompatActivity() {
                         }
 
                     }.lparams(matchParent, matchParent) {
-                        scrollFlags
+                        scrollFlags = AppBarLayout.LayoutParams.SCROLL_FLAG_SCROLL or AppBarLayout.LayoutParams.SCROLL_FLAG_EXIT_UNTIL_COLLAPSED
                     }
 
                 }.lparams(matchParent, dip(256))

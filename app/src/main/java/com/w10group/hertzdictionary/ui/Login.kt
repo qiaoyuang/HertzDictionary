@@ -1,8 +1,8 @@
 package com.w10group.hertzdictionary.ui
 
+import android.app.Dialog
 import android.content.Context
 import android.support.v4.content.ContextCompat
-import android.support.v7.app.AlertDialog
 import android.text.InputType
 import android.view.Gravity
 import android.view.View
@@ -13,6 +13,7 @@ import com.w10group.hertzdictionary.model.appUser
 import com.w10group.hertzdictionary.network.AutoLoginService
 import com.w10group.hertzdictionary.network.LoginService
 import com.w10group.hertzdictionary.network.NetworkUtil
+import com.w10group.hertzdictionary.view.myEditText
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.rxkotlin.subscribeBy
 import io.reactivex.schedulers.Schedulers
@@ -47,8 +48,10 @@ class Login(private val mContext: Context, private val mView: View) {
     }
 
     private fun login() {
-        val builder = AlertDialog.Builder(mContext, R.style.Dialog_Fullscreen)
-        builder.setView(createLoginUI()).setCancelable(false).create()
+        val dialog = Dialog(mContext, R.style.Dialog_Fullscreen)
+        dialog.setContentView(createLoginUI())
+        dialog.setCancelable(false)
+        dialog.show()
     }
 
     //自动登录的网络连接函数
@@ -141,38 +144,43 @@ class Login(private val mContext: Context, private val mView: View) {
 
             textView("登录") {
                 textColorResource = R.color.blue1
+                textSize = 30f
             }.lparams(wrapContent, wrapContent) {
-                gravity = Gravity.HORIZONTAL_GRAVITY_MASK
+                gravity = Gravity.CENTER_HORIZONTAL
                 topMargin = dip(96)
-                bottomMargin = dip(96)
             }
 
-            etPhoneNumber = editText {
+            etPhoneNumber = myEditText {
                 val drawable = ContextCompat.getDrawable(mContext, R.drawable.ic_phone_android_grey600_24dp)
                 drawable?.let {
                     it.setBounds(0, 0, it.minimumWidth, it.minimumHeight)
                     setCompoundDrawables(it, null, null, null)
                 }
                 compoundDrawablePadding = dip(4)
-                textSize = sp(16).toFloat()
+                textSize = 16f
                 hint = "请输入手机号码"
-            }.lparams(wrapContent, wrapContent) {
+                maxLines = 1
+                textColorResource = R.color.gray600
+            }.lparams(matchParent, wrapContent) {
                 gravity = Gravity.HORIZONTAL_GRAVITY_MASK
                 marginStart = dip(16)
                 marginEnd = dip(16)
+                topMargin = dip(128)
             }
 
-            etPassword = editText {
+            etPassword = myEditText {
                 val drawable = ContextCompat.getDrawable(mContext, R.drawable.ic_lock_grey600_24dp)
                 drawable?.let {
                     it.setBounds(0, 0, it.minimumWidth, it.minimumHeight)
                     setCompoundDrawables(it, null, null, null)
                 }
                 compoundDrawablePadding = dip(4)
-                textSize = sp(16).toFloat()
+                textSize = 16f
                 inputType = InputType.TYPE_TEXT_VARIATION_PASSWORD
                 hint = "请输入密码"
-            }.lparams(wrapContent, wrapContent) {
+                maxLines = 1
+                textColorResource = R.color.gray600
+            }.lparams(matchParent, wrapContent) {
                 gravity = Gravity.HORIZONTAL_GRAVITY_MASK
                 marginStart = dip(16)
                 marginEnd = dip(16)
@@ -182,17 +190,17 @@ class Login(private val mContext: Context, private val mView: View) {
                 elevation = dip(4).toFloat()
                 translationZ = dip(4).toFloat()
                 textColorResource = android.R.color.white
-                textSize = sp(16).toFloat()
+                textSize = 16f
                 backgroundColorResource = R.color.blue1
                 setOnClickListener {
                     mProgressDialog.show()
                     validate()
                 }
-            }.lparams(wrapContent, wrapContent) {
-                gravity = Gravity.HORIZONTAL_GRAVITY_MASK
+            }.lparams(matchParent, wrapContent) {
+                gravity = Gravity.CENTER_HORIZONTAL
                 marginStart = dip(16)
                 marginEnd = dip(16)
-                topMargin = dip(64)
+                topMargin = dip(96)
             }
 
         }

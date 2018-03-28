@@ -2,6 +2,8 @@ package com.w10group.hertzdictionary.view
 
 import android.support.v7.widget.AppCompatSpinner
 import android.view.ViewManager
+import android.widget.EditText
+import com.w10group.hertzdictionary.R
 import org.jetbrains.anko.custom.ankoView
 
 /**
@@ -12,3 +14,6 @@ import org.jetbrains.anko.custom.ankoView
 //AppCompatSpinner
 inline fun ViewManager.appCompatSpineer(init: AppCompatSpinner.() -> Unit): AppCompatSpinner =
         ankoView({ AppCompatSpinner(it) }, theme = 0, init = init)
+
+inline fun ViewManager.myEditText(init: EditText.() -> Unit): EditText =
+        ankoView({ EditText(it) }, theme = R.style.MyEditText, init = init)
