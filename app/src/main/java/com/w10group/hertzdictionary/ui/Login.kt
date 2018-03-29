@@ -1,9 +1,9 @@
 package com.w10group.hertzdictionary.ui
 
+import android.app.AlertDialog
 import android.app.Dialog
 import android.content.Context
 import android.support.v4.content.ContextCompat
-import android.support.v7.app.AlertDialog
 import android.text.InputType
 import android.view.Gravity
 import android.view.View
@@ -20,6 +20,7 @@ import io.reactivex.rxkotlin.subscribeBy
 import io.reactivex.schedulers.Schedulers
 import org.jetbrains.anko.*
 import org.jetbrains.anko.design.snackbar
+import android.widget.TextView
 
 /**
  * Created by Administrator on 2018/2/6 0006.
@@ -114,9 +115,23 @@ class Login(private val mContext: Context, private val mView: View) {
 
     private fun action(message: String) {
         mProgressDialog.dismiss()
-        mContext.alert(title = "登录失败", message = message) {
+        val dialog = mContext.alert(title = "登录失败", message = message) {
             yesButton { }
         }.show()
+        try {
+            val mAlert = AlertDialog::class.java.getDeclaredField("mAlert")
+            mAlert.isAccessible = true
+            val mAlertController = mAlert.get(dialog)
+            //通过反射修改message字体大小和颜色
+            val mMessage = mAlertController.javaClass.getDeclaredField("mMessageView")
+            mMessage.isAccessible = true
+            val mMessageView = mMessage.get(mAlertController) as TextView
+            mMessageView.setTextColor(ContextCompat.getColor(mContext, R.color.gray600))
+        } catch (e1: IllegalAccessException) {
+            e1.printStackTrace()
+        } catch (e2: NoSuchFieldException) {
+            e2.printStackTrace()
+        }
     }
 
 
