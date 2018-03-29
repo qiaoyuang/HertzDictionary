@@ -6,7 +6,8 @@
         <item name="colorPrimary">@color/blue1</item>
         <item name="colorPrimaryDark">@color/blue2</item>
         <item name="colorAccent">@android:color/darker_gray</item>
-        <item name="textColorPrimary">@color/gray600</item>
+        <item name="android:textColorPrimary">@color/gray600</item>
+        <item name="android:textColor">@color/gray600</item>
     </style>
 
     <style name="NewTheme" parent="AppTheme" >

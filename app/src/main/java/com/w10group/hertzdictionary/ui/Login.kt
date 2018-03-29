@@ -3,6 +3,7 @@ package com.w10group.hertzdictionary.ui
 import android.app.Dialog
 import android.content.Context
 import android.support.v4.content.ContextCompat
+import android.support.v7.app.AlertDialog
 import android.text.InputType
 import android.view.Gravity
 import android.view.View
@@ -100,25 +101,27 @@ class Login(private val mContext: Context, private val mView: View) {
                                 }
                                 editor.apply()
                             } else {
-                                mContext.alert(title = "登录失败", message = "登录失败，请重试。").show()
+                                action("登录失败，请重试。")
                             }
                         },
                         onError = {
                             it.printStackTrace()
-                            mContext.alert(title = "登录失败", message = "登录失败，请重试。").show()
+                            action("登录失败，请重试。")
                         },
                         onComplete = { snackbar(mView, "登录成功") }
                 )
     }
 
-    private fun validate() {
-        fun action(message: String) {
-            mProgressDialog.dismiss()
-            mContext.alert(title = "登录失败", message = message).show()
-            return
-        }
+    private fun action(message: String) {
+        mProgressDialog.dismiss()
+        mContext.alert(title = "登录失败", message = message) {
+            yesButton { }
+        }.show()
+    }
 
-        if (!(NetworkUtil.checkNetwork(mContext))){
+
+    private fun validate() {
+        if (!(NetworkUtil.checkNetwork(mContext))) {
             action("手机无网络，请检查网络链接")
             return
         }
