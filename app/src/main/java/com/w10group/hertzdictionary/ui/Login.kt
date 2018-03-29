@@ -118,19 +118,27 @@ class Login(private val mContext: Context, private val mView: View) {
             return
         }
 
-        if (!(NetworkUtil.checkNetwork(mContext)))
+        if (!(NetworkUtil.checkNetwork(mContext))){
             action("手机无网络，请检查网络链接")
+            return
+        }
 
         mPhoneNumber = etPhoneNumber.text.toString().trim()
-        if (mPhoneNumber.isBlank())
+        if (mPhoneNumber.isBlank()) {
             action("手机号不能为空")
+            return
+        }
 
         mPassword = etPassword.text.toString().trim()
-        if (mPassword.isBlank())
+        if (mPassword.isBlank()) {
             action("密码不能为空")
+            return
+        }
 
-        if (mPassword.length < 8 || mPassword.length > 16)
+        if (mPassword.length < 8 || mPassword.length > 16) {
             action("密码长度必须位于8至16位之间")
+            return
+        }
 
         startLogin()
     }

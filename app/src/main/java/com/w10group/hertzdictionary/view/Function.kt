@@ -15,5 +15,6 @@ import org.jetbrains.anko.custom.ankoView
 inline fun ViewManager.appCompatSpineer(init: AppCompatSpinner.() -> Unit): AppCompatSpinner =
         ankoView({ AppCompatSpinner(it) }, theme = 0, init = init)
 
+//自定义主题的EditText
 inline fun ViewManager.myEditText(init: EditText.() -> Unit): EditText =
         ankoView({ EditText(it) }, theme = R.style.MyEditText, init = init)
