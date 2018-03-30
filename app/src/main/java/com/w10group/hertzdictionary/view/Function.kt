@@ -4,6 +4,7 @@ import android.support.v7.widget.AppCompatSpinner
 import android.view.ViewManager
 import android.widget.EditText
 import com.w10group.hertzdictionary.R
+import de.hdodenhof.circleimageview.CircleImageView
 import org.jetbrains.anko.custom.ankoView
 
 /**
@@ -18,3 +19,7 @@ inline fun ViewManager.appCompatSpineer(init: AppCompatSpinner.() -> Unit): AppC
 //自定义主题的EditText
 inline fun ViewManager.myEditText(init: EditText.() -> Unit): EditText =
         ankoView({ EditText(it) }, theme = R.style.MyEditText, init = init)
+
+//CircleImageView
+inline fun ViewManager.circleImageView(init: CircleImageView.() -> Unit): CircleImageView =
+        ankoView({ CircleImageView(it) }, theme = 0, init = init)

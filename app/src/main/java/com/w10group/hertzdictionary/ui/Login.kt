@@ -2,6 +2,7 @@ package com.w10group.hertzdictionary.ui
 
 import android.app.AlertDialog
 import android.app.Dialog
+import android.app.ProgressDialog
 import android.content.Context
 import android.support.v4.content.ContextCompat
 import android.text.InputType
@@ -30,7 +31,8 @@ class Login(private val mContext: Context, private val mView: View) {
 
     private val mSharedPreferences = mContext.getSharedPreferences("UserFile", Context.MODE_PRIVATE)
 
-    private val mProgressDialog = mContext.progressDialog(message = "正在登录中......", title = "请稍等")
+    private lateinit var mProgressDialog: ProgressDialog
+    private lateinit var mAlertDialog: AlertDialog
 
     private var mPhoneNumber = ""
     private var mPassword = ""
@@ -40,7 +42,6 @@ class Login(private val mContext: Context, private val mView: View) {
     private lateinit var buttonLogin: Button
 
     fun start() {
-        mProgressDialog.setCancelable(false)
         val userId = mSharedPreferences.getString("user_id", "")
         if (userId.isBlank()) {
             login()
@@ -115,22 +116,15 @@ class Login(private val mContext: Context, private val mView: View) {
 
     private fun action(message: String) {
         mProgressDialog.dismiss()
-        val dialog = mContext.alert(title = "登录失败", message = message) {
-            yesButton { }
-        }.show()
-        try {
-            val mAlert = AlertDialog::class.java.getDeclaredField("mAlert")
-            mAlert.isAccessible = true
-            val mAlertController = mAlert.get(dialog)
-            //通过反射修改message字体大小和颜色
-            val mMessage = mAlertController.javaClass.getDeclaredField("mMessageView")
-            mMessage.isAccessible = true
-            val mMessageView = mMessage.get(mAlertController) as TextView
-            mMessageView.setTextColor(ContextCompat.getColor(mContext, R.color.gray600))
-        } catch (e1: IllegalAccessException) {
-            e1.printStackTrace()
-        } catch (e2: NoSuchFieldException) {
-            e2.printStackTrace()
+        if (this :: mAlertDialog.isInitialized) {
+            mAlertDialog.setMessage(message)
+            mAlertDialog.show()
+        } else {
+            mAlertDialog = mContext.alert(title = "登录失败", message = message) {
+                yesButton { }
+            }.show()
+            val tvMessage = mAlertDialog.find<TextView>(android.R.id.message)
+            tvMessage.setTextColor(ContextCompat.getColor(mContext, R.color.gray600))
         }
     }
 
@@ -219,7 +213,14 @@ class Login(private val mContext: Context, private val mView: View) {
                 textSize = 16f
                 backgroundColorResource = R.color.blue1
                 setOnClickListener {
-                    mProgressDialog.show()
+                    if (this@Login :: mProgressDialog.isInitialized) {
+                        mProgressDialog.show()
+                    } else {
+                        mProgressDialog = mContext.progressDialog(message = "正在登录中......", title = "请稍等") {
+                            setProgressStyle(ProgressDialog.STYLE_SPINNER)
+                            setCancelable(false)
+                        }
+                    }
                     validate()
                 }
             }.lparams(matchParent, wrapContent) {
