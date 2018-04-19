@@ -20,6 +20,7 @@ import org.jetbrains.anko.design.collapsingToolbarLayout
 import org.jetbrains.anko.design.coordinatorLayout
 import org.jetbrains.anko.design.navigationView
 import org.jetbrains.anko.support.v4.drawerLayout
+import java.util.*
 
 class MainActivity : AppCompatActivity() {
 
@@ -28,6 +29,9 @@ class MainActivity : AppCompatActivity() {
     val frameLayoutID = 1
 
     var fragmentStatus = MAIN
+
+    //Fragment缓存
+    private lateinit var fragmentMap: WeakHashMap<Int, Fragment>
 
     private lateinit var mDrawerLayout: DrawerLayout
     private lateinit var mCollapsingToolbarLayout: CollapsingToolbarLayout
@@ -70,7 +74,7 @@ class MainActivity : AppCompatActivity() {
                             collapseMode = CollapsingToolbarLayout.LayoutParams.COLLAPSE_MODE_PARALLAX
                         }
 
-                        mToolBar = toolbar {}.lparams(matchParent, actionBarSize) {
+                        mToolBar = toolbar { }.lparams(matchParent, actionBarSize) {
                             collapseMode = CollapsingToolbarLayout.LayoutParams.COLLAPSE_MODE_PIN
                         }
 
@@ -79,6 +83,11 @@ class MainActivity : AppCompatActivity() {
                     }
 
                 }.lparams(matchParent, dip(256))
+
+                coordinatorLayout {
+                    id = frameLayoutID
+                    backgroundColorResource = R.color.deepWhite
+                }.lparams(matchParent, matchParent)
 
             }.lparams(matchParent, matchParent)
 
@@ -98,7 +107,11 @@ class MainActivity : AppCompatActivity() {
             it.setHomeAsUpIndicator(R.drawable.ic_menu_white_24dp)
         }
 
+        fragmentMap = WeakHashMap()
         Login(this, mCollapsingToolbarLayout).start()
+        val mainFragment = MainFragment()
+        setFragment(mainFragment)
+        fragmentMap[MAIN] = mainFragment
     }
 
     private fun createHeaderView() =
@@ -139,6 +152,10 @@ class MainActivity : AppCompatActivity() {
             }
         }
         return super.onPrepareOptionsMenu(menu)
+    }
+
+    object FragmentID {
+        const val MAIN = 1
     }
 
 }
