@@ -23,38 +23,26 @@ class MainFragment : Fragment() {
     private lateinit var mRecyclerView: RecyclerView
 
     private lateinit var mData: List<Word>
-    private lateinit var mLastVisibleItem: Int
+    private var mLastVisibleItem: Int = 0
+    private lateinit var mAdapter: WordListAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         mActivity = activity as MainActivity
         mData = ArrayList()
+        mAdapter = WordListAdapter(mActivity, mData)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? =
             UI {
                 verticalLayout {
-                    /*cardView {
-                        elevation = dip(4).toFloat()
-                        translationZ = dip(4).toFloat()
-                        isClickable = true
-                        isFocusable = true
-                        radius = dip(4).toFloat()
-                        backgroundTintList = ContextCompat.getColorStateList(mActivity, android.R.color.white)!!
-                        //foreground = ContextCompat.getDrawable(mActivity, actionBarSize)
-                        linearLayout {
-
-                        }
-                    }.lparams(matchParent, wrapContent) {
-                        marginStart = dip(4)
-                        marginEnd = dip(4)
-                    }*/
                     mRecyclerView = recyclerView {
                         val linearLayoutManager = LinearLayoutManager(mActivity, LinearLayoutManager.VERTICAL, false)
                         layoutManager = linearLayoutManager
                         itemAnimator = DefaultItemAnimator()
-                        addOnScrollListener(object : RecyclerView.OnScrollListener {
+                        adapter = mAdapter
+                        addOnScrollListener(object : RecyclerView.OnScrollListener() {
                             override fun onScrolled(recyclerView: RecyclerView?, dx: Int, dy: Int) {
                                 super.onScrolled(recyclerView, dx, dy)
                                 mLastVisibleItem = linearLayoutManager.findLastVisibleItemPosition()
@@ -62,7 +50,9 @@ class MainFragment : Fragment() {
 
                             override fun onScrollStateChanged(recyclerView: RecyclerView?, newState: Int) {
                                 super.onScrollStateChanged(recyclerView, newState)
-                                if (newState == RecyclerView.SCROLL_STATE_IDLE && mLastVisibleItem + 1 == )
+                                if (newState == RecyclerView.SCROLL_STATE_IDLE && mLastVisibleItem + 1 == mAdapter.itemCount) {
+
+                                }
                             }
                         })
                     }.lparams(matchParent, wrapContent) {
@@ -70,6 +60,10 @@ class MainFragment : Fragment() {
                     }
                 }
             }.view
+
+    private fun getWord() {
+
+    }
 
 
 
