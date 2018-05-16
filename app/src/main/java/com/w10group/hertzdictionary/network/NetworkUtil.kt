@@ -12,7 +12,7 @@ import retrofit2.converter.gson.GsonConverterFactory
  */
 object NetworkUtil {
 
-    val BASE_URL: String = "http://101.37.37.36/"
+    val BASE_URL: String = "http://translate.google.cn/"
 
     val mRetrofit: Retrofit
 

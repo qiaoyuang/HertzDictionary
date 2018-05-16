@@ -58,7 +58,7 @@ dependencies {
     implementation 'de.hdodenhof:circleimageview:2.2.0'
 
     //Glide
-    implementation ("com.github.bumptech.glide:glide:4.6.1") {
+    implementation("com.github.bumptech.glide:glide:4.6.1") {
         exclude group: "com.android.support"
     }
     implementation 'com.github.bumptech.glide:okhttp-integration:4.6.1'

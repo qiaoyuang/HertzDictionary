@@ -15,7 +15,7 @@ import com.w10group.hertzdictionary.model.appUser
 import com.w10group.hertzdictionary.network.AutoLoginService
 import com.w10group.hertzdictionary.network.LoginService
 import com.w10group.hertzdictionary.network.NetworkUtil
-import com.w10group.hertzdictionary.view.myEditText
+import com.w10group.hertzdictionary.util.myEditText
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.rxkotlin.subscribeBy
 import io.reactivex.schedulers.Schedulers
@@ -116,7 +116,7 @@ class Login(private val mContext: Context, private val mView: View) {
 
     private fun action(message: String) {
         mProgressDialog.dismiss()
-        if (this :: mAlertDialog.isInitialized) {
+        if (this :: mAlertDialog.isLateinit) {
             mAlertDialog.setMessage(message)
             mAlertDialog.show()
         } else {
@@ -213,7 +213,7 @@ class Login(private val mContext: Context, private val mView: View) {
                 textSize = 16f
                 backgroundColorResource = R.color.blue1
                 setOnClickListener {
-                    if (this@Login :: mProgressDialog.isInitialized) {
+                    if (this@Login :: mProgressDialog.isLateinit) {
                         mProgressDialog.show()
                     } else {
                         mProgressDialog = mContext.progressDialog(message = "正在登录中......", title = "请稍等") {

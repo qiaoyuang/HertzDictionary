@@ -24,11 +24,9 @@ import java.util.*
 
 class MainActivity : AppCompatActivity() {
 
-    val MAIN = 0
-
     val frameLayoutID = 1
 
-    var fragmentStatus = MAIN
+    var fragmentStatus = FragmentID.MAIN
 
     //Fragment缓存
     private lateinit var fragmentMap: WeakHashMap<Int, Fragment>
@@ -108,10 +106,10 @@ class MainActivity : AppCompatActivity() {
         }
 
         fragmentMap = WeakHashMap()
-        Login(this, mCollapsingToolbarLayout).start()
+        //Login(this, mCollapsingToolbarLayout).start()
         val mainFragment = MainFragment()
         setFragment(mainFragment)
-        fragmentMap[MAIN] = mainFragment
+        fragmentMap[FragmentID.MAIN] = mainFragment
     }
 
     private fun createHeaderView() =
@@ -133,10 +131,10 @@ class MainActivity : AppCompatActivity() {
         supportActionBar?.setDisplayHomeAsUpEnabled(ifSet)
     }
 
-    /*override fun onCreateOptionsMenu(menu: Menu): Boolean {
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.menu_main, menu)
         return super.onCreateOptionsMenu(menu)
-    }*/
+    }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
@@ -147,8 +145,12 @@ class MainActivity : AppCompatActivity() {
 
     override fun onPrepareOptionsMenu(menu: Menu): Boolean {
         when (fragmentStatus) {
-            MAIN -> {
+            FragmentID.MAIN -> {
                 mCollapsingToolbarLayout.title = "赫兹词典"
+            }
+            FragmentID.INQUIRE_RESULT -> {
+                mCollapsingToolbarLayout.title = "查询结果"
+                setBackButton(true)
             }
         }
         return super.onPrepareOptionsMenu(menu)
@@ -156,6 +158,7 @@ class MainActivity : AppCompatActivity() {
 
     object FragmentID {
         const val MAIN = 1
+        const val INQUIRE_RESULT = 2
     }
 
 }
