@@ -13,16 +13,14 @@ import android.view.Gravity
 import android.view.Menu
 import android.view.MenuItem
 import com.w10group.hertzdictionary.R
+import com.w10group.hertzdictionary.util.RxBus
 import org.jetbrains.anko.*
 import org.jetbrains.anko.appcompat.v7.toolbar
-import org.jetbrains.anko.design.appBarLayout
-import org.jetbrains.anko.design.collapsingToolbarLayout
-import org.jetbrains.anko.design.coordinatorLayout
-import org.jetbrains.anko.design.navigationView
+import org.jetbrains.anko.design.*
 import org.jetbrains.anko.support.v4.drawerLayout
 import java.util.*
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), RxBus.OnWorkListener<Event> {
 
     val frameLayoutID = 1
 
@@ -107,9 +105,21 @@ class MainActivity : AppCompatActivity() {
 
         fragmentMap = WeakHashMap()
         //Login(this, mCollapsingToolbarLayout).start()
+
+        RxBus.register(this)
+
         val mainFragment = MainFragment()
         setFragment(mainFragment)
         fragmentMap[FragmentID.MAIN] = mainFragment
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        RxBus.unRegister(this)
+    }
+
+    override fun onWork(event: Event) {
+        snackbar(mDrawerLayout, event.s)
     }
 
     private fun createHeaderView() =
@@ -161,4 +171,8 @@ class MainActivity : AppCompatActivity() {
         const val INQUIRE_RESULT = 2
     }
 
+}
+
+class Event {
+    val s = "你好"
 }

@@ -14,10 +14,7 @@ import com.w10group.hertzdictionary.model.Word
 import com.w10group.hertzdictionary.network.InquireWordService
 import com.w10group.hertzdictionary.network.NetworkUtil
 import com.w10group.hertzdictionary.ui.MainActivity.FragmentID
-import com.w10group.hertzdictionary.util.FIRST
-import com.w10group.hertzdictionary.util.LOAD_MORE
-import com.w10group.hertzdictionary.util.NetworkWordListManager
-import com.w10group.hertzdictionary.util.WordListManager
+import com.w10group.hertzdictionary.util.*
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.rxkotlin.subscribeBy
 import io.reactivex.schedulers.Schedulers
@@ -48,6 +45,7 @@ class MainFragment : Fragment() {
         super.onCreate(savedInstanceState)
         mActivity = activity as MainActivity
         mData = ArrayList()
+        RxBus.post(Event(), RxBus.COMPUTATION, RxBus.MAIN)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
