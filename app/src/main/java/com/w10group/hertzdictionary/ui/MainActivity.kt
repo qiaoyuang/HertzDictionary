@@ -119,7 +119,7 @@ class MainActivity : AppCompatActivity(), RxBus.OnWorkListener<Event> {
     }
 
     override fun onWork(event: Event) {
-        snackbar(mDrawerLayout, event.s)
+        toast(event.s)
     }
 
     private fun createHeaderView() =

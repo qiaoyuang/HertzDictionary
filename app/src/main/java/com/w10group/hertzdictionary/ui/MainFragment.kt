@@ -65,8 +65,8 @@ class MainFragment : Fragment() {
                 mRecyclerView = recyclerView {
                     val linearLayoutManager = LinearLayoutManager(mActivity, LinearLayoutManager.VERTICAL, false)
                     mAdapter = WordListAdapter(mActivity, mData)
-                    mRecyclerView.adapter = mAdapter
-                    mWordListManager = NetworkWordListManager(mActivity, mRecyclerView, mAdapter, mData, index)
+
+
                     layoutManager = linearLayoutManager
                     itemAnimator = DefaultItemAnimator()
                     addOnScrollListener(object : RecyclerView.OnScrollListener() {
@@ -90,7 +90,9 @@ class MainFragment : Fragment() {
                 }
             }
         }.view
-        mWordListManager.getWordList(FIRST)
+        mRecyclerView.adapter = mAdapter
+        //mWordListManager = NetworkWordListManager(mActivity, mRecyclerView, mAdapter, mData, index)
+        //mWordListManager.getWordList(FIRST)
         return view
     }
 
