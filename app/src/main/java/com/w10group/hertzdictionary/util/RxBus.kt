@@ -28,13 +28,8 @@ object RxBus {
             map[T :: class] = list
             list.add(observer)
         } else {
-            try {
-                list as LinkedList<OnWorkListener<T>>
-                list.add(observer)
-            } catch (e: ClassCastException) {
-                e.printStackTrace()
-            }
-
+            list as LinkedList<OnWorkListener<T>>
+            list.add(observer)
         }
     }
 
@@ -50,25 +45,21 @@ object RxBus {
         }
     }
 
-    @SuppressWarnings
     inline fun <reified T> post(event: T, observableThread: Int = MAIN, observerThread: Int = MAIN) {
-        val observable = Observable.just(event).subscribeOn(int2Scheduler(observableThread))
+        val observable = Observable.just(event).subscribeOn(intToScheduler(observableThread))
         val list = map[T :: class]
         list?.let {
-            it as LinkedList<OnWorkListener<T>>
-            it.forEach label@{
+            it as LinkedList<out OnWorkListener<T>>
+            it.forEach {
                 val observe = it
                 observable
-                        .observeOn(int2Scheduler(observerThread))
-                        .subscribe {
-                            observe.onWork(it)
-                        }
-                return@label
+                        .observeOn(intToScheduler(observerThread))
+                        .subscribe { observe.onWork(it) }
             }
         }
     }
 
-    fun int2Scheduler(thread: Int): Scheduler =
+    fun intToScheduler(thread: Int): Scheduler =
             when (thread) {
                 MAIN -> AndroidSchedulers.mainThread()
                 IO -> Schedulers.io()
