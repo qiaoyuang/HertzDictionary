@@ -5,6 +5,7 @@ import io.reactivex.Scheduler
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import java.util.*
+import kotlin.collections.HashMap
 
 import kotlin.reflect.KClass
 
@@ -28,7 +29,7 @@ object RxBus {
             map[T :: class] = list
             list.add(observer)
         } else {
-            list as LinkedList<OnWorkListener<T>>
+            list as LinkedList<in OnWorkListener<T>>
             list.add(observer)
         }
     }
