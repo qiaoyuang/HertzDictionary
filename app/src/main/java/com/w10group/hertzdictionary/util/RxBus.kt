@@ -16,26 +16,32 @@ object RxBus {
     const val IO = 1
     const val COMPUTATION = 2
 
-    val map = HashMap<KClass<*>, LinkedList<out OnWorkListener<*>>>()
+    private val map = HashMap<KClass<*>, LinkedList<out OnWorkListener<*>>>()
+
+    fun <T : Any> put(key: KClass<T>, value: LinkedList<OnWorkListener<T>>) {
+        map[key] = value
+    }
+
+    fun <T : Any> get(key: KClass<T>): LinkedList<OnWorkListener<T>>?
+            = map[key] as LinkedList<OnWorkListener<T>>?
 
     interface OnWorkListener<in T> {
         fun onWork(event: T)
     }
 
-    inline fun <reified T> register(observer: OnWorkListener<T>) {
-        var list = map[T :: class]
+    inline fun <reified T : Any> register(observer: OnWorkListener<T>) {
+        var list = get(T :: class)
         if (list == null) {
-            list = LinkedList<OnWorkListener<T>>()
-            map[T :: class] = list
+            list = LinkedList()
+            put(T :: class, list)
             list.add(observer)
         } else {
-            list as LinkedList<in OnWorkListener<T>>
             list.add(observer)
         }
     }
 
-    inline fun <reified T> unRegister(observer: OnWorkListener<T>) {
-        val list = map[T :: class]
+    inline fun <reified T : Any> unRegister(observer: OnWorkListener<T>) {
+        val list = get(T :: class)
         list?.let {
             it.forEach {
                 if (it === observer) {
@@ -46,11 +52,10 @@ object RxBus {
         }
     }
 
-    inline fun <reified T> post(event: T, observableThread: Int = MAIN, observerThread: Int = MAIN) {
+    inline fun <reified T : Any> post(event: T, observableThread: Int = MAIN, observerThread: Int = MAIN) {
         val observable = Observable.just(event).subscribeOn(intToScheduler(observableThread))
-        val list = map[T :: class]
+        val list = get(T :: class)
         list?.let {
-            it as LinkedList<out OnWorkListener<T>>
             it.forEach {
                 val observe = it
                 observable
