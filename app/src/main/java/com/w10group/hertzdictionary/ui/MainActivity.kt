@@ -22,7 +22,7 @@ import java.util.*
 
 class MainActivity : AppCompatActivity(), RxBus.OnWorkListener<Event> {
 
-    val frameLayoutID = 1
+    private val frameLayoutID = 1
 
     var fragmentStatus = FragmentID.MAIN
 
