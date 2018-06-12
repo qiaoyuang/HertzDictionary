@@ -4,30 +4,21 @@ import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.design.widget.AppBarLayout
 import android.support.design.widget.CollapsingToolbarLayout
-import android.support.v4.app.Fragment
 import android.support.v4.content.ContextCompat
 import android.support.v4.view.GravityCompat
 import android.support.v4.widget.DrawerLayout
 import android.support.v7.widget.Toolbar
 import android.view.Gravity
-import android.view.Menu
 import android.view.MenuItem
 import com.w10group.hertzdictionary.R
-import com.w10group.hertzdictionary.util.RxBus
 import org.jetbrains.anko.*
 import org.jetbrains.anko.appcompat.v7.toolbar
 import org.jetbrains.anko.design.*
 import org.jetbrains.anko.support.v4.drawerLayout
-import java.util.*
 
-class MainActivity : AppCompatActivity(), RxBus.OnWorkListener<Event> {
+class MainActivity : AppCompatActivity() {
 
     private val frameLayoutID = 1
-
-    var fragmentStatus = FragmentID.MAIN
-
-    //Fragment缓存
-    private lateinit var fragmentMap: WeakHashMap<Int, Fragment>
 
     private lateinit var mDrawerLayout: DrawerLayout
     private lateinit var mCollapsingToolbarLayout: CollapsingToolbarLayout
@@ -55,6 +46,7 @@ class MainActivity : AppCompatActivity(), RxBus.OnWorkListener<Event> {
                     mCollapsingToolbarLayout = collapsingToolbarLayout {
                         fitsSystemWindows = true
                         contentScrim = ContextCompat.getDrawable(this@MainActivity, R.color.blue1)
+                        title = "赫兹词典"
                         setExpandedTitleTextColor(ContextCompat.getColorStateList(this@MainActivity, android.R.color.transparent)!!)
 
                         editText {
@@ -103,23 +95,6 @@ class MainActivity : AppCompatActivity(), RxBus.OnWorkListener<Event> {
             it.setHomeAsUpIndicator(R.drawable.ic_menu_white_24dp)
         }
 
-        fragmentMap = WeakHashMap()
-        //Login(this, mCollapsingToolbarLayout).start()
-
-        RxBus.register(this)
-
-        val mainFragment = MainFragment()
-        setFragment(mainFragment)
-        fragmentMap[FragmentID.MAIN] = mainFragment
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        RxBus.unRegister(this)
-    }
-
-    override fun onWork(event: Event) {
-        toast(event.s)
     }
 
     private fun createHeaderView() =
@@ -129,23 +104,6 @@ class MainActivity : AppCompatActivity(), RxBus.OnWorkListener<Event> {
                 }
             }.view
 
-    private fun setFragment(fragment: Fragment) {
-        val transaction = supportFragmentManager.beginTransaction()
-        transaction.replace(frameLayoutID, fragment)
-        transaction.addToBackStack(null)
-        transaction.commit()
-    }
-
-    //添加或移除返回按钮
-    private fun setBackButton(ifSet: Boolean) {
-        supportActionBar?.setDisplayHomeAsUpEnabled(ifSet)
-    }
-
-    override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        menuInflater.inflate(R.menu.menu_main, menu)
-        return super.onCreateOptionsMenu(menu)
-    }
-
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             android.R.id.home -> { mDrawerLayout.openDrawer(GravityCompat.START) }
@@ -153,26 +111,5 @@ class MainActivity : AppCompatActivity(), RxBus.OnWorkListener<Event> {
         return super.onOptionsItemSelected(item)
     }
 
-    override fun onPrepareOptionsMenu(menu: Menu): Boolean {
-        when (fragmentStatus) {
-            FragmentID.MAIN -> {
-                mCollapsingToolbarLayout.title = "赫兹词典"
-            }
-            FragmentID.INQUIRE_RESULT -> {
-                mCollapsingToolbarLayout.title = "查询结果"
-                setBackButton(true)
-            }
-        }
-        return super.onPrepareOptionsMenu(menu)
-    }
 
-    object FragmentID {
-        const val MAIN = 1
-        const val INQUIRE_RESULT = 2
-    }
-
-}
-
-class Event {
-    val s = "你好"
 }

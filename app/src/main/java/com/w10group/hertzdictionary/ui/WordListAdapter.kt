@@ -9,12 +9,19 @@ import com.w10group.hertzdictionary.R
 import com.w10group.hertzdictionary.model.Word
 import org.jetbrains.anko.*
 import org.jetbrains.anko.cardview.v7.cardView
+import com.w10group.hertzdictionary.ui.WordListAdapter.WordListViewHolder
 
 /**
  * Created by Administrator on 2018/4/20 0020
  * MainFragment中单词RecyclerView的Adapter.
  */
 class WordListAdapter(private val mContext: Context, private val mData: List<Word>) : RecyclerView.Adapter<WordListViewHolder>() {
+
+    companion object {
+        const val TV_ENGLISH_ID = 1
+        const val TV_CHINESE_ID = 2
+        const val TV_COUNT_ID = 3
+    }
 
     override fun getItemCount(): Int = mData.size
 
@@ -51,16 +58,10 @@ class WordListAdapter(private val mContext: Context, private val mData: List<Wor
         holder.tvCount.text = countStr
     }
 
-}
-
-class WordListViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-
-    val tvEnglish = itemView.find<TextView>(TV_ENGLISH_ID)
-    val tvChinese = itemView.find<TextView>(TV_CHINESE_ID)
-    val tvCount = itemView.find<TextView>(TV_COUNT_ID)
+    class WordListViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        val tvEnglish = itemView.find<TextView>(TV_ENGLISH_ID)
+        val tvChinese = itemView.find<TextView>(TV_CHINESE_ID)
+        val tvCount = itemView.find<TextView>(TV_COUNT_ID)
+    }
 
 }
-
-const val TV_ENGLISH_ID = 1
-const val TV_CHINESE_ID = 2
-const val TV_COUNT_ID = 3

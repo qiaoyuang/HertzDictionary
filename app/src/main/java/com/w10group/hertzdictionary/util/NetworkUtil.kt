@@ -1,4 +1,4 @@
-package com.w10group.hertzdictionary.network
+package com.w10group.hertzdictionary.util
 
 import android.content.Context
 import android.net.ConnectivityManager
@@ -12,7 +12,7 @@ import retrofit2.converter.gson.GsonConverterFactory
  */
 object NetworkUtil {
 
-    val BASE_URL: String = "http://translate.google.cn/"
+    private const val BASE_URL = "http://translate.google.cn/"
 
     val mRetrofit: Retrofit
 

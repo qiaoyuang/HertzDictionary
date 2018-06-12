@@ -64,6 +64,8 @@ dependencies {
     implementation 'com.github.bumptech.glide:okhttp-integration:4.6.1'
     kapt 'com.github.bumptech.glide:compiler:4.6.1'
 
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+
     // Anko Commons
     implementation "org.jetbrains.anko:anko-commons:$anko_version"
 

@@ -1,4 +1,4 @@
-package com.w10group.hertzdictionary.network
+package com.w10group.hertzdictionary.util
 
 import com.w10group.hertzdictionary.model.InquireResponse
 import io.reactivex.Observable

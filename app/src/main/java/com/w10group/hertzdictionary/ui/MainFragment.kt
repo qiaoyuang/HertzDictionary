@@ -11,9 +11,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.w10group.hertzdictionary.model.Word
-import com.w10group.hertzdictionary.network.InquireWordService
-import com.w10group.hertzdictionary.network.NetworkUtil
-import com.w10group.hertzdictionary.ui.MainActivity.FragmentID
+import com.w10group.hertzdictionary.util.InquireWordService
+import com.w10group.hertzdictionary.util.NetworkUtil
 import com.w10group.hertzdictionary.util.*
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.rxkotlin.subscribeBy
@@ -45,7 +44,6 @@ class MainFragment : Fragment() {
         super.onCreate(savedInstanceState)
         mActivity = activity as MainActivity
         mData = ArrayList()
-        RxBus.post(Event(), RxBus.COMPUTATION, RxBus.MAIN)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
@@ -65,8 +63,6 @@ class MainFragment : Fragment() {
                 mRecyclerView = recyclerView {
                     val linearLayoutManager = LinearLayoutManager(mActivity, LinearLayoutManager.VERTICAL, false)
                     mAdapter = WordListAdapter(mActivity, mData)
-
-
                     layoutManager = linearLayoutManager
                     itemAnimator = DefaultItemAnimator()
                     addOnScrollListener(object : RecyclerView.OnScrollListener() {
@@ -114,12 +110,6 @@ class MainFragment : Fragment() {
                             it.printStackTrace()
                         }
                 )
-    }
-
-    override fun onStart() {
-        super.onStart()
-        mActivity.fragmentStatus = FragmentID.MAIN
-        mActivity.invalidateOptionsMenu()
     }
 
 }
