@@ -22,6 +22,7 @@ object RxBus {
         map[key] = value
     }
 
+    @Suppress("UNCHECKED_CAST")
     fun <T : Any> get(key: KClass<T>): LinkedList<OnWorkListener<T>>?
             = map[key] as LinkedList<OnWorkListener<T>>?
 

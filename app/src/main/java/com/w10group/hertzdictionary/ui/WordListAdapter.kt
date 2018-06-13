@@ -52,10 +52,10 @@ class WordListAdapter(private val mContext: Context, private val mData: List<Wor
 
     override fun onBindViewHolder(holder: WordListViewHolder, position: Int) {
         val word = mData[position]
-        holder.tvEnglish.text = word.english
-        holder.tvChinese.text = word.chinese
-        val countStr = "已查询次数：${word.count}"
-        holder.tvCount.text = countStr
+        //holder.tvEnglish.text = word.english
+        //holder.tvChinese.text = word.chinese
+        //val countStr = "已查询次数：${word.count}"
+        //holder.tvCount.text = countStr
     }
 
     class WordListViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {

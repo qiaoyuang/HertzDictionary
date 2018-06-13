@@ -13,5 +13,3 @@ data class User(@SerializedName("user_id") val userID: String = "",
                 @SerializedName("user_phone_number") val phoneNumber: String = "",
                 @SerializedName("word_list") val wordList: List<Int>? = null,
                 val password: String? = null)
-
-var appUser: User? = null

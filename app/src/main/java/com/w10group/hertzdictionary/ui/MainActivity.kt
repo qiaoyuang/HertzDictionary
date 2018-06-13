@@ -8,9 +8,15 @@ import android.support.v4.content.ContextCompat
 import android.support.v4.view.GravityCompat
 import android.support.v4.widget.DrawerLayout
 import android.support.v7.widget.Toolbar
+import android.util.Log
 import android.view.Gravity
 import android.view.MenuItem
 import com.w10group.hertzdictionary.R
+import com.w10group.hertzdictionary.util.InquireWordService
+import com.w10group.hertzdictionary.util.NetworkUtil
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.rxkotlin.subscribeBy
+import io.reactivex.schedulers.Schedulers
 import org.jetbrains.anko.*
 import org.jetbrains.anko.appcompat.v7.toolbar
 import org.jetbrains.anko.design.*
@@ -94,6 +100,20 @@ class MainActivity : AppCompatActivity() {
             it.setDisplayHomeAsUpEnabled(true)
             it.setHomeAsUpIndicator(R.drawable.ic_menu_white_24dp)
         }
+
+        NetworkUtil.create<InquireWordService>()
+                .inquire("hello")
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeBy(onNext = {
+                    it.words?.forEach {
+                        Log.d("中文", it.ch)
+                        Log.d("英文", it.en)
+                    }
+                },
+                        onError = {
+                            it.printStackTrace()
+                        })
 
     }
 
