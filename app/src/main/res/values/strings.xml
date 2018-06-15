@@ -1,11 +1,8 @@
 <resources>
     <string name="app_name">HertzDictionary</string>
 
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
-
-    <string name="setting">设置</string>
-    <string name="mine">我的信息</string>
-    <string name="word_list">我的词单</string>
+    <string name="more_features">更多功能</string>
+    <string name="mine">关于开发者</string>
+    <string name="open_source_license">开源许可证</string>
 
 </resources>

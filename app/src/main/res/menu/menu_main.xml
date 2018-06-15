@@ -7,19 +7,19 @@
         android:checkableBehavior="single" >
 
         <item
+            android:id="@+id/main_menu_more_features"
+            android:icon="@drawable/ic_extension_grey600_24dp"
+            android:title="@string/more_features" />
+
+        <item
             android:id="@+id/main_menu_mine"
             android:icon="@drawable/ic_account_circle_grey600_24dp"
             android:title="@string/mine" />
 
         <item
-            android:id="@+id/main_menu_word_list"
-            android:icon="@drawable/ic_subject_grey600_24dp"
-            android:title="@string/word_list" />
-
-        <item
             android:id="@+id/main_menu_setting"
-            android:icon="@drawable/ic_settings_grey600_24dp"
-            android:title="@string/setting" />
+            android:icon="@drawable/ic_subject_grey600_24dp"
+            android:title="@string/open_source_license" />
 
     </group>
 
