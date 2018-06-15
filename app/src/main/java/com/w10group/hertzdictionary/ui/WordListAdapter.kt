@@ -6,7 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import com.w10group.hertzdictionary.R
-import com.w10group.hertzdictionary.model.Word
+import com.w10group.hertzdictionary.bean.Word
 import org.jetbrains.anko.*
 import org.jetbrains.anko.cardview.v7.cardView
 import com.w10group.hertzdictionary.ui.WordListAdapter.WordListViewHolder

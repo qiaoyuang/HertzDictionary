@@ -4,7 +4,7 @@ import android.content.Context
 import android.support.v7.widget.RecyclerView.Adapter
 import android.support.v7.widget.RecyclerView.ViewHolder
 import android.view.View
-import com.w10group.hertzdictionary.model.Word
+import com.w10group.hertzdictionary.bean.Word
 
 class LocalWordListManager(context: Context,
                            view: View,
