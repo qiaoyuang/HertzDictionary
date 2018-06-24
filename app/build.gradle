@@ -49,9 +49,7 @@ dependencies {
     implementation "com.android.support:cardview-v7:$support_version"
 
     //implementation 'com.android.support:percent:27.1.0'
-
     //implementation 'com.android.support:animated-vector-drawable:27.1.0'
-
     //implementation 'com.android.support.constraint:constraint-layout:1.0.2'
 
     //RxJava
@@ -95,11 +93,9 @@ dependencies {
     implementation "org.jetbrains.anko:anko-design-coroutines:$anko_version"
 
     // GridLayout-v7
-
     //implementation "org.jetbrains.anko:anko-gridlayout-v7:$anko_version"
 
     // Percent
-
     //implementation "org.jetbrains.anko:anko-percent:$anko_version"
 
     // RecyclerView-v7
@@ -113,7 +109,6 @@ dependencies {
     implementation "org.jetbrains.anko:anko-support-v4:$anko_version"
 
     // ConstraintLayout
-
     //implementation "org.jetbrains.anko:anko-constraint-layout:$anko_version"
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.2'

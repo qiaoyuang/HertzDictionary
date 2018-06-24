@@ -1,4 +1,4 @@
-package com.w10group.hertzdictionary.util
+package com.w10group.hertzdictionary.core
 
 import android.content.Context
 import android.net.ConnectivityManager

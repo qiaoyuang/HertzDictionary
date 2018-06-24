@@ -1,4 +1,4 @@
-package com.w10group.hertzdictionary.util
+package com.w10group.hertzdictionary.business.network
 
 import io.reactivex.Observable
 import okhttp3.ResponseBody

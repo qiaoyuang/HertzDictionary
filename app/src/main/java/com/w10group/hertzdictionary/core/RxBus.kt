@@ -1,4 +1,4 @@
-package com.w10group.hertzdictionary.util
+package com.w10group.hertzdictionary.core
 
 import io.reactivex.Observable
 import io.reactivex.Scheduler

@@ -1,11 +1,11 @@
-package com.w10group.hertzdictionary.ui
+package com.w10group.hertzdictionary.business.manager
 
 import android.content.Context
 import android.content.SharedPreferences
 import android.widget.ImageView
 import com.bumptech.glide.Glide
-import com.w10group.hertzdictionary.util.GetImageURLService
-import com.w10group.hertzdictionary.util.NetworkUtil
+import com.w10group.hertzdictionary.business.network.GetImageURLService
+import com.w10group.hertzdictionary.core.NetworkUtil
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.rxkotlin.subscribeBy
 import io.reactivex.schedulers.Schedulers
@@ -19,26 +19,31 @@ import java.util.*
 
 object BackgroundImageManager {
 
+    private const val FILE_NAME = "BGImageInfo"
     private const val KEY_TODAY = "today"
     private const val KEY_URL = "URL"
     private const val DEFAULT_VALUE = "null"
     private const val GET_URL = "http://guolin.tech/api/bing_pic"
+
+    private lateinit var todayURL: String
 
     fun show(context: Context, imageView: ImageView) {
         getURLOnLocal(context, imageView)
     }
 
     private fun getURLOnLocal(context: Context, imageView: ImageView) {
-        val sharedPreferences = context.getSharedPreferences("BGImageInfo", Context.MODE_PRIVATE)
+        if (BackgroundImageManager::todayURL.isLateinit) {
+            Glide.with(context).load(todayURL).into(imageView)
+            return
+        }
+        val sharedPreferences = context.getSharedPreferences(FILE_NAME, Context.MODE_PRIVATE)
         val calendar = Calendar.getInstance()
         val today = "${calendar.get(Calendar.YEAR)}-${calendar.get(Calendar.MONTH) + 1}-${calendar.get(Calendar.DAY_OF_MONTH)}"
         val date = sharedPreferences.getString(KEY_TODAY, DEFAULT_VALUE)
         if (today == date) {
-            val url = sharedPreferences.getString(KEY_URL, DEFAULT_VALUE)
-            if (url != url) {
-                Glide.with(context).load(url).into(imageView)
-                return
-            }
+            todayURL = sharedPreferences.getString(KEY_URL, DEFAULT_VALUE)
+            Glide.with(context).load(todayURL).into(imageView)
+            return
         }
         getURLOnInternet(context, imageView, today, sharedPreferences)
     }
@@ -53,11 +58,11 @@ object BackgroundImageManager {
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeBy {
-                    val url = it.charStream().readText()
-                    Glide.with(context).load(url).into(imageView)
+                    todayURL = it.charStream().readText()
+                    Glide.with(context).load(todayURL).into(imageView)
                     val edit = sharedPreferences.edit()
                     edit.putString(KEY_TODAY, today)
-                    edit.putString(KEY_URL, url)
+                    edit.putString(KEY_URL, todayURL)
                     edit.apply()
                 }
     }

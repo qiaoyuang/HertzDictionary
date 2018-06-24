@@ -1,4 +1,4 @@
-package com.w10group.hertzdictionary.ui
+package com.w10group.hertzdictionary.business.main
 
 import android.content.Context
 import android.support.v7.widget.RecyclerView
@@ -6,10 +6,10 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import com.w10group.hertzdictionary.R
-import com.w10group.hertzdictionary.bean.Word
+import com.w10group.hertzdictionary.business.bean.Word
 import org.jetbrains.anko.*
 import org.jetbrains.anko.cardview.v7.cardView
-import com.w10group.hertzdictionary.ui.WordListAdapter.WordListViewHolder
+import com.w10group.hertzdictionary.business.main.WordListAdapter.WordListViewHolder
 
 /**
  * Created by Administrator on 2018/4/20 0020

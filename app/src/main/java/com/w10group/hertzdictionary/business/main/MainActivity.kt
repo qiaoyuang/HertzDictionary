@@ -1,4 +1,4 @@
-package com.w10group.hertzdictionary.ui
+package com.w10group.hertzdictionary.business.main
 
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
@@ -18,9 +18,10 @@ import android.view.inputmethod.EditorInfo
 import android.widget.ImageView
 import android.widget.TextView
 import com.w10group.hertzdictionary.R
-import com.w10group.hertzdictionary.bean.Word
-import com.w10group.hertzdictionary.util.InquireWordService
-import com.w10group.hertzdictionary.util.NetworkUtil
+import com.w10group.hertzdictionary.business.bean.Word
+import com.w10group.hertzdictionary.business.manager.BackgroundImageManager
+import com.w10group.hertzdictionary.business.network.InquireWordService
+import com.w10group.hertzdictionary.core.NetworkUtil
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.rxkotlin.subscribeBy
 import io.reactivex.schedulers.Schedulers

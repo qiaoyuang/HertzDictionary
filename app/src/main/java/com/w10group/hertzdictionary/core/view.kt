@@ -1,4 +1,4 @@
-package com.w10group.hertzdictionary.util
+package com.w10group.hertzdictionary.core
 
 import android.support.v7.widget.AppCompatSpinner
 import android.view.ViewManager
