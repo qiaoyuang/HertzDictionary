@@ -32,7 +32,7 @@ object BackgroundImageManager {
     }
 
     private fun getURLOnLocal(context: Context, imageView: ImageView) {
-        if (BackgroundImageManager::todayURL.isLateinit) {
+        if (!BackgroundImageManager::todayURL.isLateinit) {
             Glide.with(context).load(todayURL).into(imageView)
             return
         }

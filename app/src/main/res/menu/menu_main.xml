@@ -17,7 +17,7 @@
             android:title="@string/mine" />
 
         <item
-            android:id="@+id/main_menu_setting"
+            android:id="@+id/main_menu_licence"
             android:icon="@drawable/ic_subject_grey600_24dp"
             android:title="@string/open_source_license" />
 

@@ -30,6 +30,6 @@ object NetworkUtil {
         return networkInfo != null && networkInfo.isAvailable
     }
 
-    inline fun <reified T> create(): T = mRetrofit.create(T :: class.java)
+    inline fun <reified T> create(): T = mRetrofit.create(T::class.java)
 
 }

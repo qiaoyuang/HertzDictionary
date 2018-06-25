@@ -11,14 +11,21 @@ import android.support.v4.view.GravityCompat
 import android.support.v4.widget.DrawerLayout
 import android.support.v4.widget.NestedScrollView
 import android.support.v7.widget.*
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.Gravity
+import android.view.KeyEvent
 import android.view.MenuItem
 import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.widget.ImageView
+import android.widget.LinearLayout
 import android.widget.TextView
 import com.w10group.hertzdictionary.R
+import com.w10group.hertzdictionary.business.about.AboutDeveloperActivity
 import com.w10group.hertzdictionary.business.bean.Word
+import com.w10group.hertzdictionary.business.features.FeaturesActivity
+import com.w10group.hertzdictionary.business.licence.LicenceActivity
 import com.w10group.hertzdictionary.business.manager.BackgroundImageManager
 import com.w10group.hertzdictionary.business.network.InquireWordService
 import com.w10group.hertzdictionary.core.NetworkUtil
@@ -40,6 +47,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var mNestedScrollView: NestedScrollView
     private lateinit var mRecyclerView: RecyclerView
     private lateinit var mBackgroundImageView: ImageView
+    private lateinit var mOtherMeanLayout: LinearLayout
 
     private lateinit var mTVSrcPronunciation: TextView
     private lateinit var mTVResult: TextView
@@ -50,6 +58,18 @@ class MainActivity : AppCompatActivity() {
     private val mData by lazy { ArrayList<Word>() }
     private val mAdapter by lazy { WordListAdapter(this, mData) }
 
+    private val gray600 by lazy { ContextCompat.getColor(this, R.color.gray600) }
+    private val deepWhite by lazy { ContextCompat.getColor(this, R.color.deepWhite) }
+    private val black by lazy { ContextCompat.getColor(this, android.R.color.black) }
+    private val white by lazy { ContextCompat.getColor(this, android.R.color.white) }
+    private val blue1 by lazy { ContextCompat.getColor(this, R.color.blue1) }
+
+    private companion object {
+        const val STATUS_INQUIRED_NOT = 0
+        const val STATUS_INQUIRED = 1
+    }
+
+    private var status = STATUS_INQUIRED_NOT
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -59,17 +79,17 @@ class MainActivity : AppCompatActivity() {
 
         mDrawerLayout = drawerLayout {
             coordinatorLayout {
-                backgroundColorResource = R.color.deepWhite
+                backgroundColor = deepWhite
                 fitsSystemWindows = true
 
                 appBarLayout {
                     translationZ = dip(4).toFloat()
                     elevation = dip(4).toFloat()
-                    backgroundColorResource = android.R.color.white
+                    backgroundColor = white
 
                     mToolBar = toolbar {
                         title = "赫兹词典"
-                        backgroundColorResource = R.color.blue1
+                        backgroundColor = blue1
                         setTheme(R.style.ThemeOverlay_AppCompat_Light)
                         popupTheme = R.style.ThemeOverlay_AppCompat_Light
                     }.lparams(matchParent, actionBarSize) {
@@ -78,8 +98,8 @@ class MainActivity : AppCompatActivity() {
 
                     editText {
                         hint = "点击可输入单词"
-                        hintTextColor = ContextCompat.getColor(this@MainActivity, R.color.gray600)
-                        textColor = ContextCompat.getColor(this@MainActivity, android.R.color.black)
+                        hintTextColor = gray600
+                        textColor = black
                         background = null
                         textSize = 22f
                         singleLine = true
@@ -91,6 +111,18 @@ class MainActivity : AppCompatActivity() {
                             }
                             false
                         }
+                        addTextChangedListener(object : TextWatcher {
+                            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+                            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+                            override fun afterTextChanged(s: Editable?) {
+                                if (status == STATUS_INQUIRED) {
+                                    mRecyclerView.visibility = View.VISIBLE
+                                    mNestedScrollView.visibility = View.GONE
+                                    mTVSrcPronunciation.visibility = View.GONE
+                                    status = STATUS_INQUIRED_NOT
+                                }
+                            }
+                        })
                     }.lparams(matchParent, wrapContent) {
                         topMargin = dip(8)
                         marginStart = dip(16)
@@ -100,7 +132,7 @@ class MainActivity : AppCompatActivity() {
 
                     mTVSrcPronunciation = textView {
                         visibility = View.GONE
-                        textColor = ContextCompat.getColor(this@MainActivity, android.R.color.black)
+                        textColor = black
                         textSize = 14f
                     }.lparams(wrapContent, wrapContent) {
                         marginStart = dip(16)
@@ -115,75 +147,98 @@ class MainActivity : AppCompatActivity() {
 
                 mNestedScrollView = nestedScrollView {
                     visibility = View.GONE
-                    cardView {
-                        backgroundResource = R.color.blue1
-                        val sourceLanguageId = 1
-                        val resultId = 2
-                        val pronunciationId = 3
-                        val otherTranslationsId = 4
-                        relativeLayout {
-                            textView {
-                                id = sourceLanguageId
-                                textColorResource = android.R.color.white
-                                textSize = 16f
-                                text = "简体中文"
-                            }.lparams(wrapContent, wrapContent) {
-                                alignParentTop()
-                                alignParentStart()
-                                topMargin = dip(8)
-                                marginStart = dip(8)
-                            }
-                            mTVResult = textView {
-                                id = resultId
-                                textColorResource = android.R.color.white
-                                textSize = 22f
-                            }.lparams(wrapContent, wrapContent) {
-                                below(sourceLanguageId)
-                                alignParentStart()
-                                topMargin = dip(16)
-                                marginStart = dip(16)
-                            }
+                    verticalLayout {
+                        cardView {
+                            backgroundColor = blue1
+                            val sourceLanguageId = 1
+                            val resultId = 2
+                            val pronunciationId = 3
+                            val otherTranslationsId = 4
+                            relativeLayout {
+                                textView {
+                                    id = sourceLanguageId
+                                    textColor = white
+                                    textSize = 16f
+                                    text = "简体中文"
+                                }.lparams(wrapContent, wrapContent) {
+                                    alignParentTop()
+                                    alignParentStart()
+                                    topMargin = dip(8)
+                                    marginStart = dip(8)
+                                }
+                                mTVResult = textView {
+                                    id = resultId
+                                    textColor = white
+                                    textSize = 22f
+                                }.lparams(wrapContent, wrapContent) {
+                                    below(sourceLanguageId)
+                                    alignParentStart()
+                                    topMargin = dip(16)
+                                    marginStart = dip(16)
+                                }
 
-                            mTVPronunciation = textView {
-                                id = pronunciationId
-                                textColorResource = android.R.color.white
-                                textSize = 14f
-                            }.lparams(wrapContent, wrapContent) {
-                                below(resultId)
-                                alignParentStart()
-                                topMargin = dip(4)
-                                marginStart = dip(16)
+                                mTVPronunciation = textView {
+                                    id = pronunciationId
+                                    textColor = white
+                                    textSize = 14f
+                                }.lparams(wrapContent, wrapContent) {
+                                    below(resultId)
+                                    alignParentStart()
+                                    topMargin = dip(4)
+                                    marginStart = dip(16)
+                                }
+
+                                mTVOtherTranslation = textView {
+                                    id = otherTranslationsId
+                                    textColor = white
+                                    textSize = 14f
+                                }.lparams(matchParent, wrapContent) {
+                                    below(pronunciationId)
+                                    alignParentStart()
+                                    topMargin = dip(16)
+                                    marginStart = dip(16)
+                                    marginEnd = dip(16)
+                                }
+
+                                mTVRelatedWords = textView {
+                                    textColor = white
+                                    textSize = 14f
+                                }.lparams(matchParent, wrapContent) {
+                                    below(otherTranslationsId)
+                                    alignParentStart()
+                                    margin = dip(16)
+                                }
+
+                            }.lparams(matchParent, wrapContent)
+                        }.lparams(matchParent, wrapContent) {
+                            margin = dip(8)
+                            elevation = dip(8).toFloat()
+                            translationZ = dip(8).toFloat()
+                            gravity = Gravity.TOP or Gravity.CENTER_HORIZONTAL
+                        }
+
+                        cardView {
+                            verticalLayout {
+                                textView {
+                                    textColor = black
+                                    textSize = 16f
+                                    text = "词汇扩展"
+                                }.lparams(wrapContent, wrapContent) {
+                                    topMargin = dip(8)
+                                    bottomMargin = dip(16)
+                                    marginStart = dip(8)
+                                }
+                                mOtherMeanLayout = verticalLayout {}
                             }
-
-                            mTVOtherTranslation = textView {
-                                id = otherTranslationsId
-                                textColorResource = android.R.color.white
-                                textSize = 14f
-                            }.lparams(matchParent, wrapContent) {
-                                below(pronunciationId)
-                                alignParentStart()
-                                topMargin = dip(16)
-                                marginStart = dip(16)
-                                marginEnd = dip(16)
-                            }
-
-                            mTVRelatedWords = textView {
-                                textColorResource = android.R.color.white
-                                textSize = 14f
-                            }.lparams(matchParent, wrapContent) {
-                                below(otherTranslationsId)
-                                alignParentStart()
-                                margin = dip(16)
-                            }
-
-
-                        }.lparams(matchParent, wrapContent)
-                    }.lparams(matchParent, wrapContent) {
-                        margin = dip(8)
-                        elevation = dip(8).toFloat()
-                        translationZ = dip(8).toFloat()
-                        gravity = Gravity.TOP or Gravity.CENTER_HORIZONTAL
-                    }
+                        }.lparams(matchParent, wrapContent) {
+                            marginStart = dip(8)
+                            marginEnd = dip(8)
+                            bottomMargin = dip(16)
+                            elevation = dip(8).toFloat()
+                            translationZ = dip(8).toFloat()
+                            gravity = Gravity.TOP or Gravity.CENTER_HORIZONTAL
+                        }
+                    }.lparams(matchParent, wrapContent)
                 }.lparams(matchParent, matchParent) {
                     behavior = AppBarLayout.ScrollingViewBehavior()
                 }
@@ -202,10 +257,15 @@ class MainActivity : AppCompatActivity() {
                 inflateMenu(R.menu.menu_main)
                 fitsSystemWindows = true
                 isClickable = true
-                backgroundColorResource = android.R.color.white
+                backgroundColor = white
                 itemTextColor = ContextCompat.getColorStateList(this@MainActivity, android.R.color.tertiary_text_dark)
                 addHeaderView(createHeaderView())
                 setNavigationItemSelectedListener {
+                    when (it.itemId) {
+                        R.id.main_menu_more_features -> startActivity<FeaturesActivity>()
+                        R.id.main_menu_mine -> startActivity<AboutDeveloperActivity>()
+                        R.id.main_menu_licence -> startActivity<LicenceActivity>()
+                    }
                     false
                 }
             }.lparams(dip(256), matchParent) { gravity = Gravity.START }
@@ -230,14 +290,24 @@ class MainActivity : AppCompatActivity() {
                 }
             }.view
 
-
-
-
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             android.R.id.home -> { mDrawerLayout.openDrawer(GravityCompat.START) }
         }
         return super.onOptionsItemSelected(item)
+    }
+
+    override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            if (status == STATUS_INQUIRED) {
+                mRecyclerView.visibility = View.VISIBLE
+                mNestedScrollView.visibility = View.GONE
+                mTVSrcPronunciation.visibility = View.GONE
+                status = STATUS_INQUIRED_NOT
+                return false
+            }
+        }
+        return super.onKeyDown(keyCode, event)
     }
 
     private fun inquire(word: String) {
@@ -250,14 +320,46 @@ class MainActivity : AppCompatActivity() {
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnNext {
-                    mRecyclerView.visibility = View.GONE
-                    mNestedScrollView.visibility = View.VISIBLE
-                    mTVSrcPronunciation.visibility = View.VISIBLE
+                    if (status == STATUS_INQUIRED_NOT) {
+                        mRecyclerView.visibility = View.GONE
+                        mNestedScrollView.visibility = View.VISIBLE
+                        mTVSrcPronunciation.visibility = View.VISIBLE
+                        status = STATUS_INQUIRED
+                    }
                     it.word?.let {
                         mTVResult.text = it[0].ch
                         val srcPronunciationText = "读音：${it[1].srcPronunciation}"
                         mTVSrcPronunciation.text = srcPronunciationText
                         mTVPronunciation.text = it[1].pronunciation
+                    }
+
+                    mOtherMeanLayout.removeAllViews()
+                    it.dict?.forEach {
+                        val layoutParams1 = LinearLayout.LayoutParams(matchParent, wrapContent)
+                        layoutParams1.marginStart = dip(16)
+                        val headView = TextView(this)
+                        headView.textSize = 16f
+                        headView.textColor = gray600
+                        headView.text = it.posType
+                        headView.layoutParams = layoutParams1
+
+                        val layoutParams2 = LinearLayout.LayoutParams(matchParent, wrapContent)
+                        layoutParams2.marginStart = dip(32)
+                        layoutParams2.topMargin = dip(16)
+                        layoutParams2.bottomMargin = dip(24)
+                        val recyclerView = RecyclerView(this)
+                        recyclerView.layoutManager = object : LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false) {
+                            override fun canScrollVertically(): Boolean {
+                                return false
+                            }
+                        }
+                        it.dictInfo?.let {
+                            recyclerView.adapter = OtherMeanAdapter(this, it)
+                        }
+                        recyclerView.layoutParams = layoutParams2
+
+                        mOtherMeanLayout.addView(headView)
+                        mOtherMeanLayout.addView(recyclerView)
                     }
                 }
                 .observeOn(Schedulers.computation())
@@ -283,12 +385,10 @@ class MainActivity : AppCompatActivity() {
                         it.words?.let {
                             val last = it.size - 1
                             it.forEachIndexed { index, word ->
-                                if (index != 0) {
-                                    if (index == last) {
-                                        builder2.append(word)
-                                    } else {
-                                        builder2.append("$word,")
-                                    }
+                                if (index == last) {
+                                    builder2.append(word)
+                                } else {
+                                    builder2.append("$word, ")
                                 }
                             }
                         }
@@ -298,7 +398,7 @@ class MainActivity : AppCompatActivity() {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeBy(
                         onNext = {
-                            val otherTranslationText = "其它翻译：\n${it[0]}"
+                            val otherTranslationText = "其它义项：\n${it[0]}"
                             mTVOtherTranslation.text = otherTranslationText
                             val relatedWordsText = "相关词组：\n${it[1]}"
                             mTVRelatedWords.text = relatedWordsText
