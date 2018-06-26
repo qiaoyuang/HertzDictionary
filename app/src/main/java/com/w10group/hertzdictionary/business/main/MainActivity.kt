@@ -18,6 +18,7 @@ import android.view.KeyEvent
 import android.view.MenuItem
 import android.view.View
 import android.view.inputmethod.EditorInfo
+import android.widget.EditText
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
@@ -27,7 +28,7 @@ import com.w10group.hertzdictionary.business.bean.Word
 import com.w10group.hertzdictionary.business.features.FeaturesActivity
 import com.w10group.hertzdictionary.business.licence.LicenceActivity
 import com.w10group.hertzdictionary.business.manager.BackgroundImageManager
-import com.w10group.hertzdictionary.business.network.InquireWordService
+import com.w10group.hertzdictionary.business.manager.NetworkService
 import com.w10group.hertzdictionary.core.NetworkUtil
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.rxkotlin.subscribeBy
@@ -48,6 +49,8 @@ class MainActivity : AppCompatActivity() {
     private lateinit var mRecyclerView: RecyclerView
     private lateinit var mBackgroundImageView: ImageView
     private lateinit var mOtherMeanLayout: LinearLayout
+    private lateinit var mIVClose: ImageView
+    private lateinit var mETInput: EditText
 
     private lateinit var mTVSrcPronunciation: TextView
     private lateinit var mTVResult: TextView
@@ -96,7 +99,21 @@ class MainActivity : AppCompatActivity() {
                         scrollFlags = SCROLL_FLAG_SCROLL or SCROLL_FLAG_ENTER_ALWAYS or SCROLL_FLAG_SNAP
                     }
 
-                    editText {
+                    mIVClose = imageView {
+                        visibility = View.GONE
+                        setImageDrawable(ContextCompat.getDrawable(this@MainActivity, R.drawable.ic_clear_black_24dp))
+                        setOnClickListener {
+                            if (status == STATUS_INQUIRED) {
+                                restore()
+                            }
+                        }
+                    }.lparams(wrapContent, wrapContent) {
+                        gravity = Gravity.END or Gravity.TOP
+                        topMargin = dip(8)
+                        marginEnd = dip(8)
+                    }
+
+                    mETInput = editText {
                         hint = "点击可输入单词"
                         hintTextColor = gray600
                         textColor = black
@@ -116,10 +133,7 @@ class MainActivity : AppCompatActivity() {
                             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
                             override fun afterTextChanged(s: Editable?) {
                                 if (status == STATUS_INQUIRED) {
-                                    mRecyclerView.visibility = View.VISIBLE
-                                    mNestedScrollView.visibility = View.GONE
-                                    mTVSrcPronunciation.visibility = View.GONE
-                                    status = STATUS_INQUIRED_NOT
+                                    restore()
                                 }
                             }
                         })
@@ -258,7 +272,7 @@ class MainActivity : AppCompatActivity() {
                 fitsSystemWindows = true
                 isClickable = true
                 backgroundColor = white
-                itemTextColor = ContextCompat.getColorStateList(this@MainActivity, android.R.color.tertiary_text_dark)
+                itemTextColor = ContextCompat.getColorStateList(this@MainActivity, R.color.blue1)
                 addHeaderView(createHeaderView())
                 setNavigationItemSelectedListener {
                     when (it.itemId) {
@@ -266,7 +280,7 @@ class MainActivity : AppCompatActivity() {
                         R.id.main_menu_mine -> startActivity<AboutDeveloperActivity>()
                         R.id.main_menu_licence -> startActivity<LicenceActivity>()
                     }
-                    false
+                    true
                 }
             }.lparams(dip(256), matchParent) { gravity = Gravity.START }
         }
@@ -300,14 +314,20 @@ class MainActivity : AppCompatActivity() {
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
             if (status == STATUS_INQUIRED) {
-                mRecyclerView.visibility = View.VISIBLE
-                mNestedScrollView.visibility = View.GONE
-                mTVSrcPronunciation.visibility = View.GONE
-                status = STATUS_INQUIRED_NOT
+                restore()
                 return false
             }
         }
         return super.onKeyDown(keyCode, event)
+    }
+
+    private fun restore() {
+        status = STATUS_INQUIRED_NOT
+        mRecyclerView.visibility = View.VISIBLE
+        mNestedScrollView.visibility = View.GONE
+        mTVSrcPronunciation.visibility = View.GONE
+        mIVClose.visibility = View.GONE
+        mETInput.setText("")
     }
 
     private fun inquire(word: String) {
@@ -315,8 +335,8 @@ class MainActivity : AppCompatActivity() {
             snackbar(mRecyclerView, "当前无网络连接")
             return
         }
-        NetworkUtil.create<InquireWordService>()
-                .inquire(word)
+        NetworkUtil.create<NetworkService>()
+                .inquireWord(word)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnNext {
@@ -324,6 +344,7 @@ class MainActivity : AppCompatActivity() {
                         mRecyclerView.visibility = View.GONE
                         mNestedScrollView.visibility = View.VISIBLE
                         mTVSrcPronunciation.visibility = View.VISIBLE
+                        mIVClose.visibility = View.VISIBLE
                         status = STATUS_INQUIRED
                     }
                     it.word?.let {
@@ -398,8 +419,13 @@ class MainActivity : AppCompatActivity() {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeBy(
                         onNext = {
-                            val otherTranslationText = "其它义项：\n${it[0]}"
-                            mTVOtherTranslation.text = otherTranslationText
+                            if (it[0].isBlank()) {
+                                mTVOtherTranslation.visibility = View.GONE
+                            } else {
+                                mTVOtherTranslation.visibility = View.VISIBLE
+                                val otherTranslationText = "其它义项：\n${it[0]}"
+                                mTVOtherTranslation.text = otherTranslationText
+                            }
                             val relatedWordsText = "相关词组：\n${it[1]}"
                             mTVRelatedWords.text = relatedWordsText
                         },

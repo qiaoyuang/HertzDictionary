@@ -4,7 +4,6 @@ import android.content.Context
 import android.content.SharedPreferences
 import android.widget.ImageView
 import com.bumptech.glide.Glide
-import com.w10group.hertzdictionary.business.network.GetImageURLService
 import com.w10group.hertzdictionary.core.NetworkUtil
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.rxkotlin.subscribeBy
@@ -53,8 +52,8 @@ object BackgroundImageManager {
             snackbar(imageView, "当前无网络连接")
             return
         }
-        NetworkUtil.create<GetImageURLService>()
-                .get(GET_URL)
+        NetworkUtil.create<NetworkService>()
+                .getImageURL(GET_URL)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeBy {
