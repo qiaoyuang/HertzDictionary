@@ -13,7 +13,6 @@ import android.support.v4.widget.NestedScrollView
 import android.support.v7.widget.*
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import android.view.Gravity
 import android.view.KeyEvent
 import android.view.MenuItem
@@ -83,27 +82,6 @@ class MainActivity : AppCompatActivity() {
 
         mDrawerLayout = drawerLayout {
 
-            navigationView {
-                inflateMenu(R.menu.menu_main)
-                fitsSystemWindows = true
-                isClickable = true
-                backgroundColor = deepWhite
-                itemTextColor = ContextCompat.getColorStateList(this@MainActivity, R.color.gray600)
-                addHeaderView(createHeaderView())
-                setNavigationItemSelectedListener {
-                    when (it.itemId) {
-                        R.id.main_menu_more_features -> startActivity<FeaturesActivity>()
-                        R.id.main_menu_mine -> startActivity<AboutDeveloperActivity>()
-                        R.id.main_menu_licence -> startActivity<LicenceActivity>()
-                    }
-                    true
-                }
-            }.lparams(matchParent, matchParent) {
-                gravity = Gravity.START
-                elevation = dip(8).toFloat()
-                translationZ = dip(8).toFloat()
-            }
-
             coordinatorLayout {
                 backgroundColor = deepWhite
                 fitsSystemWindows = true
@@ -132,6 +110,7 @@ class MainActivity : AppCompatActivity() {
                         gravity = Gravity.END or Gravity.TOP
                         topMargin = dip(8)
                         marginEnd = dip(8)
+                        scrollFlags = SCROLL_FLAG_SCROLL or SCROLL_FLAG_ENTER_ALWAYS or SCROLL_FLAG_SNAP
                     }
 
                     mETInput = editText {
@@ -287,6 +266,30 @@ class MainActivity : AppCompatActivity() {
                 }
 
             }.lparams(matchParent, matchParent)
+
+            verticalLayout {
+                fitsSystemWindows = true
+                navigationView {
+                    inflateMenu(R.menu.menu_main)
+                    fitsSystemWindows = true
+                    isClickable = true
+                    backgroundColor = deepWhite
+                    itemTextColor = ContextCompat.getColorStateList(this@MainActivity, R.color.blue1)
+                    addHeaderView(createHeaderView())
+                    setNavigationItemSelectedListener {
+                        when (it.itemId) {
+                            R.id.main_menu_more_features -> startActivity<FeaturesActivity>()
+                            R.id.main_menu_mine -> startActivity<AboutDeveloperActivity>()
+                            R.id.main_menu_licence -> startActivity<LicenceActivity>()
+                        }
+                        true
+                    }
+                }.lparams(matchParent, matchParent) {
+                    translationZ = dip(8).toFloat()
+                }
+            }.lparams(matchParent, matchParent) {
+                gravity = Gravity.START
+            }
 
         }
 

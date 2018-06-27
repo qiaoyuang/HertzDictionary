@@ -8,6 +8,7 @@
         <item name="colorAccent">@android:color/darker_gray</item>
         <item name="android:textColorPrimary">@android:color/white</item>
         <item name="android:textColor">@color/gray600</item>
+        <item name="android:colorControlNormal">@android:color/white</item>
     </style>
 
     <style name="NewTheme" parent="AppTheme" >

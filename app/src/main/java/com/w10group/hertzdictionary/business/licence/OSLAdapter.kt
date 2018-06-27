@@ -30,14 +30,19 @@ class OSLAdapter(private val mContext: Context, private val mData: List<OSL>) : 
             verticalLayout {
                 textView {
                     id = TITLE_ID
-                    textSize = 20f
+                    textSize = 22f
                     textColor = black
-                }.lparams(wrapContent, wrapContent)
+                }.lparams(wrapContent, wrapContent) {
+                    topMargin = dip(16)
+                }
 
                 textView {
                     id = CONTENT_ID
                     textColor = black
-                }.lparams(wrapContent, wrapContent)
+                }.lparams(wrapContent, wrapContent) {
+                    marginStart = dip(16)
+                    bottomMargin = dip(16)
+                }
             }
         }.view
         return OSLViewHolder(view)
