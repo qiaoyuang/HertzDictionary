@@ -13,6 +13,7 @@ import android.support.v4.widget.NestedScrollView
 import android.support.v7.widget.*
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.Gravity
 import android.view.KeyEvent
 import android.view.MenuItem
@@ -81,13 +82,33 @@ class MainActivity : AppCompatActivity() {
         styledAttributes.recycle()
 
         mDrawerLayout = drawerLayout {
+
+            navigationView {
+                inflateMenu(R.menu.menu_main)
+                fitsSystemWindows = true
+                isClickable = true
+                backgroundColor = deepWhite
+                itemTextColor = ContextCompat.getColorStateList(this@MainActivity, R.color.gray600)
+                addHeaderView(createHeaderView())
+                setNavigationItemSelectedListener {
+                    when (it.itemId) {
+                        R.id.main_menu_more_features -> startActivity<FeaturesActivity>()
+                        R.id.main_menu_mine -> startActivity<AboutDeveloperActivity>()
+                        R.id.main_menu_licence -> startActivity<LicenceActivity>()
+                    }
+                    true
+                }
+            }.lparams(matchParent, matchParent) {
+                gravity = Gravity.START
+                elevation = dip(8).toFloat()
+                translationZ = dip(8).toFloat()
+            }
+
             coordinatorLayout {
                 backgroundColor = deepWhite
                 fitsSystemWindows = true
 
                 appBarLayout {
-                    translationZ = dip(4).toFloat()
-                    elevation = dip(4).toFloat()
                     backgroundColor = white
 
                     mToolBar = toolbar {
@@ -267,22 +288,6 @@ class MainActivity : AppCompatActivity() {
 
             }.lparams(matchParent, matchParent)
 
-            navigationView {
-                inflateMenu(R.menu.menu_main)
-                fitsSystemWindows = true
-                isClickable = true
-                backgroundColor = white
-                itemTextColor = ContextCompat.getColorStateList(this@MainActivity, R.color.blue1)
-                addHeaderView(createHeaderView())
-                setNavigationItemSelectedListener {
-                    when (it.itemId) {
-                        R.id.main_menu_more_features -> startActivity<FeaturesActivity>()
-                        R.id.main_menu_mine -> startActivity<AboutDeveloperActivity>()
-                        R.id.main_menu_licence -> startActivity<LicenceActivity>()
-                    }
-                    true
-                }
-            }.lparams(dip(256), matchParent) { gravity = Gravity.START }
         }
 
         setSupportActionBar(mToolBar)
@@ -299,7 +304,7 @@ class MainActivity : AppCompatActivity() {
                 verticalLayout {
                     mBackgroundImageView = imageView {
                         scaleType = ImageView.ScaleType.CENTER_CROP
-                        backgroundColorResource = R.color.blue1
+                        backgroundColor = blue1
                     }.lparams(matchParent, dip(184))
                 }
             }.view

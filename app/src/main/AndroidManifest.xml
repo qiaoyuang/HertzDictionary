@@ -28,7 +28,8 @@
         <activity
             android:name=".business.features.FeaturesActivity"
             android:launchMode="singleTop"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme" />
         <activity
             android:name=".business.about.AboutDeveloperActivity"
             android:launchMode="singleTop"
@@ -36,7 +37,8 @@
         <activity
             android:name=".business.licence.LicenceActivity"
             android:launchMode="singleTop"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme" />
     </application>
 
 </manifest>

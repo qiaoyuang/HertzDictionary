@@ -2,6 +2,7 @@ package com.w10group.hertzdictionary.business.licence
 
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import android.support.v4.content.ContextCompat
 import android.support.v7.widget.DefaultItemAnimator
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
@@ -32,6 +33,7 @@ class LicenceActivity : AppCompatActivity() {
         verticalLayout {
             toolbar {
                 title = "开源许可证"
+                titleColor = ContextCompat.getColor(this@LicenceActivity, android.R.color.white)
                 backgroundColorResource = R.color.blue1
                 setTheme(R.style.ThemeOverlay_AppCompat_Light)
                 popupTheme = R.style.ThemeOverlay_AppCompat_Light
