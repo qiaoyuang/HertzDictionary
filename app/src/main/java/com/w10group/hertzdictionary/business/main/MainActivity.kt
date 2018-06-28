@@ -24,15 +24,19 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import com.w10group.hertzdictionary.R
 import com.w10group.hertzdictionary.business.about.AboutDeveloperActivity
-import com.w10group.hertzdictionary.business.bean.Word
+import com.w10group.hertzdictionary.business.bean.InquireResult
+import com.w10group.hertzdictionary.business.bean.RealmWord
 import com.w10group.hertzdictionary.business.features.FeaturesActivity
 import com.w10group.hertzdictionary.business.licence.LicenceActivity
 import com.w10group.hertzdictionary.business.manager.BackgroundImageManager
 import com.w10group.hertzdictionary.business.manager.NetworkService
 import com.w10group.hertzdictionary.core.NetworkUtil
+import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.rxkotlin.subscribeBy
 import io.reactivex.schedulers.Schedulers
+import io.realm.Realm
+import io.realm.RealmConfiguration
 import org.jetbrains.anko.*
 import org.jetbrains.anko.appcompat.v7.toolbar
 import org.jetbrains.anko.cardview.v7.cardView
@@ -40,6 +44,7 @@ import org.jetbrains.anko.design.*
 import org.jetbrains.anko.recyclerview.v7.recyclerView
 import org.jetbrains.anko.support.v4.drawerLayout
 import org.jetbrains.anko.support.v4.nestedScrollView
+import java.util.*
 
 class MainActivity : AppCompatActivity() {
 
@@ -58,7 +63,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var mTVOtherTranslation: TextView
     private lateinit var mTVRelatedWords: TextView
 
-    private val mData by lazy { ArrayList<Word>() }
+    private val mData by lazy { LinkedList<RealmWord>() }
     private val mAdapter by lazy { WordListAdapter(this, mData) }
 
     private val gray600 by lazy { ContextCompat.getColor(this, R.color.gray600) }
@@ -66,6 +71,8 @@ class MainActivity : AppCompatActivity() {
     private val black by lazy { ContextCompat.getColor(this, android.R.color.black) }
     private val white by lazy { ContextCompat.getColor(this, android.R.color.white) }
     private val blue1 by lazy { ContextCompat.getColor(this, R.color.blue1) }
+
+    private lateinit var mRealm: Realm
 
     private companion object {
         const val STATUS_INQUIRED_NOT = 0
@@ -76,6 +83,10 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        Realm.init(applicationContext)
+        val config = RealmConfiguration.Builder().build()
+        mRealm = Realm.getInstance(config)
+
         val styledAttributes = theme.obtainStyledAttributes(intArrayOf(android.R.attr.actionBarSize))
         val actionBarSize = styledAttributes.getDimension(0, 0f).toInt()
         styledAttributes.recycle()
@@ -88,6 +99,9 @@ class MainActivity : AppCompatActivity() {
 
                 appBarLayout {
                     backgroundColor = white
+                    elevation = dip(8).toFloat()
+                    translationZ = dip(8).toFloat()
+                    val scrollFlag = SCROLL_FLAG_SCROLL or SCROLL_FLAG_ENTER_ALWAYS or SCROLL_FLAG_SNAP
 
                     mToolBar = toolbar {
                         title = "赫兹词典"
@@ -95,7 +109,7 @@ class MainActivity : AppCompatActivity() {
                         setTheme(R.style.ThemeOverlay_AppCompat_Light)
                         popupTheme = R.style.ThemeOverlay_AppCompat_Light
                     }.lparams(matchParent, actionBarSize) {
-                        scrollFlags = SCROLL_FLAG_SCROLL or SCROLL_FLAG_ENTER_ALWAYS or SCROLL_FLAG_SNAP
+                        scrollFlags = scrollFlag
                     }
 
                     mIVClose = imageView {
@@ -108,9 +122,9 @@ class MainActivity : AppCompatActivity() {
                         }
                     }.lparams(wrapContent, wrapContent) {
                         gravity = Gravity.END or Gravity.TOP
-                        topMargin = dip(8)
-                        marginEnd = dip(8)
-                        scrollFlags = SCROLL_FLAG_SCROLL or SCROLL_FLAG_ENTER_ALWAYS or SCROLL_FLAG_SNAP
+                        topMargin = dip(16)
+                        marginEnd = dip(16)
+                        scrollFlags = scrollFlag
                     }
 
                     mETInput = editText {
@@ -132,16 +146,14 @@ class MainActivity : AppCompatActivity() {
                             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
                             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
                             override fun afterTextChanged(s: Editable?) {
-                                if (status == STATUS_INQUIRED) {
-                                    restore()
-                                }
+                                if (status == STATUS_INQUIRED) restore()
                             }
                         })
                     }.lparams(matchParent, wrapContent) {
-                        topMargin = dip(8)
+                        //topMargin = dip(8)
                         marginStart = dip(16)
                         marginEnd = dip(16)
-                        scrollFlags = SCROLL_FLAG_SCROLL or SCROLL_FLAG_ENTER_ALWAYS or SCROLL_FLAG_SNAP
+                        scrollFlags = scrollFlag
                     }
 
                     mTVSrcPronunciation = textView {
@@ -151,13 +163,10 @@ class MainActivity : AppCompatActivity() {
                     }.lparams(wrapContent, wrapContent) {
                         marginStart = dip(16)
                         bottomMargin = dip(16)
-                        scrollFlags = SCROLL_FLAG_SCROLL or SCROLL_FLAG_ENTER_ALWAYS or SCROLL_FLAG_SNAP
+                        scrollFlags = scrollFlag
                     }
 
-                }.lparams(matchParent, wrapContent) {
-                    elevation = dip(8).toFloat()
-                    translationZ = dip(8).toFloat()
-                }
+                }.lparams(matchParent, wrapContent)
 
                 mNestedScrollView = nestedScrollView {
                     visibility = View.GONE
@@ -168,6 +177,8 @@ class MainActivity : AppCompatActivity() {
                             val resultId = 2
                             val pronunciationId = 3
                             val otherTranslationsId = 4
+                            elevation = dip(4).toFloat()
+                            translationZ = dip(4).toFloat()
                             relativeLayout {
                                 textView {
                                     id = sourceLanguageId
@@ -226,12 +237,12 @@ class MainActivity : AppCompatActivity() {
                             }.lparams(matchParent, wrapContent)
                         }.lparams(matchParent, wrapContent) {
                             margin = dip(8)
-                            elevation = dip(8).toFloat()
-                            translationZ = dip(8).toFloat()
                             gravity = Gravity.TOP or Gravity.CENTER_HORIZONTAL
                         }
 
                         cardView {
+                            elevation = dip(4).toFloat()
+                            translationZ = dip(4).toFloat()
                             verticalLayout {
                                 textView {
                                     textColor = black
@@ -248,8 +259,6 @@ class MainActivity : AppCompatActivity() {
                             marginStart = dip(8)
                             marginEnd = dip(8)
                             bottomMargin = dip(16)
-                            elevation = dip(8).toFloat()
-                            translationZ = dip(8).toFloat()
                             gravity = Gravity.TOP or Gravity.CENTER_HORIZONTAL
                         }
                     }.lparams(matchParent, wrapContent)
@@ -260,32 +269,29 @@ class MainActivity : AppCompatActivity() {
                 mRecyclerView = recyclerView {
                     layoutManager = LinearLayoutManager(this@MainActivity, LinearLayoutManager.VERTICAL, false)
                     itemAnimator = DefaultItemAnimator()
-                    adapter = mAdapter
                 }.lparams(matchParent, matchParent) {
                     behavior = AppBarLayout.ScrollingViewBehavior()
                 }
 
             }.lparams(matchParent, matchParent)
 
-            verticalLayout {
+            navigationView {
+                inflateMenu(R.menu.menu_main)
                 fitsSystemWindows = true
-                navigationView {
-                    inflateMenu(R.menu.menu_main)
-                    fitsSystemWindows = true
-                    isClickable = true
-                    backgroundColor = deepWhite
-                    itemTextColor = ContextCompat.getColorStateList(this@MainActivity, R.color.blue1)
-                    addHeaderView(createHeaderView())
-                    setNavigationItemSelectedListener {
-                        when (it.itemId) {
-                            R.id.main_menu_more_features -> startActivity<FeaturesActivity>()
-                            R.id.main_menu_mine -> startActivity<AboutDeveloperActivity>()
-                            R.id.main_menu_licence -> startActivity<LicenceActivity>()
-                        }
-                        true
+                isClickable = true
+                backgroundColor = deepWhite
+                elevation = dip(4).toFloat()
+                translationZ = dip(4).toFloat()
+                itemTextColor = ContextCompat.getColorStateList(this@MainActivity, R.color.gray600)
+                addHeaderView(createHeaderView())
+                setNavigationItemSelectedListener {
+                    it.isCheckable = false
+                    when (it.itemId) {
+                        R.id.main_menu_more_features -> startActivity<FeaturesActivity>()
+                        R.id.main_menu_mine -> startActivity<AboutDeveloperActivity>()
+                        R.id.main_menu_licence -> startActivity<LicenceActivity>()
                     }
-                }.lparams(matchParent, matchParent) {
-                    translationZ = dip(8).toFloat()
+                    true
                 }
             }.lparams(matchParent, matchParent) {
                 gravity = Gravity.START
@@ -298,8 +304,8 @@ class MainActivity : AppCompatActivity() {
             it.setDisplayHomeAsUpEnabled(true)
             it.setHomeAsUpIndicator(R.drawable.ic_menu_white_24dp)
         }
-
         BackgroundImageManager.show(this, mBackgroundImageView)
+        initRecyclerViewData()
     }
 
     private fun createHeaderView() =
@@ -311,6 +317,25 @@ class MainActivity : AppCompatActivity() {
                     }.lparams(matchParent, dip(184))
                 }
             }.view
+
+    private fun initRecyclerViewData() {
+        mRealm.where(RealmWord::class.java)
+                .findAllAsync()
+                .asFlowable()
+                .subscribeOn(Schedulers.io())
+                .observeOn(Schedulers.computation())
+                .map {
+                    mData.addAll(it)
+                    mData.sortByDescending { it.count }
+                }
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeBy { mRecyclerView.adapter = mAdapter }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        mRealm.close()
+    }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
@@ -329,6 +354,7 @@ class MainActivity : AppCompatActivity() {
         return super.onKeyDown(keyCode, event)
     }
 
+    //将界面恢复到未查询的状态
     private fun restore() {
         status = STATUS_INQUIRED_NOT
         mRecyclerView.visibility = View.VISIBLE
@@ -348,6 +374,8 @@ class MainActivity : AppCompatActivity() {
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnNext {
+                    refreshRecyclerViewData(it)
+                    //改变控件状态
                     if (status == STATUS_INQUIRED_NOT) {
                         mRecyclerView.visibility = View.GONE
                         mNestedScrollView.visibility = View.VISIBLE
@@ -355,6 +383,7 @@ class MainActivity : AppCompatActivity() {
                         mIVClose.visibility = View.VISIBLE
                         status = STATUS_INQUIRED
                     }
+                    //展示读音信息
                     it.word?.let {
                         mTVResult.text = it[0].ch
                         val srcPronunciationText = "读音：${it[1].srcPronunciation}"
@@ -362,6 +391,7 @@ class MainActivity : AppCompatActivity() {
                         mTVPronunciation.text = it[1].pronunciation
                     }
 
+                    //显示扩展词意
                     mOtherMeanLayout.removeAllViews()
                     it.dict?.forEach {
                         val layoutParams1 = LinearLayout.LayoutParams(matchParent, wrapContent)
@@ -393,6 +423,7 @@ class MainActivity : AppCompatActivity() {
                 }
                 .observeOn(Schedulers.computation())
                 .map {
+                    //拼接其它义项
                     val builder1 = StringBuilder()
                     it.alternativeTranslations?.let {
                         it[0].words?.let {
@@ -408,7 +439,7 @@ class MainActivity : AppCompatActivity() {
                             }
                         }
                     }
-
+                    //拼接相关词组
                     val builder2 = StringBuilder()
                     it.relatedWords?.let {
                         it.words?.let {
@@ -439,6 +470,48 @@ class MainActivity : AppCompatActivity() {
                         },
                         onError = { it.printStackTrace() }
                 )
+    }
+
+    //查询动作成功发生后调用此方法来进行数据库操作以及RecyclerView更新
+    private fun refreshRecyclerViewData(inquireResult: InquireResult) {
+        Observable.just(inquireResult)
+                .subscribeOn(Schedulers.computation())
+                .observeOn(Schedulers.computation())
+                .map {
+                    val orig = it.word!![0]
+                    var word: RealmWord? = null
+                    //在mData中查找word是否存在，如果存在则找到它并记录其index
+                    mData.forEachIndexed { index, realmWord ->
+                        if (realmWord.en == orig.en) {
+                            word = realmWord
+                            word!!.count++
+                            word!!.reSort(index)
+                        }
+                    }
+                    //如果word没有初始化表示word不存在与mData中，所以创建新word
+                    word = word ?: RealmWord(ch = orig.ch, en = orig.en, isExist = false)
+                    WordListAdapter.sumCount++
+                    word!!
+                }
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeBy {
+                    mAdapter.notifyDataSetChanged()
+                    if (it.isExist) {
+
+                    } else {
+
+                    }
+                }
+    }
+
+    //调整RealmWord在mData中的位置
+    private fun RealmWord.reSort(index: Int) {
+        for (i in index..0) {
+            if (mData[i].count > count) {
+                mData.removeAt(index)
+                mData[i - 1] = this
+            }
+        }
     }
 
 }

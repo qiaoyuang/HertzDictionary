@@ -26,6 +26,10 @@ import java.io.InputStreamReader
 
 class LicenceActivity : AppCompatActivity() {
 
+    companion object {
+        const val OPEN_SOURCE_FILE_NAME = "open_source.txt"
+    }
+
     private val mData = ArrayList<OSL>()
     private lateinit var mRecyclerView: RecyclerView
 
@@ -78,13 +82,14 @@ class LicenceActivity : AppCompatActivity() {
                     "Glide",
                     "Gson",
                     "OkHttp",
+                    "Realm",
                     "Retrofit",
                     "RxAndroid",
                     "RxJava",
                     "RxKotlin",
                     "Subsampling Scale Image View")
             var i = 0
-            val inputStream = assets.open("open_source.txt")
+            val inputStream = assets.open(OPEN_SOURCE_FILE_NAME)
             val bufferedReader = BufferedReader(InputStreamReader(inputStream, "UTF-8"))
             val contentBuilder = StringBuilder()
             var line = bufferedReader.readLine()
