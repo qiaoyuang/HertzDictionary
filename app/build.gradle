@@ -1,5 +1,4 @@
 apply plugin: 'com.android.application'
-apply plugin: 'realm-android'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
@@ -71,6 +70,9 @@ dependencies {
     }
     implementation 'com.github.bumptech.glide:okhttp-integration:4.6.1'
     kapt 'com.github.bumptech.glide:compiler:4.6.1'
+
+    //LitePal
+    implementation 'org.litepal.android:core:2.0.0'
 
     //Kotlin扩展类库
     implementation "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"

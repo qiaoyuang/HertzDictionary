@@ -1,5 +1,6 @@
 package com.w10group.hertzdictionary.business.main
 
+import android.app.ProgressDialog
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.design.widget.AppBarLayout
@@ -13,6 +14,7 @@ import android.support.v4.widget.NestedScrollView
 import android.support.v7.widget.*
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.TypedValue
 import android.view.Gravity
 import android.view.KeyEvent
 import android.view.MenuItem
@@ -25,7 +27,7 @@ import android.widget.TextView
 import com.w10group.hertzdictionary.R
 import com.w10group.hertzdictionary.business.about.AboutDeveloperActivity
 import com.w10group.hertzdictionary.business.bean.InquireResult
-import com.w10group.hertzdictionary.business.bean.RealmWord
+import com.w10group.hertzdictionary.business.bean.LocalWord
 import com.w10group.hertzdictionary.business.features.FeaturesActivity
 import com.w10group.hertzdictionary.business.licence.LicenceActivity
 import com.w10group.hertzdictionary.business.manager.BackgroundImageManager
@@ -35,8 +37,6 @@ import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.rxkotlin.subscribeBy
 import io.reactivex.schedulers.Schedulers
-import io.realm.Realm
-import io.realm.RealmConfiguration
 import org.jetbrains.anko.*
 import org.jetbrains.anko.appcompat.v7.toolbar
 import org.jetbrains.anko.cardview.v7.cardView
@@ -44,6 +44,7 @@ import org.jetbrains.anko.design.*
 import org.jetbrains.anko.recyclerview.v7.recyclerView
 import org.jetbrains.anko.support.v4.drawerLayout
 import org.jetbrains.anko.support.v4.nestedScrollView
+import org.litepal.LitePal
 import java.util.*
 
 class MainActivity : AppCompatActivity() {
@@ -63,8 +64,17 @@ class MainActivity : AppCompatActivity() {
     private lateinit var mTVOtherTranslation: TextView
     private lateinit var mTVRelatedWords: TextView
 
-    private val mData by lazy { LinkedList<RealmWord>() }
-    private val mAdapter by lazy { WordListAdapter(this, mData) }
+    private val mData by lazy { LinkedList<LocalWord>() }
+    private val mAdapter by lazy {
+        WordListAdapter(this, mData,
+                itemOnClickListener = { _, orig ->
+                    mETInput.setText(orig)
+                    inquire(orig)
+                },
+                itemOnLongClickListener = {
+
+                })
+    }
 
     private val gray600 by lazy { ContextCompat.getColor(this, R.color.gray600) }
     private val deepWhite by lazy { ContextCompat.getColor(this, R.color.deepWhite) }
@@ -72,7 +82,8 @@ class MainActivity : AppCompatActivity() {
     private val white by lazy { ContextCompat.getColor(this, android.R.color.white) }
     private val blue1 by lazy { ContextCompat.getColor(this, R.color.blue1) }
 
-    private lateinit var mRealm: Realm
+    @Suppress("deprecation")
+    private val mProgressDialog by lazy { ProgressDialog(this) }
 
     private companion object {
         const val STATUS_INQUIRED_NOT = 0
@@ -83,13 +94,12 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        Realm.init(applicationContext)
-        val config = RealmConfiguration.Builder().build()
-        mRealm = Realm.getInstance(config)
-
         val styledAttributes = theme.obtainStyledAttributes(intArrayOf(android.R.attr.actionBarSize))
         val actionBarSize = styledAttributes.getDimension(0, 0f).toInt()
         styledAttributes.recycle()
+        val typedValue = TypedValue()
+        theme.resolveAttribute(android.R.attr.selectableItemBackground, typedValue, true)
+        val mTouchFeedback = ContextCompat.getDrawable(this, typedValue.resourceId)
 
         mDrawerLayout = drawerLayout {
 
@@ -150,7 +160,6 @@ class MainActivity : AppCompatActivity() {
                             }
                         })
                     }.lparams(matchParent, wrapContent) {
-                        //topMargin = dip(8)
                         marginStart = dip(16)
                         marginEnd = dip(16)
                         scrollFlags = scrollFlag
@@ -172,13 +181,15 @@ class MainActivity : AppCompatActivity() {
                     visibility = View.GONE
                     verticalLayout {
                         cardView {
+                            elevation = dip(4).toFloat()
+                            translationZ = dip(4).toFloat()
+                            isClickable = true
                             backgroundColor = blue1
+                            foreground = mTouchFeedback
                             val sourceLanguageId = 1
                             val resultId = 2
                             val pronunciationId = 3
                             val otherTranslationsId = 4
-                            elevation = dip(4).toFloat()
-                            translationZ = dip(4).toFloat()
                             relativeLayout {
                                 textView {
                                     id = sourceLanguageId
@@ -243,6 +254,9 @@ class MainActivity : AppCompatActivity() {
                         cardView {
                             elevation = dip(4).toFloat()
                             translationZ = dip(4).toFloat()
+                            isClickable = true
+                            backgroundColor = white
+                            foreground = mTouchFeedback
                             verticalLayout {
                                 textView {
                                     textColor = black
@@ -271,6 +285,8 @@ class MainActivity : AppCompatActivity() {
                     itemAnimator = DefaultItemAnimator()
                 }.lparams(matchParent, matchParent) {
                     behavior = AppBarLayout.ScrollingViewBehavior()
+                    topMargin = dip(4)
+                    bottomMargin = dip(4)
                 }
 
             }.lparams(matchParent, matchParent)
@@ -280,6 +296,7 @@ class MainActivity : AppCompatActivity() {
                 fitsSystemWindows = true
                 isClickable = true
                 backgroundColor = deepWhite
+                foreground = mTouchFeedback
                 elevation = dip(4).toFloat()
                 translationZ = dip(4).toFloat()
                 itemTextColor = ContextCompat.getColorStateList(this@MainActivity, R.color.gray600)
@@ -306,6 +323,9 @@ class MainActivity : AppCompatActivity() {
         }
         BackgroundImageManager.show(this, mBackgroundImageView)
         initRecyclerViewData()
+        mProgressDialog.setTitle("请稍候")
+        mProgressDialog.setMessage("正在获取单词数据......")
+        mProgressDialog.setCancelable(false)
     }
 
     private fun createHeaderView() =
@@ -319,25 +339,17 @@ class MainActivity : AppCompatActivity() {
             }.view
 
     private fun initRecyclerViewData() {
-        mRealm.where(RealmWord::class.java)
-                .findAllAsync()
-                .asFlowable()
+        Observable.just(LitePal.order("count desc")
+                .find(LocalWord::class.java))
                 .subscribeOn(Schedulers.io())
-                .observeOn(Schedulers.computation())
-                .map {
-                    mData.addAll(it)
-                    mData.sortByDescending { it.count }
-                }
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribeBy { mRecyclerView.adapter = mAdapter }
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        mRealm.close()
+                .subscribeBy {
+                    it?.let { mData.addAll(it) }
+                    mRecyclerView.adapter = mAdapter }
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        item.isCheckable = true
         when (item.itemId) {
             android.R.id.home -> { mDrawerLayout.openDrawer(GravityCompat.START) }
         }
@@ -369,6 +381,7 @@ class MainActivity : AppCompatActivity() {
             snackbar(mRecyclerView, "当前无网络连接")
             return
         }
+        mProgressDialog.show()
         NetworkUtil.create<NetworkService>()
                 .inquireWord(word)
                 .subscribeOn(Schedulers.io())
@@ -468,50 +481,69 @@ class MainActivity : AppCompatActivity() {
                             val relatedWordsText = "相关词组：\n${it[1]}"
                             mTVRelatedWords.text = relatedWordsText
                         },
-                        onError = { it.printStackTrace() }
+                        onError = {
+                            it.printStackTrace()
+                            mProgressDialog.dismiss()
+                            snackbar(mRecyclerView, "网络出现问题")
+                        },
+                        onComplete = { mProgressDialog.dismiss() }
                 )
     }
 
     //查询动作成功发生后调用此方法来进行数据库操作以及RecyclerView更新
     private fun refreshRecyclerViewData(inquireResult: InquireResult) {
+        var isMoved = false
         Observable.just(inquireResult)
                 .subscribeOn(Schedulers.computation())
                 .observeOn(Schedulers.computation())
                 .map {
                     val orig = it.word!![0]
-                    var word: RealmWord? = null
+                    var word: LocalWord? = null
                     //在mData中查找word是否存在，如果存在则找到它并记录其index
                     mData.forEachIndexed { index, realmWord ->
                         if (realmWord.en == orig.en) {
                             word = realmWord
                             word!!.count++
-                            word!!.reSort(index)
+                            isMoved = word!!.reSort(index)
                         }
                     }
                     //如果word没有初始化表示word不存在与mData中，所以创建新word
-                    word = word ?: RealmWord(ch = orig.ch, en = orig.en, isExist = false)
+                    if (word == null) {
+                        word = LocalWord(ch = orig.ch, en = orig.en)
+                        mData.add(word!!)
+                    }
+
                     WordListAdapter.sumCount++
                     word!!
                 }
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribeBy {
-                    mAdapter.notifyDataSetChanged()
-                    if (it.isExist) {
-
+                .doOnNext {
+                    if (it.isSaved) {
+                        if (isMoved) {
+                            //可优化
+                            mAdapter.notifyDataSetChanged()
+                        } else {
+                            mAdapter.notifyItemRangeChanged(0, mData.size)
+                        }
                     } else {
-
+                        //可优化
+                        mAdapter.notifyDataSetChanged()
                     }
                 }
+                .observeOn(Schedulers.io())
+                .subscribeBy { it.save() }
     }
 
-    //调整RealmWord在mData中的位置
-    private fun RealmWord.reSort(index: Int) {
-        for (i in index..0) {
+    //调整LocalWord在mData中的位置
+    private fun LocalWord.reSort(index: Int): Boolean {
+        for (i in index downTo 0) {
             if (mData[i].count > count) {
                 mData.removeAt(index)
-                mData[i - 1] = this
+                mData[i + 1] = this
+                return true
             }
         }
+        return false
     }
 
 }
