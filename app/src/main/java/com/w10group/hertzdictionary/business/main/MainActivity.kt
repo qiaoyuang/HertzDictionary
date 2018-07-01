@@ -119,7 +119,7 @@ class MainActivity : AppCompatActivity() {
     private val blue1 by lazy { ContextCompat.getColor(this, R.color.blue1) }
 
     private val mProgressDialog by lazy {
-        progressDialog(title = "请稍后", message = "正在获取单词数据......") {
+        progressDialog(title = "请稍候......", message = "正在获取单词数据......") {
             setCancelable(false)
            setProgressStyle(0)
         }
@@ -568,7 +568,7 @@ class MainActivity : AppCompatActivity() {
                         onError = {
                             it.printStackTrace()
                             mProgressDialog.dismiss()
-                            snackbar(mRecyclerView, "网络出现问题")
+                            snackbar(mRecyclerView, "网络出现问题，请稍后再试。")
                         },
                         onComplete = { mProgressDialog.dismiss() }
                 )

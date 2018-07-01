@@ -27,7 +27,7 @@ object NetworkUtil {
     fun checkNetwork(context: Context): Boolean {
         val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
         val networkInfo = connectivityManager.activeNetworkInfo
-        return networkInfo != null && networkInfo.isAvailable
+        return networkInfo != null && networkInfo.isConnected
     }
 
     inline fun <reified T> create(): T = mRetrofit.create(T::class.java)
