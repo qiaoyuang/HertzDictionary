@@ -1,8 +1,10 @@
 <resources>
     <string name="app_name">HertzDictionary</string>
 
-    <string name="more_features">更多功能</string>
+    <string name="more_features">未来新功能</string>
     <string name="mine">关于开发者</string>
     <string name="open_source_license">开源许可证</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
 
 </resources>

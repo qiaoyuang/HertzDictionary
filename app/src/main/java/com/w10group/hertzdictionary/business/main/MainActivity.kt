@@ -1,6 +1,8 @@
 package com.w10group.hertzdictionary.business.main
 
-import android.app.ProgressDialog
+import android.content.Context
+import android.graphics.Color
+import android.os.Build
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.design.widget.AppBarLayout
@@ -11,15 +13,13 @@ import android.support.v4.content.ContextCompat
 import android.support.v4.view.GravityCompat
 import android.support.v4.widget.DrawerLayout
 import android.support.v4.widget.NestedScrollView
+import android.support.v7.app.ActionBarDrawerToggle
 import android.support.v7.widget.*
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.TypedValue
-import android.view.Gravity
-import android.view.KeyEvent
-import android.view.MenuItem
-import android.view.View
+import android.view.*
 import android.view.inputmethod.EditorInfo
+import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.LinearLayout
@@ -33,6 +33,7 @@ import com.w10group.hertzdictionary.business.licence.LicenceActivity
 import com.w10group.hertzdictionary.business.manager.BackgroundImageManager
 import com.w10group.hertzdictionary.business.manager.NetworkService
 import com.w10group.hertzdictionary.core.NetworkUtil
+import com.w10group.hertzdictionary.core.createTouchFeedbackBorderless
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.rxkotlin.subscribeBy
@@ -45,7 +46,7 @@ import org.jetbrains.anko.recyclerview.v7.recyclerView
 import org.jetbrains.anko.support.v4.drawerLayout
 import org.jetbrains.anko.support.v4.nestedScrollView
 import org.litepal.LitePal
-import java.util.*
+import java.util.concurrent.CopyOnWriteArrayList
 
 class MainActivity : AppCompatActivity() {
 
@@ -54,6 +55,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var mNestedScrollView: NestedScrollView
     private lateinit var mRecyclerView: RecyclerView
     private lateinit var mBackgroundImageView: ImageView
+    private lateinit var mOtherMeanCard: CardView
     private lateinit var mOtherMeanLayout: LinearLayout
     private lateinit var mIVClose: ImageView
     private lateinit var mETInput: EditText
@@ -64,26 +66,64 @@ class MainActivity : AppCompatActivity() {
     private lateinit var mTVOtherTranslation: TextView
     private lateinit var mTVRelatedWords: TextView
 
-    private val mData by lazy { LinkedList<LocalWord>() }
+    private val mData by lazy { CopyOnWriteArrayList<LocalWord>() }
     private val mAdapter by lazy {
         WordListAdapter(this, mData,
-                itemOnClickListener = { _, orig ->
-                    mETInput.setText(orig)
-                    inquire(orig)
+                itemOnClickListener = {
+                    mETInput.setText(it)
+                    inquire(it)
                 },
-                itemOnLongClickListener = {
-
+                itemOnLongClickListener = { localWord, index, adapter ->
+                    selector("", listOf("删除：${localWord.en}", "清空所有单词")) { dialog, which ->
+                        if (which == 0) {
+                            alert {
+                                title = "您确定要删除${localWord.en}吗？"
+                                message = "删除单词会使单词的查询次数清零，且不可恢复，请您确认。"
+                                okButton {
+                                    mData.removeAt(index)
+                                    WordListAdapter.sumCount -= localWord.count
+                                    adapter.notifyItemRemoved(index)
+                                    adapter.notifyItemChanged(0, mData.size)
+                                    Observable.just(localWord)
+                                            .subscribeOn(Schedulers.io())
+                                            .observeOn(Schedulers.io())
+                                            .subscribeBy { it.delete() }
+                                    it.dismiss()
+                                }
+                                cancelButton { it.dismiss() }
+                            }.show()
+                        } else {
+                            alert {
+                                title = "您确定要清空所有单词吗？"
+                                message = "清空所有单词会使所有保存的已查询单词数据全部清零，且不可恢复，请您确认。"
+                                yesButton {
+                                    mData.clear()
+                                    WordListAdapter.sumCount = 0
+                                    adapter.notifyDataSetChanged()
+                                    Observable.just(LocalWord::class.java)
+                                            .subscribeOn(Schedulers.io())
+                                            .observeOn(Schedulers.io())
+                                            .subscribeBy { LitePal.deleteAll(it) }
+                                    it.dismiss()
+                                }
+                                cancelButton { it.dismiss() }
+                            }.show()
+                        }
+                        dialog.dismiss()
+                    }
                 })
     }
 
     private val gray600 by lazy { ContextCompat.getColor(this, R.color.gray600) }
     private val deepWhite by lazy { ContextCompat.getColor(this, R.color.deepWhite) }
-    private val black by lazy { ContextCompat.getColor(this, android.R.color.black) }
-    private val white by lazy { ContextCompat.getColor(this, android.R.color.white) }
     private val blue1 by lazy { ContextCompat.getColor(this, R.color.blue1) }
 
-    @Suppress("deprecation")
-    private val mProgressDialog by lazy { ProgressDialog(this) }
+    private val mProgressDialog by lazy {
+        progressDialog(title = "请稍后", message = "正在获取单词数据......") {
+            setCancelable(false)
+           setProgressStyle(0)
+        }
+    }
 
     private companion object {
         const val STATUS_INQUIRED_NOT = 0
@@ -97,18 +137,16 @@ class MainActivity : AppCompatActivity() {
         val styledAttributes = theme.obtainStyledAttributes(intArrayOf(android.R.attr.actionBarSize))
         val actionBarSize = styledAttributes.getDimension(0, 0f).toInt()
         styledAttributes.recycle()
-        val typedValue = TypedValue()
-        theme.resolveAttribute(android.R.attr.selectableItemBackground, typedValue, true)
-        val mTouchFeedback = ContextCompat.getDrawable(this, typedValue.resourceId)
 
         mDrawerLayout = drawerLayout {
+            fitsSystemWindows = true
 
             coordinatorLayout {
                 backgroundColor = deepWhite
-                fitsSystemWindows = true
 
                 appBarLayout {
-                    backgroundColor = white
+                    backgroundColor = Color.WHITE
+                    isFocusableInTouchMode = true
                     elevation = dip(8).toFloat()
                     translationZ = dip(8).toFloat()
                     val scrollFlag = SCROLL_FLAG_SCROLL or SCROLL_FLAG_ENTER_ALWAYS or SCROLL_FLAG_SNAP
@@ -140,7 +178,7 @@ class MainActivity : AppCompatActivity() {
                     mETInput = editText {
                         hint = "点击可输入单词"
                         hintTextColor = gray600
-                        textColor = black
+                        textColor = Color.BLACK
                         background = null
                         textSize = 22f
                         singleLine = true
@@ -167,7 +205,7 @@ class MainActivity : AppCompatActivity() {
 
                     mTVSrcPronunciation = textView {
                         visibility = View.GONE
-                        textColor = black
+                        textColor = Color.BLACK
                         textSize = 14f
                     }.lparams(wrapContent, wrapContent) {
                         marginStart = dip(16)
@@ -185,15 +223,16 @@ class MainActivity : AppCompatActivity() {
                             translationZ = dip(4).toFloat()
                             isClickable = true
                             backgroundColor = blue1
-                            foreground = mTouchFeedback
+                            foreground = createTouchFeedbackBorderless(this@MainActivity)
                             val sourceLanguageId = 1
                             val resultId = 2
                             val pronunciationId = 3
                             val otherTranslationsId = 4
+
                             relativeLayout {
                                 textView {
                                     id = sourceLanguageId
-                                    textColor = white
+                                    textColor = Color.WHITE
                                     textSize = 16f
                                     text = "简体中文"
                                 }.lparams(wrapContent, wrapContent) {
@@ -204,7 +243,7 @@ class MainActivity : AppCompatActivity() {
                                 }
                                 mTVResult = textView {
                                     id = resultId
-                                    textColor = white
+                                    textColor = Color.WHITE
                                     textSize = 22f
                                 }.lparams(wrapContent, wrapContent) {
                                     below(sourceLanguageId)
@@ -215,7 +254,7 @@ class MainActivity : AppCompatActivity() {
 
                                 mTVPronunciation = textView {
                                     id = pronunciationId
-                                    textColor = white
+                                    textColor = Color.WHITE
                                     textSize = 14f
                                 }.lparams(wrapContent, wrapContent) {
                                     below(resultId)
@@ -226,9 +265,9 @@ class MainActivity : AppCompatActivity() {
 
                                 mTVOtherTranslation = textView {
                                     id = otherTranslationsId
-                                    textColor = white
+                                    textColor = Color.WHITE
                                     textSize = 14f
-                                }.lparams(matchParent, wrapContent) {
+                                }.lparams(wrapContent, wrapContent) {
                                     below(pronunciationId)
                                     alignParentStart()
                                     topMargin = dip(16)
@@ -237,9 +276,9 @@ class MainActivity : AppCompatActivity() {
                                 }
 
                                 mTVRelatedWords = textView {
-                                    textColor = white
+                                    textColor = Color.WHITE
                                     textSize = 14f
-                                }.lparams(matchParent, wrapContent) {
+                                }.lparams(wrapContent, wrapContent) {
                                     below(otherTranslationsId)
                                     alignParentStart()
                                     margin = dip(16)
@@ -248,18 +287,17 @@ class MainActivity : AppCompatActivity() {
                             }.lparams(matchParent, wrapContent)
                         }.lparams(matchParent, wrapContent) {
                             margin = dip(8)
-                            gravity = Gravity.TOP or Gravity.CENTER_HORIZONTAL
                         }
 
-                        cardView {
+                        mOtherMeanCard = cardView {
                             elevation = dip(4).toFloat()
                             translationZ = dip(4).toFloat()
                             isClickable = true
-                            backgroundColor = white
-                            foreground = mTouchFeedback
+                            backgroundColor = Color.WHITE
+                            foreground = createTouchFeedbackBorderless(this@MainActivity)
                             verticalLayout {
                                 textView {
-                                    textColor = black
+                                    textColor = Color.BLACK
                                     textSize = 16f
                                     text = "词汇扩展"
                                 }.lparams(wrapContent, wrapContent) {
@@ -267,13 +305,12 @@ class MainActivity : AppCompatActivity() {
                                     bottomMargin = dip(16)
                                     marginStart = dip(8)
                                 }
-                                mOtherMeanLayout = verticalLayout {}
-                            }
+                                mOtherMeanLayout = verticalLayout {}.lparams(matchParent, wrapContent)
+                            }.lparams(matchParent, wrapContent)
                         }.lparams(matchParent, wrapContent) {
                             marginStart = dip(8)
                             marginEnd = dip(8)
                             bottomMargin = dip(16)
-                            gravity = Gravity.TOP or Gravity.CENTER_HORIZONTAL
                         }
                     }.lparams(matchParent, wrapContent)
                 }.lparams(matchParent, matchParent) {
@@ -296,7 +333,6 @@ class MainActivity : AppCompatActivity() {
                 fitsSystemWindows = true
                 isClickable = true
                 backgroundColor = deepWhite
-                foreground = mTouchFeedback
                 elevation = dip(4).toFloat()
                 translationZ = dip(4).toFloat()
                 itemTextColor = ContextCompat.getColorStateList(this@MainActivity, R.color.gray600)
@@ -318,14 +354,14 @@ class MainActivity : AppCompatActivity() {
 
         setSupportActionBar(mToolBar)
         supportActionBar?.let {
+            it.setHomeButtonEnabled(true)
             it.setDisplayHomeAsUpEnabled(true)
-            it.setHomeAsUpIndicator(R.drawable.ic_menu_white_24dp)
         }
+        val toggle = ActionBarDrawerToggle(this@MainActivity, mDrawerLayout, mToolBar, R.string.navigation_drawer_open, R.string.navigation_drawer_close)
+        mDrawerLayout.addDrawerListener(toggle)
+        toggle.syncState()
         BackgroundImageManager.show(this, mBackgroundImageView)
         initRecyclerViewData()
-        mProgressDialog.setTitle("请稍候")
-        mProgressDialog.setMessage("正在获取单词数据......")
-        mProgressDialog.setCancelable(false)
     }
 
     private fun createHeaderView() =
@@ -334,7 +370,10 @@ class MainActivity : AppCompatActivity() {
                     mBackgroundImageView = imageView {
                         scaleType = ImageView.ScaleType.CENTER_CROP
                         backgroundColor = blue1
-                    }.lparams(matchParent, dip(184))
+                        isClickable = true
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
+                            foreground = createTouchFeedbackBorderless(this@MainActivity)
+                    }.lparams(matchParent, dip(176))
                 }
             }.view
 
@@ -345,7 +384,8 @@ class MainActivity : AppCompatActivity() {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeBy {
                     it?.let { mData.addAll(it) }
-                    mRecyclerView.adapter = mAdapter }
+                    mRecyclerView.adapter = mAdapter
+                }
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -364,6 +404,33 @@ class MainActivity : AppCompatActivity() {
             }
         }
         return super.onKeyDown(keyCode, event)
+    }
+
+    override fun dispatchTouchEvent(ev: MotionEvent?): Boolean {
+        ev?.let {
+            if (it.action == MotionEvent.ACTION_DOWN) {
+                if (isShouldHideInput(currentFocus, ev)) {
+                    currentFocus.windowToken?.let {
+                        val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+                        imm.hideSoftInputFromWindow(it, 0)
+                    }
+                }
+            }
+        }
+        return super.dispatchTouchEvent(ev)
+    }
+
+    private fun isShouldHideInput(view: View?, event: MotionEvent): Boolean {
+        if (view != null && view == mETInput) {
+            val l = intArrayOf(0, 0)
+            view.getLocationInWindow(l)
+            val left = l[0]
+            val top = l[1]
+            val right = left + view.width
+            val bottom = top + view.height
+            return !(event.x > left && event.x < right && event.y > top && event.y < bottom)
+        }
+        return false
     }
 
     //将界面恢复到未查询的状态
@@ -399,39 +466,56 @@ class MainActivity : AppCompatActivity() {
                     //展示读音信息
                     it.word?.let {
                         mTVResult.text = it[0].ch
-                        val srcPronunciationText = "读音：${it[1].srcPronunciation}"
-                        mTVSrcPronunciation.text = srcPronunciationText
-                        mTVPronunciation.text = it[1].pronunciation
+                        if (it[1].srcPronunciation.isBlank()) {
+                            mTVSrcPronunciation.visibility = View.GONE
+                        } else {
+                            mTVSrcPronunciation.visibility = View.VISIBLE
+                            val srcPronunciationText = "读音：${it[1].srcPronunciation}"
+                            mTVSrcPronunciation.text = srcPronunciationText
+                        }
+
+                        if (it[1].pronunciation.isBlank()) {
+                            mTVPronunciation.visibility = View.GONE
+                        } else {
+                            mTVPronunciation.visibility = View.VISIBLE
+                            mTVPronunciation.text = it[1].pronunciation
+                        }
                     }
 
                     //显示扩展词意
                     mOtherMeanLayout.removeAllViews()
-                    it.dict?.forEach {
-                        val layoutParams1 = LinearLayout.LayoutParams(matchParent, wrapContent)
-                        layoutParams1.marginStart = dip(16)
-                        val headView = TextView(this)
-                        headView.textSize = 16f
-                        headView.textColor = gray600
-                        headView.text = it.posType
-                        headView.layoutParams = layoutParams1
+                    if (it.dict == null) {
+                        mOtherMeanCard.visibility = View.GONE
+                    } else {
+                        mOtherMeanCard.visibility = View.VISIBLE
+                        it.dict.forEach {
+                            val layoutParams1 = LinearLayout.LayoutParams(wrapContent, wrapContent)
+                            layoutParams1.marginStart = dip(16)
+                            val headView = TextView(this)
+                            headView.textSize = 16f
+                            headView.textColor = gray600
+                            headView.text = it.posType
+                            headView.layoutParams = layoutParams1
 
-                        val layoutParams2 = LinearLayout.LayoutParams(matchParent, wrapContent)
-                        layoutParams2.marginStart = dip(32)
-                        layoutParams2.topMargin = dip(16)
-                        layoutParams2.bottomMargin = dip(24)
-                        val recyclerView = RecyclerView(this)
-                        recyclerView.layoutManager = object : LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false) {
-                            override fun canScrollVertically(): Boolean {
-                                return false
+                            val layoutParams2 = LinearLayout.LayoutParams(matchParent, wrapContent)
+                            layoutParams2.marginStart = dip(32)
+                            layoutParams2.marginEnd = dip(8)
+                            layoutParams2.topMargin = dip(16)
+                            layoutParams2.bottomMargin = dip(24)
+                            val recyclerView = RecyclerView(this)
+                            recyclerView.layoutManager = object : LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false) {
+                                override fun canScrollVertically(): Boolean {
+                                    return false
+                                }
                             }
-                        }
-                        it.dictInfo?.let {
-                            recyclerView.adapter = OtherMeanAdapter(this, it)
-                        }
-                        recyclerView.layoutParams = layoutParams2
+                            it.dictInfo?.let {
+                                recyclerView.adapter = OtherMeanAdapter(this, it)
+                            }
+                            recyclerView.layoutParams = layoutParams2
 
-                        mOtherMeanLayout.addView(headView)
-                        mOtherMeanLayout.addView(recyclerView)
+                            mOtherMeanLayout.addView(headView)
+                            mOtherMeanLayout.addView(recyclerView)
+                        }
                     }
                 }
                 .observeOn(Schedulers.computation())
@@ -492,7 +576,6 @@ class MainActivity : AppCompatActivity() {
 
     //查询动作成功发生后调用此方法来进行数据库操作以及RecyclerView更新
     private fun refreshRecyclerViewData(inquireResult: InquireResult) {
-        var isMoved = false
         Observable.just(inquireResult)
                 .subscribeOn(Schedulers.computation())
                 .observeOn(Schedulers.computation())
@@ -500,11 +583,11 @@ class MainActivity : AppCompatActivity() {
                     val orig = it.word!![0]
                     var word: LocalWord? = null
                     //在mData中查找word是否存在，如果存在则找到它并记录其index
-                    mData.forEachIndexed { index, realmWord ->
-                        if (realmWord.en == orig.en) {
-                            word = realmWord
-                            word!!.count++
-                            isMoved = word!!.reSort(index)
+                    mData.forEachIndexed { index, localWord ->
+                        if (localWord.en == orig.en) {
+                            word = localWord
+                            localWord.count++
+                            localWord.reSort(index)
                         }
                     }
                     //如果word没有初始化表示word不存在与mData中，所以创建新word
@@ -519,31 +602,54 @@ class MainActivity : AppCompatActivity() {
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnNext {
                     if (it.isSaved) {
-                        if (isMoved) {
-                            //可优化
-                            mAdapter.notifyDataSetChanged()
+                        if (mIsMoved[0] >= 0) {
+                            mAdapter.notifyItemRemoved(mIsMoved[0])
+                            mAdapter.notifyItemInserted(mIsMoved[1])
                         } else {
                             mAdapter.notifyItemRangeChanged(0, mData.size)
                         }
                     } else {
-                        //可优化
-                        mAdapter.notifyDataSetChanged()
+                        val index = mData.size - 1
+                        mAdapter.notifyItemRangeChanged(0, index)
+                        mAdapter.notifyItemInserted(index)
                     }
                 }
                 .observeOn(Schedulers.io())
-                .subscribeBy { it.save() }
+                .subscribeBy(
+                        onNext = { it.save() },
+                        onError = { it.printStackTrace() }
+                )
     }
 
-    //调整LocalWord在mData中的位置
-    private fun LocalWord.reSort(index: Int): Boolean {
-        for (i in index downTo 0) {
-            if (mData[i].count > count) {
-                mData.removeAt(index)
-                mData[i + 1] = this
-                return true
+    //第一个数字为负的时候表示未移动过，非负时表示移动前的位置，第二个数表示移动后的位置
+    private val mIsMoved = intArrayOf(-1, -1)
+
+    //调整LocalWord在mData中的位置，并返回链表是否被调整过
+    private fun LocalWord.reSort(index: Int) {
+        mIsMoved[0] = -1
+        when {
+            index == 0 -> return
+            mData[index - 1].count >= count -> return
+            else -> label@{
+                val start = index - 1
+                for (i in start downTo 0) {
+                    val word = mData[i]
+                    if (word.count >= count) {
+                        mData.removeAt(index)
+                        val newIndex = i + 1
+                        mData.add(newIndex, this)
+                        mIsMoved[0] = index
+                        mIsMoved[1] = newIndex
+                        return
+                    } else if (i == 0 && word.count < count) {
+                        mData.removeAt(index)
+                        mData.add(i, this)
+                        mIsMoved[0] = index
+                        mIsMoved[1] = i
+                    }
+                }
             }
         }
-        return false
     }
 
 }

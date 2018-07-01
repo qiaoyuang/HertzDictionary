@@ -1,6 +1,7 @@
 package com.w10group.hertzdictionary.business.main
 
 import android.content.Context
+import android.os.Build
 import android.support.v4.content.ContextCompat
 import android.support.v7.widget.RecyclerView.Adapter
 import android.support.v7.widget.RecyclerView.ViewHolder
@@ -10,6 +11,7 @@ import android.widget.TextView
 import com.w10group.hertzdictionary.R
 import com.w10group.hertzdictionary.business.bean.DictInfo
 import com.w10group.hertzdictionary.business.main.OtherMeanAdapter.OtherMeanViewHolder
+import com.w10group.hertzdictionary.core.createTouchFeedback
 import org.jetbrains.anko.*
 
 class OtherMeanAdapter(private val mContext: Context, private val mData: List<DictInfo>) : Adapter<OtherMeanViewHolder>() {
@@ -44,6 +46,10 @@ class OtherMeanAdapter(private val mContext: Context, private val mData: List<Di
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): OtherMeanViewHolder {
         val view = AnkoContext.create(mContext).apply {
             verticalLayout {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    isClickable = true
+                    foreground = createTouchFeedback(mContext)
+                }
                 textView {
                     id = WORD
                     textColor = black
@@ -56,7 +62,7 @@ class OtherMeanAdapter(private val mContext: Context, private val mData: List<Di
                 }.lparams(wrapContent, wrapContent) {
                     bottomMargin = dip(8)
                 }
-            }
+            }.layoutParams = ViewGroup.LayoutParams(matchParent, wrapContent)
         }.view
         return OtherMeanViewHolder(view)
     }

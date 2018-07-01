@@ -1,11 +1,13 @@
 package com.w10group.hertzdictionary.business.licence
 
 import android.content.Context
+import android.os.Build
 import android.support.v4.content.ContextCompat
 import android.support.v7.widget.RecyclerView
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import com.w10group.hertzdictionary.core.createTouchFeedbackBorderless
 import org.jetbrains.anko.*
 
 class OSLAdapter(private val mContext: Context, private val mData: List<OSL>) : RecyclerView.Adapter<OSLAdapter.OSLViewHolder>() {
@@ -28,6 +30,10 @@ class OSLAdapter(private val mContext: Context, private val mData: List<OSL>) : 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): OSLViewHolder {
         val view = AnkoContext.create(mContext).apply {
             verticalLayout {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    isClickable = true
+                    foreground = createTouchFeedbackBorderless(mContext)
+                }
                 textView {
                     id = TITLE_ID
                     textSize = 22f

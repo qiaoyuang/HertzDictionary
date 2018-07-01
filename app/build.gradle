@@ -69,6 +69,7 @@ dependencies {
         exclude group: "com.android.support"
     }
     implementation 'com.github.bumptech.glide:okhttp-integration:4.6.1'
+    implementation 'com.android.support.constraint:constraint-layout:1.1.2'
     kapt 'com.github.bumptech.glide:compiler:4.6.1'
 
     //LitePal
