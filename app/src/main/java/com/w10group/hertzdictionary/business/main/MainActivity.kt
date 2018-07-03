@@ -10,7 +10,6 @@ import android.support.design.widget.AppBarLayout.LayoutParams.SCROLL_FLAG_SCROL
 import android.support.design.widget.AppBarLayout.LayoutParams.SCROLL_FLAG_ENTER_ALWAYS
 import android.support.design.widget.AppBarLayout.LayoutParams.SCROLL_FLAG_SNAP
 import android.support.v4.content.ContextCompat
-import android.support.v4.view.GravityCompat
 import android.support.v4.widget.DrawerLayout
 import android.support.v4.widget.NestedScrollView
 import android.support.v7.app.ActionBarDrawerToggle
@@ -386,14 +385,6 @@ class MainActivity : AppCompatActivity() {
                     it?.let { mData.addAll(it) }
                     mRecyclerView.adapter = mAdapter
                 }
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        item.isCheckable = true
-        when (item.itemId) {
-            android.R.id.home -> { mDrawerLayout.openDrawer(GravityCompat.START) }
-        }
-        return super.onOptionsItemSelected(item)
     }
 
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
