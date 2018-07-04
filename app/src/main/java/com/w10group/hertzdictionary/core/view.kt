@@ -35,3 +35,19 @@ fun createTouchFeedbackBorderless(context: Context): Drawable? {
     context.theme.resolveAttribute(android.R.attr.selectableItemBackgroundBorderless, typedValue, true)
     return ContextCompat.getDrawable(context, typedValue.resourceId)
 }
+
+object ActionBarSize {
+
+    private var mSize = 0
+
+    fun get(context: Context):Int =
+            if (mSize == 0) {
+                val styledAttributes = context.applicationContext
+                        .obtainStyledAttributes(intArrayOf(android.R.attr.actionBarSize))
+                val actionBarSize = styledAttributes.getDimension(0, 0f).toInt()
+                styledAttributes.recycle()
+                mSize = actionBarSize
+                mSize
+            } else mSize
+
+}

@@ -13,6 +13,7 @@ import android.support.v7.widget.Toolbar
 import android.view.MenuItem
 import com.w10group.hertzdictionary.business.licence.OSLAdapter.OSL
 import com.w10group.hertzdictionary.R
+import com.w10group.hertzdictionary.core.ActionBarSize
 import io.reactivex.Observable
 import io.reactivex.rxkotlin.subscribeBy
 import io.reactivex.schedulers.Schedulers
@@ -26,8 +27,19 @@ import java.io.InputStreamReader
 
 class LicenceActivity : AppCompatActivity() {
 
-    companion object {
+    private companion object {
         const val OPEN_SOURCE_FILE_NAME = "open_source.txt"
+        const val ANKO = "Anko"
+        const val CIRCLE_IMAGE_VIEW = "CircleImageView"
+        const val GLIDE = "Glide"
+        const val GSON = "Gson"
+        const val LITE_PAL = "LitePal"
+        const val OK_HTTP = "OkHttp"
+        const val RETROFIT = "Retrofit"
+        const val RX_ANDROID = "RxAndroid"
+        const val RX_JAVA = "RxJava"
+        const val RX_KOTLIN = "RxKotlin"
+        const val SUBSAMPLING = "Subsampling Scale Image View"
     }
 
     private val mData = ArrayList<OSL>()
@@ -35,9 +47,6 @@ class LicenceActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val styledAttributes = theme.obtainStyledAttributes(intArrayOf(android.R.attr.actionBarSize))
-        val actionBarSize = styledAttributes.getDimension(0, 0f).toInt()
-        styledAttributes.recycle()
         val toolbarID = 1
 
         coordinatorLayout {
@@ -46,7 +55,7 @@ class LicenceActivity : AppCompatActivity() {
                     id = toolbarID
                     title = "开源许可证"
                     backgroundColorResource = R.color.blue1
-                }.lparams(matchParent, actionBarSize) {
+                }.lparams(matchParent, ActionBarSize.get(this@LicenceActivity)) {
                     scrollFlags = SCROLL_FLAG_SCROLL or SCROLL_FLAG_ENTER_ALWAYS or SCROLL_FLAG_SNAP
                 }
             }.lparams(matchParent, wrapContent)
@@ -77,17 +86,8 @@ class LicenceActivity : AppCompatActivity() {
     private fun loadData() {
         Observable.create<OSLAdapter> {
             val titles = arrayOf(
-                    "Anko",
-                    "CircleImageView",
-                    "Glide",
-                    "Gson",
-                    "LitePal",
-                    "OkHttp",
-                    "Retrofit",
-                    "RxAndroid",
-                    "RxJava",
-                    "RxKotlin",
-                    "Subsampling Scale Image View")
+                    ANKO, CIRCLE_IMAGE_VIEW, GLIDE, GSON, LITE_PAL, OK_HTTP,
+                    RETROFIT, RX_ANDROID, RX_JAVA, RX_KOTLIN, SUBSAMPLING)
             var i = 0
             val inputStream = assets.open(OPEN_SOURCE_FILE_NAME)
             val bufferedReader = BufferedReader(InputStreamReader(inputStream, "UTF-8"))

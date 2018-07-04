@@ -31,6 +31,7 @@ import com.w10group.hertzdictionary.business.features.FeaturesActivity
 import com.w10group.hertzdictionary.business.licence.LicenceActivity
 import com.w10group.hertzdictionary.business.manager.BackgroundImageManager
 import com.w10group.hertzdictionary.business.manager.NetworkService
+import com.w10group.hertzdictionary.core.ActionBarSize
 import com.w10group.hertzdictionary.core.NetworkUtil
 import com.w10group.hertzdictionary.core.createTouchFeedbackBorderless
 import io.reactivex.Observable
@@ -120,7 +121,7 @@ class MainActivity : AppCompatActivity() {
     private val mProgressDialog by lazy {
         progressDialog(title = "请稍候......", message = "正在获取单词数据......") {
             setCancelable(false)
-           setProgressStyle(0)
+            setProgressStyle(0)
         }
     }
 
@@ -133,9 +134,6 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val styledAttributes = theme.obtainStyledAttributes(intArrayOf(android.R.attr.actionBarSize))
-        val actionBarSize = styledAttributes.getDimension(0, 0f).toInt()
-        styledAttributes.recycle()
 
         mDrawerLayout = drawerLayout {
             fitsSystemWindows = true
@@ -155,7 +153,7 @@ class MainActivity : AppCompatActivity() {
                         backgroundColor = blue1
                         setTheme(R.style.ThemeOverlay_AppCompat_Light)
                         popupTheme = R.style.ThemeOverlay_AppCompat_Light
-                    }.lparams(matchParent, actionBarSize) {
+                    }.lparams(matchParent, ActionBarSize.get(this@MainActivity)) {
                         scrollFlags = scrollFlag
                     }
 
@@ -621,7 +619,7 @@ class MainActivity : AppCompatActivity() {
         when {
             index == 0 -> return
             mData[index - 1].count >= count -> return
-            else -> label@{
+            else -> {
                 val start = index - 1
                 for (i in start downTo 0) {
                     val word = mData[i]
