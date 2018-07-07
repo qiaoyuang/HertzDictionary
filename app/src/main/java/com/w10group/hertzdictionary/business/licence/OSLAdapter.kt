@@ -3,14 +3,15 @@ package com.w10group.hertzdictionary.business.licence
 import android.content.Context
 import android.os.Build
 import android.support.v4.content.ContextCompat
-import android.support.v7.widget.RecyclerView
+import android.support.v7.widget.RecyclerView.Adapter
+import android.support.v7.widget.RecyclerView.ViewHolder
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import com.w10group.hertzdictionary.core.createTouchFeedbackBorderless
 import org.jetbrains.anko.*
 
-class OSLAdapter(private val mContext: Context, private val mData: List<OSL>) : RecyclerView.Adapter<OSLAdapter.OSLViewHolder>() {
+class OSLAdapter(private val mContext: Context, private val mData: List<OSL>) : Adapter<OSLAdapter.OSLViewHolder>() {
 
     private companion object {
         const val TITLE_ID = 1
@@ -40,6 +41,7 @@ class OSLAdapter(private val mContext: Context, private val mData: List<OSL>) : 
                     textColor = black
                 }.lparams(wrapContent, wrapContent) {
                     topMargin = dip(16)
+                    bottomMargin = dip(16)
                 }
 
                 textView {
@@ -54,7 +56,7 @@ class OSLAdapter(private val mContext: Context, private val mData: List<OSL>) : 
         return OSLViewHolder(view)
     }
 
-    class OSLViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    class OSLViewHolder(itemView: View) : ViewHolder(itemView) {
         val tvTitle = itemView.find<TextView>(TITLE_ID)
         val tvContent = itemView.find<TextView>(CONTENT_ID)
     }

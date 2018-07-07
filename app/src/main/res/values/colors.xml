@@ -10,4 +10,7 @@
     <color name="blue0">#ccffff</color>
     <color name="blue1">#0099ff</color>
     <color name="blue2">#333399</color>
+
+    <color name="wechat">#5dad47</color>
+    <color name="alipay">#48aae9</color>
 </resources>

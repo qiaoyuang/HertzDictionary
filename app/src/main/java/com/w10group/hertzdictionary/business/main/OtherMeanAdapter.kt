@@ -14,7 +14,8 @@ import com.w10group.hertzdictionary.business.main.OtherMeanAdapter.OtherMeanView
 import com.w10group.hertzdictionary.core.createTouchFeedback
 import org.jetbrains.anko.*
 
-class OtherMeanAdapter(private val mContext: Context, private val mData: List<DictInfo>) : Adapter<OtherMeanViewHolder>() {
+class OtherMeanAdapter(private val mContext: Context,
+                       private val mData: List<DictInfo>) : Adapter<OtherMeanViewHolder>() {
 
     private companion object {
         const val WORD = 1
@@ -46,6 +47,7 @@ class OtherMeanAdapter(private val mContext: Context, private val mData: List<Di
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): OtherMeanViewHolder {
         val view = AnkoContext.create(mContext).apply {
             verticalLayout {
+                lparams(matchParent, wrapContent)
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                     isClickable = true
                     foreground = createTouchFeedback(mContext)
@@ -62,7 +64,7 @@ class OtherMeanAdapter(private val mContext: Context, private val mData: List<Di
                 }.lparams(wrapContent, wrapContent) {
                     bottomMargin = dip(8)
                 }
-            }.layoutParams = ViewGroup.LayoutParams(matchParent, wrapContent)
+            }
         }.view
         return OtherMeanViewHolder(view)
     }

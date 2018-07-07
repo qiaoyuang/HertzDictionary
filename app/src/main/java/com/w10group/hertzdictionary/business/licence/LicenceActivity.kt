@@ -2,7 +2,7 @@ package com.w10group.hertzdictionary.business.licence
 
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
-import android.support.design.widget.AppBarLayout
+import android.support.design.widget.AppBarLayout.ScrollingViewBehavior
 import android.support.design.widget.AppBarLayout.LayoutParams.SCROLL_FLAG_SCROLL
 import android.support.design.widget.AppBarLayout.LayoutParams.SCROLL_FLAG_ENTER_ALWAYS
 import android.support.design.widget.AppBarLayout.LayoutParams.SCROLL_FLAG_SNAP
@@ -47,12 +47,11 @@ class LicenceActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val toolbarID = 1
+        lateinit var toolbar: Toolbar
 
         coordinatorLayout {
             appBarLayout {
-                toolbar {
-                    id = toolbarID
+                toolbar = toolbar {
                     title = "开源许可证"
                     backgroundColorResource = R.color.blue1
                 }.lparams(matchParent, ActionBarSize.get(this@LicenceActivity)) {
@@ -66,11 +65,10 @@ class LicenceActivity : AppCompatActivity() {
             }.lparams(matchParent, wrapContent) {
                 marginStart = dip(16)
                 marginEnd = dip(16)
-                behavior = AppBarLayout.ScrollingViewBehavior()
+                behavior = ScrollingViewBehavior()
             }
         }
 
-        val toolbar = find<Toolbar>(toolbarID)
         setSupportActionBar(toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         loadData()
@@ -91,21 +89,25 @@ class LicenceActivity : AppCompatActivity() {
             var i = 0
             val inputStream = assets.open(OPEN_SOURCE_FILE_NAME)
             val bufferedReader = BufferedReader(InputStreamReader(inputStream, "UTF-8"))
-            val contentBuilder = StringBuilder()
+            val builder = StringBuilder()
             var line = bufferedReader.readLine()
+            var isFirst = true
             while (line != null) {
                 if (line == "*") {
-                    val osl = OSL(titles[i], contentBuilder.toString())
-                    contentBuilder.delete(0, contentBuilder.length)
+                    val osl = OSL(titles[i], builder.toString())
+                    builder.delete(0, builder.length)
                     i++
                     mData.add(osl)
+                    isFirst = true
                 } else {
-                    contentBuilder.append("\n")
-                    contentBuilder.append(line)
+                    if (isFirst) isFirst = false
+                    else builder.append("\n")
+                    builder.append(line)
                 }
                 line = bufferedReader.readLine()
             }
             it.onNext(OSLAdapter(this, mData))
+            it.onComplete()
             bufferedReader.close()
             inputStream.close()
         }

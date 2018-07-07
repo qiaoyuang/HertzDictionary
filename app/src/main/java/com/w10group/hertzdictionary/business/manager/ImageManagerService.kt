@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.SharedPreferences
 import android.widget.ImageView
 import com.bumptech.glide.Glide
+import com.w10group.hertzdictionary.core.GlideApp
 import com.w10group.hertzdictionary.core.NetworkUtil
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.rxkotlin.subscribeBy
@@ -16,22 +17,27 @@ import java.util.*
  * 背景图片加载管理类
  */
 
-object BackgroundImageManager {
+object ImageManagerService {
 
     private const val FILE_NAME = "BGImageInfo"
     private const val KEY_TODAY = "today"
     private const val KEY_URL = "URL"
     private const val DEFAULT_VALUE = "null"
     private const val GET_URL = "http://guolin.tech/api/bing_pic"
+    private const val AVATER_URL = "http://q.qlogo.cn/headimg_dl?dst_uin=1205173348&spec=100"
 
     private lateinit var todayURL: String
 
-    fun show(context: Context, imageView: ImageView) {
+    fun loadAvatar(context: Context, imageView: ImageView) {
+        GlideApp.with(context).load(AVATER_URL).dontAnimate().into(imageView)
+    }
+
+    fun loadBackground(context: Context, imageView: ImageView) {
         getURLOnLocal(context, imageView)
     }
 
     private fun getURLOnLocal(context: Context, imageView: ImageView) {
-        if (!BackgroundImageManager::todayURL.isLateinit) {
+        if (!ImageManagerService::todayURL.isLateinit) {
             Glide.with(context).load(todayURL).into(imageView)
             return
         }
@@ -41,7 +47,7 @@ object BackgroundImageManager {
         val date = sharedPreferences.getString(KEY_TODAY, DEFAULT_VALUE)
         if (today == date) {
             todayURL = sharedPreferences.getString(KEY_URL, DEFAULT_VALUE)
-            Glide.with(context).load(todayURL).into(imageView)
+            GlideApp.with(context).load(todayURL).dontAnimate().into(imageView)
             return
         }
         getURLOnInternet(context, imageView, today, sharedPreferences)
@@ -58,7 +64,7 @@ object BackgroundImageManager {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeBy {
                     todayURL = it.charStream().readText()
-                    Glide.with(context).load(todayURL).into(imageView)
+                    GlideApp.with(context).load(todayURL).dontAnimate().into(imageView)
                     val edit = sharedPreferences.edit()
                     edit.putString(KEY_TODAY, today)
                     edit.putString(KEY_URL, todayURL)

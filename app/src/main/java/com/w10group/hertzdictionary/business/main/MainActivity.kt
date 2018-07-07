@@ -5,7 +5,7 @@ import android.graphics.Color
 import android.os.Build
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
-import android.support.design.widget.AppBarLayout
+import android.support.design.widget.AppBarLayout.ScrollingViewBehavior
 import android.support.design.widget.AppBarLayout.LayoutParams.SCROLL_FLAG_SCROLL
 import android.support.design.widget.AppBarLayout.LayoutParams.SCROLL_FLAG_ENTER_ALWAYS
 import android.support.design.widget.AppBarLayout.LayoutParams.SCROLL_FLAG_SNAP
@@ -29,7 +29,7 @@ import com.w10group.hertzdictionary.business.bean.InquireResult
 import com.w10group.hertzdictionary.business.bean.LocalWord
 import com.w10group.hertzdictionary.business.features.FeaturesActivity
 import com.w10group.hertzdictionary.business.licence.LicenceActivity
-import com.w10group.hertzdictionary.business.manager.BackgroundImageManager
+import com.w10group.hertzdictionary.business.manager.ImageManagerService
 import com.w10group.hertzdictionary.business.manager.NetworkService
 import com.w10group.hertzdictionary.core.ActionBarSize
 import com.w10group.hertzdictionary.core.NetworkUtil
@@ -39,6 +39,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.rxkotlin.subscribeBy
 import io.reactivex.schedulers.Schedulers
 import org.jetbrains.anko.*
+import org.jetbrains.anko.appcompat.v7.titleResource
 import org.jetbrains.anko.appcompat.v7.toolbar
 import org.jetbrains.anko.cardview.v7.cardView
 import org.jetbrains.anko.design.*
@@ -149,9 +150,8 @@ class MainActivity : AppCompatActivity() {
                     val scrollFlag = SCROLL_FLAG_SCROLL or SCROLL_FLAG_ENTER_ALWAYS or SCROLL_FLAG_SNAP
 
                     mToolBar = toolbar {
-                        title = "赫兹词典"
+                        titleResource = R.string.app_name
                         backgroundColor = blue1
-                        setTheme(R.style.ThemeOverlay_AppCompat_Light)
                         popupTheme = R.style.ThemeOverlay_AppCompat_Light
                     }.lparams(matchParent, ActionBarSize.get(this@MainActivity)) {
                         scrollFlags = scrollFlag
@@ -311,14 +311,14 @@ class MainActivity : AppCompatActivity() {
                         }
                     }.lparams(matchParent, wrapContent)
                 }.lparams(matchParent, matchParent) {
-                    behavior = AppBarLayout.ScrollingViewBehavior()
+                    behavior = ScrollingViewBehavior()
                 }
 
                 mRecyclerView = recyclerView {
                     layoutManager = LinearLayoutManager(this@MainActivity, LinearLayoutManager.VERTICAL, false)
                     itemAnimator = DefaultItemAnimator()
                 }.lparams(matchParent, matchParent) {
-                    behavior = AppBarLayout.ScrollingViewBehavior()
+                    behavior = ScrollingViewBehavior()
                     topMargin = dip(4)
                     bottomMargin = dip(4)
                 }
@@ -330,8 +330,6 @@ class MainActivity : AppCompatActivity() {
                 fitsSystemWindows = true
                 isClickable = true
                 backgroundColor = deepWhite
-                elevation = dip(4).toFloat()
-                translationZ = dip(4).toFloat()
                 itemTextColor = ContextCompat.getColorStateList(this@MainActivity, R.color.gray600)
                 addHeaderView(createHeaderView())
                 setNavigationItemSelectedListener {
@@ -350,27 +348,22 @@ class MainActivity : AppCompatActivity() {
         }
 
         setSupportActionBar(mToolBar)
-        supportActionBar?.let {
-            it.setHomeButtonEnabled(true)
-            it.setDisplayHomeAsUpEnabled(true)
-        }
         val toggle = ActionBarDrawerToggle(this@MainActivity, mDrawerLayout, mToolBar, R.string.navigation_drawer_open, R.string.navigation_drawer_close)
         mDrawerLayout.addDrawerListener(toggle)
         toggle.syncState()
-        BackgroundImageManager.show(this, mBackgroundImageView)
+        ImageManagerService.loadBackground(this, mBackgroundImageView)
         initRecyclerViewData()
     }
 
     private fun createHeaderView() =
             AnkoContext.create(this).apply {
-                verticalLayout {
-                    mBackgroundImageView = imageView {
-                        scaleType = ImageView.ScaleType.CENTER_CROP
-                        backgroundColor = blue1
-                        isClickable = true
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
-                            foreground = createTouchFeedbackBorderless(this@MainActivity)
-                    }.lparams(matchParent, dip(176))
+                mBackgroundImageView = imageView {
+                    layoutParams = ViewGroup.LayoutParams(matchParent, dip(176))
+                    scaleType = ImageView.ScaleType.CENTER_CROP
+                    backgroundColor = blue1
+                    isClickable = true
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
+                        foreground = createTouchFeedbackBorderless(this@MainActivity)
                 }
             }.view
 

@@ -1,8 +1,10 @@
 package com.w10group.hertzdictionary.core
 
+import android.app.Activity
 import android.content.Context
 import android.graphics.drawable.Drawable
 import android.support.v4.content.ContextCompat
+import android.support.v4.widget.DrawerLayout
 import android.support.v7.widget.AppCompatSpinner
 import android.util.TypedValue
 import android.view.ViewManager
@@ -22,6 +24,9 @@ inline fun ViewManager.appCompatSpineer(init: AppCompatSpinner.() -> Unit): AppC
 inline fun ViewManager.circleImageView(init: CircleImageView.() -> Unit): CircleImageView =
         ankoView({ CircleImageView(it) }, theme = 0, init = init)
 
+inline fun Activity.myDrawerLayout(init: DrawerLayout.() -> Unit): DrawerLayout =
+        ankoView({ DrawerLayout(it) }, theme = 0, init = init)
+
 //创建触摸反馈效果Drawable
 fun createTouchFeedback(context: Context): Drawable? {
     val typedValue = TypedValue()
@@ -36,10 +41,9 @@ fun createTouchFeedbackBorderless(context: Context): Drawable? {
     return ContextCompat.getDrawable(context, typedValue.resourceId)
 }
 
+//获取系统的ActionBarSize
 object ActionBarSize {
-
     private var mSize = 0
-
     fun get(context: Context):Int =
             if (mSize == 0) {
                 val styledAttributes = context.applicationContext
@@ -49,5 +53,4 @@ object ActionBarSize {
                 mSize = actionBarSize
                 mSize
             } else mSize
-
 }
