@@ -1,6 +1,9 @@
 package com.w10group.hertzdictionary.business.features
 
+import android.content.Intent
 import android.graphics.Color
+import android.graphics.Paint
+import android.net.Uri
 import android.os.Build
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
@@ -28,7 +31,7 @@ class FeaturesActivity : AppCompatActivity() {
 
     private companion object {
         const val FEATURE_FILE_NAME = "feature.txt"
-        const val MY_EMAIL = "Email:qiaoyuang2012@gmail.com"
+        const val MY_EMAIL = "qiaoyuang2012@gmail.com"
         const val GITHUB_ADDRESS = "https://github.com/qiaoyuang/HertzDictionary"
     }
 
@@ -58,7 +61,6 @@ class FeaturesActivity : AppCompatActivity() {
             }.lparams(matchParent, wrapContent)
 
             nestedScrollView {
-
                 verticalLayout {
                     cardView {
                         elevation = dip(4).toFloat()
@@ -71,20 +73,20 @@ class FeaturesActivity : AppCompatActivity() {
                                 text = title
                                 textColor = Color.BLACK
                                 textSize = 22f
-                            }.lparams(wrapContent, wrapContent)
+                            }.lparams(wrapContent, wrapContent) {
+                                bottomMargin = dip(8)
+                            }
 
                             mTVCurrentContent = textView {
                                 textSize = 16f
-                            }.lparams(matchParent, matchParent) {
-                                topMargin = dip(8)
+                            }.lparams(matchParent, wrapContent) {
+                                margin = dip(8)
                             }
 
                         }.lparams(matchParent, wrapContent) {
-                            marginStart = dip(8)
-                            marginEnd = dip(8)
-                            topMargin = dip(16)
-                            bottomMargin = dip(16)
+                            margin = dip(16)
                         }
+
                     }.lparams(matchParent, wrapContent) {
                         marginStart = dip(8)
                         marginEnd = dip(8)
@@ -103,19 +105,18 @@ class FeaturesActivity : AppCompatActivity() {
                                 text = title
                                 textColor = Color.BLACK
                                 textSize = 22f
-                            }.lparams(wrapContent, wrapContent)
+                            }.lparams(wrapContent, wrapContent) {
+                                bottomMargin = dip(8)
+                            }
 
                             mTVNextContent = textView {
                                 textSize = 16f
-                            }.lparams(matchParent, matchParent) {
-                                topMargin = dip(8)
+                            }.lparams(matchParent, wrapContent) {
+                                margin = dip(8)
                             }
 
                         }.lparams(matchParent, wrapContent) {
-                            marginStart = dip(8)
-                            marginEnd = dip(8)
-                            topMargin = dip(16)
-                            bottomMargin = dip(16)
+                            margin = dip(16)
                         }
 
                     }.lparams(matchParent, wrapContent) {
@@ -136,7 +137,9 @@ class FeaturesActivity : AppCompatActivity() {
                                 text = title
                                 textColor = Color.BLACK
                                 textSize = 22f
-                            }.lparams(wrapContent, wrapContent)
+                            }.lparams(wrapContent, wrapContent) {
+                                bottomMargin = dip(8)
+                            }
 
                             mTVBugFeedback1 = textView {
                                 textSize = 16f
@@ -148,9 +151,10 @@ class FeaturesActivity : AppCompatActivity() {
                                 text = MY_EMAIL
                                 textSize = 16f
                                 textColor = blue1
-                                setOnClickListener {
-
-                                }
+                                paint.flags = Paint.UNDERLINE_TEXT_FLAG
+                                paint.isAntiAlias = true
+                                gravity = Gravity.CENTER_HORIZONTAL
+                                setOnClickListener { sendEmail() }
                             }.lparams(wrapContent, wrapContent) {
                                 gravity = Gravity.CENTER_HORIZONTAL
                                 topMargin = dip(8)
@@ -158,8 +162,10 @@ class FeaturesActivity : AppCompatActivity() {
 
                             mTVBugFeedback2 = textView {
                                 textSize = 16f
-                            }.lparams(matchParent, matchParent) {
+                            }.lparams(matchParent, wrapContent) {
                                 topMargin = dip(8)
+                                marginStart = dip(8)
+                                marginEnd = dip(8)
                             }
 
                             button {
@@ -170,19 +176,17 @@ class FeaturesActivity : AppCompatActivity() {
                                     foreground = createTouchFeedbackBorderless(this@FeaturesActivity)
                             }.lparams(matchParent, wrapContent) {
                                 topMargin = dip(24)
+                                bottomMargin = dip(8)
                             }
 
                         }.lparams(matchParent, wrapContent) {
-                            marginStart = dip(8)
-                            marginEnd = dip(8)
-                            topMargin = dip(16)
-                            bottomMargin = dip(16)
+                            margin = dip(16)
                         }
 
                     }.lparams(matchParent, wrapContent) {
+                        topMargin = dip(8)
                         marginStart = dip(8)
                         marginEnd = dip(8)
-                        topMargin = dip(8)
                     }
 
                     cardView {
@@ -197,21 +201,26 @@ class FeaturesActivity : AppCompatActivity() {
                                 text = title
                                 textColor = Color.BLACK
                                 textSize = 22f
-                            }.lparams(wrapContent, wrapContent)
+                            }.lparams(wrapContent, wrapContent) {
+                                bottomMargin = dip(8)
+                            }
 
                             mTVAboutTech1 = textView {
                                 textSize = 16f
                             }.lparams(matchParent, matchParent) {
                                 topMargin = dip(8)
+                                marginStart = dip(8)
+                                marginEnd = dip(8)
                             }
 
                             textView {
                                 text = GITHUB_ADDRESS
                                 textSize = 16f
                                 textColor = blue1
-                                setOnClickListener {
-
-                                }
+                                paint.flags = Paint.UNDERLINE_TEXT_FLAG
+                                paint.isAntiAlias = true
+                                gravity = Gravity.CENTER_HORIZONTAL
+                                setOnClickListener { openBrowser() }
                             }.lparams(wrapContent, wrapContent) {
                                 gravity = Gravity.CENTER_HORIZONTAL
                                 topMargin = dip(8)
@@ -219,15 +228,12 @@ class FeaturesActivity : AppCompatActivity() {
 
                             mTVAboutTech2 = textView {
                                 textSize = 16f
-                            }.lparams(matchParent, matchParent) {
-                                topMargin = dip(8)
+                            }.lparams(matchParent, wrapContent) {
+                                margin = dip(8)
                             }
 
                         }.lparams(matchParent, wrapContent) {
-                            marginStart = dip(8)
-                            marginEnd = dip(8)
-                            topMargin = dip(16)
-                            bottomMargin = dip(16)
+                            margin = dip(16)
                         }
 
                     }.lparams(matchParent, wrapContent) {
@@ -256,6 +262,22 @@ class FeaturesActivity : AppCompatActivity() {
             android.R.id.home -> { onBackPressed() }
         }
         return super.onOptionsItemSelected(item)
+    }
+
+    private fun openBrowser() {
+        val intent = Intent()
+        intent.action = "android.intent.action.VIEW"
+        val uri = Uri.parse(GITHUB_ADDRESS)
+        intent.data = uri
+        startActivity(intent)
+    }
+
+    private fun sendEmail() {
+        val subject = "赫兹词典bug反馈"
+        val content = "mailto:$MY_EMAIL?subject=$subject"
+        val intent = Intent(Intent.ACTION_SENDTO)
+        intent.data = Uri.parse(content)
+        startActivity(intent)
     }
 
 }
