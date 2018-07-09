@@ -24,12 +24,12 @@ object ImageManagerService {
     private const val KEY_URL = "URL"
     private const val DEFAULT_VALUE = "null"
     private const val GET_URL = "http://guolin.tech/api/bing_pic"
-    private const val AVATER_URL = "http://q.qlogo.cn/headimg_dl?dst_uin=1205173348&spec=100"
+    private const val AVATAR_URL = "http://q.qlogo.cn/headimg_dl?dst_uin=1205173348&spec=100"
 
     private lateinit var todayURL: String
 
     fun loadAvatar(context: Context, imageView: ImageView) {
-        GlideApp.with(context).load(AVATER_URL).dontAnimate().into(imageView)
+        GlideApp.with(context).load(AVATAR_URL).dontAnimate().into(imageView)
     }
 
     fun loadBackground(context: Context, imageView: ImageView) {

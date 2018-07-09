@@ -8,7 +8,6 @@ import java.util.*
 import kotlin.collections.HashMap
 import kotlin.reflect.KClass
 
-
 object RxBus {
 
     const val MAIN = 0
@@ -34,10 +33,8 @@ object RxBus {
         if (list == null) {
             list = LinkedList()
             put(T :: class, list)
-            list.add(observer)
-        } else {
-            list.add(observer)
         }
+        list.add(observer)
     }
 
     inline fun <reified T : Any> unRegister(observer: OnWorkListener<T>) {
