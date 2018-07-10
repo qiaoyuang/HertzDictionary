@@ -1,5 +1,8 @@
 package com.w10group.hertzdictionary.business.about
 
+import android.content.ClipData
+import android.content.ClipboardManager
+import android.content.Context
 import android.graphics.Color
 import android.os.Build
 import android.support.v7.app.AppCompatActivity
@@ -14,6 +17,7 @@ import android.support.v4.content.ContextCompat
 import android.support.v7.widget.Toolbar
 import android.view.Gravity
 import android.view.MenuItem
+import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
 import com.w10group.hertzdictionary.R
@@ -30,6 +34,7 @@ import org.jetbrains.anko.cardview.v7.cardView
 import org.jetbrains.anko.design.appBarLayout
 import org.jetbrains.anko.design.collapsingToolbarLayout
 import org.jetbrains.anko.design.coordinatorLayout
+import org.jetbrains.anko.design.snackbar
 import org.jetbrains.anko.support.v4.nestedScrollView
 
 class AboutDeveloperActivity : AppCompatActivity() {
@@ -207,9 +212,8 @@ class AboutDeveloperActivity : AppCompatActivity() {
                         frameLayout {
                             backgroundColor = blueGray
                             foreground = createTouchFeedbackBorderless(this@AboutDeveloperActivity)
-                            setOnClickListener {
-
-                            }
+                            val content = "BTC钱包地址"
+                            setOnClickListener { copyToClipBoard(it, content, BTC_ADDRESS) }
                             GlideApp.with(this@AboutDeveloperActivity).load(R.drawable.btc).dontAnimate().into(
                                     imageView().lparams(dip(24), dip(24)) {
                                         gravity = Gravity.CENTER_VERTICAL
@@ -218,8 +222,7 @@ class AboutDeveloperActivity : AppCompatActivity() {
                                         bottomMargin = dip(16)
                                     })
                             textView {
-                                val title = "BTC Address"
-                                text = title
+                                text = content
                                 textSize = 16f
                                 textColor = coin
                             }.lparams(wrapContent, wrapContent) {
@@ -234,9 +237,8 @@ class AboutDeveloperActivity : AppCompatActivity() {
                         frameLayout {
                             backgroundColor = blueGray
                             foreground = createTouchFeedbackBorderless(this@AboutDeveloperActivity)
-                            setOnClickListener {
-
-                            }
+                            val content = "ETH钱包地址"
+                            setOnClickListener { copyToClipBoard(it, content, ETH_ADDRESS) }
                             GlideApp.with(this@AboutDeveloperActivity).load(R.drawable.eth).dontAnimate().into(
                                     imageView().lparams(dip(24), dip(24)) {
                                         gravity = Gravity.CENTER_VERTICAL
@@ -245,8 +247,7 @@ class AboutDeveloperActivity : AppCompatActivity() {
                                         bottomMargin = dip(16)
                                     })
                             textView {
-                                val title = "ETH Address"
-                                text = title
+                                text = content
                                 textSize = 16f
                                 textColor = coin
                             }.lparams(wrapContent, wrapContent) {
@@ -290,6 +291,12 @@ class AboutDeveloperActivity : AppCompatActivity() {
             android.R.id.home -> { onBackPressed() }
         }
         return super.onOptionsItemSelected(item)
+    }
+
+    private fun copyToClipBoard(view: View, content: String, address: String) {
+        val cmb = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+        cmb.primaryClip = ClipData.newPlainText("label", address)
+        snackbar(view, "${content}已复制到剪贴板")
     }
 
 }
