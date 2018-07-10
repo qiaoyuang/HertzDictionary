@@ -24,25 +24,15 @@ import org.jetbrains.anko.design.coordinatorLayout
 import org.jetbrains.anko.recyclerview.v7.recyclerView
 import java.io.BufferedReader
 import java.io.InputStreamReader
+import java.util.*
 
 class LicenceActivity : AppCompatActivity() {
 
     private companion object {
         const val OPEN_SOURCE_FILE_NAME = "open_source.txt"
-        const val ANKO = "Anko"
-        const val CIRCLE_IMAGE_VIEW = "CircleImageView"
-        const val GLIDE = "Glide"
-        const val GSON = "Gson"
-        const val LITE_PAL = "LitePal"
-        const val OK_HTTP = "OkHttp"
-        const val RETROFIT = "Retrofit"
-        const val RX_ANDROID = "RxAndroid"
-        const val RX_JAVA = "RxJava"
-        const val RX_KOTLIN = "RxKotlin"
-        const val SUBSAMPLING = "Subsampling Scale Image View"
     }
 
-    private val mData = ArrayList<OSL>()
+    private val mData = LinkedList<OSL>()
     private lateinit var mRecyclerView: RecyclerView
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -83,26 +73,29 @@ class LicenceActivity : AppCompatActivity() {
 
     private fun loadData() {
         Observable.create<OSLAdapter> {
-            val titles = arrayOf(
-                    ANKO, CIRCLE_IMAGE_VIEW, GLIDE, GSON, LITE_PAL, OK_HTTP,
-                    RETROFIT, RX_ANDROID, RX_JAVA, RX_KOTLIN, SUBSAMPLING)
-            var i = 0
             val inputStream = assets.open(OPEN_SOURCE_FILE_NAME)
             val bufferedReader = BufferedReader(InputStreamReader(inputStream, "UTF-8"))
             val builder = StringBuilder()
             var line = bufferedReader.readLine()
             var isFirst = true
             while (line != null) {
-                if (line == "*") {
-                    val osl = OSL(titles[i], builder.toString())
-                    builder.delete(0, builder.length)
-                    i++
-                    mData.add(osl)
-                    isFirst = true
-                } else {
-                    if (isFirst) isFirst = false
-                    else builder.append("\n")
-                    builder.append(line)
+                when (line) {
+                    "&" -> {
+                        val osl = OSL(builder.toString())
+                        builder.delete(0, builder.length)
+                        mData.add(osl)
+                        isFirst = true
+                    }
+                    "*" -> {
+                        mData.last.content = builder.toString()
+                        builder.delete(0, builder.length)
+                        isFirst = true
+                    }
+                    else -> {
+                        if (isFirst) isFirst = false
+                        else builder.append("\n")
+                        builder.append(line)
+                    }
                 }
                 line = bufferedReader.readLine()
             }

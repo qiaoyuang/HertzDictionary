@@ -43,7 +43,6 @@ class OSLAdapter(private val mContext: Context, private val mData: List<OSL>) : 
                     topMargin = dip(16)
                     bottomMargin = dip(16)
                 }
-
                 textView {
                     id = CONTENT_ID
                     textColor = black
@@ -61,6 +60,6 @@ class OSLAdapter(private val mContext: Context, private val mData: List<OSL>) : 
         val tvContent = itemView.find<TextView>(CONTENT_ID)
     }
 
-    data class OSL(val title: String, val content: String)
+    data class OSL(var title: String = "", var content: String = "")
 
 }

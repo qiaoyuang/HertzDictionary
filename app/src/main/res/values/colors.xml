@@ -1,16 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#3F51B5</color>
-    <color name="colorPrimaryDark">#303F9F</color>
-    <color name="colorAccent">#FF4081</color>
 
     <color name="deepWhite">#f0f0f0</color>
     <color name="gray600">#757575</color>
+    <color name="blueGray">#eceff1</color>
 
-    <color name="blue0">#ccffff</color>
-    <color name="blue1">#0099ff</color>
-    <color name="blue2">#333399</color>
+    <color name="blue1">#039be5</color>
+    <color name="blue2">#0277bd</color>
 
     <color name="wechat">#5dad47</color>
     <color name="alipay">#48aae9</color>
+    <color name="coin">#8f9eae</color>
 </resources>

@@ -21,6 +21,7 @@ import com.w10group.hertzdictionary.business.features.FeaturesActivity
 import com.w10group.hertzdictionary.business.manager.FileReadManagerService
 import com.w10group.hertzdictionary.business.manager.ImageManagerService
 import com.w10group.hertzdictionary.core.ActionBarSize
+import com.w10group.hertzdictionary.core.GlideApp
 import com.w10group.hertzdictionary.core.circleImageView
 import com.w10group.hertzdictionary.core.createTouchFeedbackBorderless
 import org.jetbrains.anko.*
@@ -36,9 +37,14 @@ class AboutDeveloperActivity : AppCompatActivity() {
     private companion object {
         const val DEVELOPER_NAME = "Raidriar"
         const val ABOUT_ME_FILE_NAME = "about_me.txt"
+
+        const val BTC_ADDRESS = "3589aqdNmzCuQeQcYWjF6w9Euq8FsWoDfg"
+        const val ETH_ADDRESS = "0x98725b434f875f91604362be9deac3ad38a365fc"
     }
 
     private val blue1 by lazy { ContextCompat.getColor(this, R.color.blue1) }
+    private val blueGray by lazy { ContextCompat.getColor(this, R.color.blueGray) }
+    private val coin by lazy { ContextCompat.getColor(this, R.color.coin) }
 
     private lateinit var mCollapsingToolbarLayout: CollapsingToolbarLayout
     private lateinit var mToolbar: Toolbar
@@ -46,6 +52,7 @@ class AboutDeveloperActivity : AppCompatActivity() {
     private lateinit var mIMAvatar: ImageView
     private lateinit var mTVContent1: TextView
     private lateinit var mTVContent2: TextView
+    private lateinit var mTVContent3: TextView
     private lateinit var mTVFeature: TextView
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -139,29 +146,121 @@ class AboutDeveloperActivity : AppCompatActivity() {
                             topMargin = dip(8)
                         }
 
-                        button {
-                            text = "微信收款码"
-                            textSize = 16f
-                            backgroundColorResource = R.color.wechat
-                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
-                                foreground = createTouchFeedbackBorderless(this@AboutDeveloperActivity)
+
+
+                        frameLayout {
+                            backgroundColor = blueGray
+                            foreground = createTouchFeedbackBorderless(this@AboutDeveloperActivity)
+                            setOnClickListener {
+
+                            }
+                            GlideApp.with(this@AboutDeveloperActivity).load(R.drawable.wechatpay).dontAnimate().into(
+                                    imageView().lparams(dip(24), dip(24)) {
+                                        gravity = Gravity.CENTER_VERTICAL
+                                        marginStart = dip(32)
+                                        topMargin = dip(16)
+                                        bottomMargin = dip(16)
+                            })
+                            textView {
+                                text = "微信收款码"
+                                textSize = 16f
+                                textColorResource = R.color.wechat
+                            }.lparams(wrapContent, wrapContent) {
+                                gravity = Gravity.CENTER
+                            }
                         }.lparams(matchParent, wrapContent) {
                             topMargin = dip(24)
                         }
 
-                        button {
-                            text = "支付宝收款码"
-                            textSize = 16f
-                            backgroundColorResource = R.color.alipay
-                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
-                                foreground = createTouchFeedbackBorderless(this@AboutDeveloperActivity)
+
+
+                        frameLayout {
+                            backgroundColor = blueGray
+                            foreground = createTouchFeedbackBorderless(this@AboutDeveloperActivity)
+                            setOnClickListener {
+
+                            }
+                            GlideApp.with(this@AboutDeveloperActivity).load(R.drawable.alipay).dontAnimate().into(
+                                    imageView().lparams(dip(24), dip(24)) {
+                                        gravity = Gravity.CENTER_VERTICAL
+                                        marginStart = dip(32)
+                                        topMargin = dip(16)
+                                        bottomMargin = dip(16)
+                                    })
+                            textView {
+                                text = "支付宝收款码"
+                                textSize = 16f
+                                textColorResource = R.color.alipay
+                            }.lparams(wrapContent, wrapContent) {
+                                gravity = Gravity.CENTER
+                            }
                         }.lparams(matchParent, wrapContent) {
                             topMargin = dip(8)
                         }
 
+                        mTVContent3 = textView {
+                            textSize = 16f
+                        }.lparams(matchParent, wrapContent) {
+                            topMargin = dip(24)
+                        }
+
+                        frameLayout {
+                            backgroundColor = blueGray
+                            foreground = createTouchFeedbackBorderless(this@AboutDeveloperActivity)
+                            setOnClickListener {
+
+                            }
+                            GlideApp.with(this@AboutDeveloperActivity).load(R.drawable.btc).dontAnimate().into(
+                                    imageView().lparams(dip(24), dip(24)) {
+                                        gravity = Gravity.CENTER_VERTICAL
+                                        marginStart = dip(32)
+                                        topMargin = dip(16)
+                                        bottomMargin = dip(16)
+                                    })
+                            textView {
+                                val title = "BTC Address"
+                                text = title
+                                textSize = 16f
+                                textColor = coin
+                            }.lparams(wrapContent, wrapContent) {
+                                gravity = Gravity.CENTER
+                            }
+                        }.lparams(matchParent, wrapContent) {
+                            topMargin = dip(24)
+                        }
+
+
+
+                        frameLayout {
+                            backgroundColor = blueGray
+                            foreground = createTouchFeedbackBorderless(this@AboutDeveloperActivity)
+                            setOnClickListener {
+
+                            }
+                            GlideApp.with(this@AboutDeveloperActivity).load(R.drawable.eth).dontAnimate().into(
+                                    imageView().lparams(dip(24), dip(24)) {
+                                        gravity = Gravity.CENTER_VERTICAL
+                                        marginStart = dip(32)
+                                        topMargin = dip(16)
+                                        bottomMargin = dip(16)
+                                    })
+                            textView {
+                                val title = "ETH Address"
+                                text = title
+                                textSize = 16f
+                                textColor = coin
+                            }.lparams(wrapContent, wrapContent) {
+                                gravity = Gravity.CENTER
+                            }
+                        }.lparams(matchParent, wrapContent) {
+                            topMargin = dip(8)
+                        }
+
+
+
                     }.lparams(matchParent, wrapContent) {
                         topMargin = dip(16)
-                        bottomMargin = dip(16)
+                        bottomMargin = dip(24)
                         marginStart = dip(8)
                         marginEnd = dip(8)
                     }
@@ -183,7 +282,7 @@ class AboutDeveloperActivity : AppCompatActivity() {
 
         ImageManagerService.loadBackground(this, mIMBackground)
         ImageManagerService.loadAvatar(this, mIMAvatar)
-        FileReadManagerService.process(ABOUT_ME_FILE_NAME, this, mTVContent1, mTVContent2)
+        FileReadManagerService.process(ABOUT_ME_FILE_NAME, this, mTVContent1, mTVContent2, mTVContent3)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {

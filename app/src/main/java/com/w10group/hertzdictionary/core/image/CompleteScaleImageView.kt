@@ -24,7 +24,7 @@ class CompleteScaleImageView(private val mContext: Context,
                 viewPager().lparams(matchParent, matchParent)
 
                 imageView {
-                    imageResource = R.drawable.ic_close_white_18dp
+                    imageResource = R.drawable.ic_arrow_back_white_24dp
                 }.lparams(wrapContent, wrapContent) {
                     gravity = Gravity.START or Gravity.TOP
                     marginEnd = dip(24)
@@ -32,7 +32,7 @@ class CompleteScaleImageView(private val mContext: Context,
                 }
 
                 imageView {
-                    imageResource = R.drawable.ic_close_white_18dp
+                    imageResource = R.drawable.ic_delete_white_24dp
                 }.lparams(wrapContent, wrapContent) {
                     gravity = Gravity.END or Gravity.TOP
                     marginEnd= dip(24)
@@ -40,7 +40,7 @@ class CompleteScaleImageView(private val mContext: Context,
                 }
 
                 imageView {
-                    imageResource = R.drawable.ic_close_white_18dp
+                    imageResource = R.drawable.ic_file_download_white_24dp
                 }.lparams(wrapContent, wrapContent) {
                     gravity = Gravity.END or Gravity.BOTTOM
                     marginEnd= dip(24)

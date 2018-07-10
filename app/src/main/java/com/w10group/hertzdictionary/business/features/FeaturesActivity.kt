@@ -4,7 +4,6 @@ import android.content.Intent
 import android.graphics.Color
 import android.graphics.Paint
 import android.net.Uri
-import android.os.Build
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.design.widget.AppBarLayout.ScrollingViewBehavior
@@ -19,6 +18,7 @@ import android.widget.TextView
 import com.w10group.hertzdictionary.R
 import com.w10group.hertzdictionary.business.manager.FileReadManagerService
 import com.w10group.hertzdictionary.core.ActionBarSize
+import com.w10group.hertzdictionary.core.GlideApp
 import com.w10group.hertzdictionary.core.createTouchFeedbackBorderless
 import org.jetbrains.anko.*
 import org.jetbrains.anko.appcompat.v7.toolbar
@@ -168,12 +168,26 @@ class FeaturesActivity : AppCompatActivity() {
                                 marginEnd = dip(8)
                             }
 
-                            button {
-                                text = "我的微信"
-                                textSize = 16f
-                                backgroundColorResource = R.color.wechat
-                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
-                                    foreground = createTouchFeedbackBorderless(this@FeaturesActivity)
+                            frameLayout {
+                                backgroundColorResource = R.color.blueGray
+                                foreground = createTouchFeedbackBorderless(this@FeaturesActivity)
+                                setOnClickListener {
+
+                                }
+                                GlideApp.with(this@FeaturesActivity).load(R.drawable.wechat).dontAnimate().into(
+                                        imageView().lparams(dip(24), dip(24)) {
+                                            gravity = Gravity.CENTER_VERTICAL
+                                            marginStart = dip(64)
+                                            topMargin = dip(16)
+                                            bottomMargin = dip(16)
+                                        })
+                                textView {
+                                    text = "我的微信"
+                                    textSize = 16f
+                                    textColorResource = R.color.wechat
+                                }.lparams(wrapContent, wrapContent) {
+                                    gravity = Gravity.CENTER
+                                }
                             }.lparams(matchParent, wrapContent) {
                                 topMargin = dip(24)
                                 bottomMargin = dip(8)
