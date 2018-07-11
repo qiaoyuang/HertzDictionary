@@ -10,12 +10,13 @@ import android.provider.MediaStore
 import android.support.v4.view.ViewPager
 import android.view.Gravity
 import android.view.View
-import android.view.ViewGroup
 import android.widget.ImageView
+import android.widget.ProgressBar
 import android.widget.TextView
 import com.davemorrissey.labs.subscaleview.ImageSource
 import com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView
 import com.w10group.hertzdictionary.R
+import com.w10group.hertzdictionary.core.subsamplingImageView
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.rxkotlin.subscribeBy
@@ -25,6 +26,11 @@ import org.jetbrains.anko.design.snackbar
 import org.jetbrains.anko.support.v4.viewPager
 import java.io.File
 import java.util.*
+
+/**
+ * Created by qiaoyuang on 2018/7/9.
+ * 大图查看器封装，图片下载的时候还可以多利用线程池的并发进行重构
+ */
 
 class CompleteScaleImageView(private val mContext: Context,
                              private val mImageDownloader: ImageDownloader) {
@@ -39,7 +45,7 @@ class CompleteScaleImageView(private val mContext: Context,
 
     private val mDialog = Dialog(mContext, R.style.Dialog_Fullscreen)
 
-    private val mViews by lazy { LinkedList<SubsamplingScaleImageView>() }
+    private val mViews by lazy { LinkedList<View>() }
     private val mDownloadFiles by lazy { LinkedList<File>() }//下载图片列表，当使用网络查看模式时，该列表保存所有下载下来的完整尺寸图片
 
     private var mSelectedPosition = 0//当前选中的位置
@@ -47,6 +53,8 @@ class CompleteScaleImageView(private val mContext: Context,
     companion object {
         const val URL = 0
         const val FILE = 1
+        const val PROGRESS_BAR_ID = 10
+        const val SUBSAMPLING_ID = 11
     }
 
     //标示当前状态是网络图片显示模式还是本地图片显示模式
@@ -152,12 +160,21 @@ class CompleteScaleImageView(private val mContext: Context,
             }
         }.view
 
-    private fun createItemView(): SubsamplingScaleImageView {
-        val subsamplingScaleImageView = SubsamplingScaleImageView(mContext)
-        subsamplingScaleImageView.layoutParams = ViewGroup.LayoutParams(matchParent, matchParent)
-        subsamplingScaleImageView.setOnClickListener { mAnim.start() }
-        return subsamplingScaleImageView
-    }
+    private fun createItemView(): View =
+        AnkoContext.create(mContext).apply {
+            frameLayout {
+                progressBar {
+                    id = PROGRESS_BAR_ID
+                    visibility = View.VISIBLE
+                }.lparams(wrapContent, wrapContent) {
+                    gravity = Gravity.CENTER
+                }
+                subsamplingImageView {
+                    id = SUBSAMPLING_ID
+                    setOnClickListener { mAnim.start() }
+                }.lparams(matchParent, matchParent)
+            }
+        }.view
 
     fun setDeleteUnable() { mIVDelete.visibility = View.INVISIBLE }
 
@@ -181,6 +198,7 @@ class CompleteScaleImageView(private val mContext: Context,
                     for (i in 0 until urls.size) {
                         mViews.add(createItemView())
                     }
+                    initShow(startPosition)
                     var index = 0
                     Observable.create<File> {
                         for (url in urls) {
@@ -192,17 +210,17 @@ class CompleteScaleImageView(private val mContext: Context,
                     }
                             .subscribeOn(Schedulers.io())
                             .observeOn(AndroidSchedulers.mainThread())
-                            .subscribeBy(onNext = {
-                                mViews[index].setImage(ImageSource.uri(Uri.fromFile(it)))
+                            .subscribeBy {
+                                mViews[index].find<SubsamplingScaleImageView>(SUBSAMPLING_ID).setImage(ImageSource.uri(Uri.fromFile(it)))
+                                mViews[index].find<ProgressBar>(PROGRESS_BAR_ID).visibility = View.INVISIBLE
                                 index++
-                            },
-                                    onError = { it.printStackTrace() },
-                                    onComplete = { initShow(startPosition) })
+                            }
                 }
             } else if (mStatus == FILE) {
                 mFiles?.let {
                     for (file in it) {
-                        val subsamplingScaleImageView = createItemView()
+                        val view = createItemView()
+                        val subsamplingScaleImageView = view.find<SubsamplingScaleImageView>(SUBSAMPLING_ID)
                         mViews.add(subsamplingScaleImageView)
                         subsamplingScaleImageView.setImage(ImageSource.uri(Uri.fromFile(file)))
                     }
@@ -215,7 +233,10 @@ class CompleteScaleImageView(private val mContext: Context,
     private fun initShow(startPosition: Int) {
         mViewPager.adapter = mAdapter
         mSelectedPosition = startPosition
-        val text = "${startPosition + 1}/${mViews.size}"
+        val size = if (mStatus == URL) {
+            mUrls!!.size
+        } else mFiles!!.size
+        val text = "${startPosition + 1}/$size"
         mTVImageCount.text = text
         showAgain(startPosition)
     }
@@ -229,7 +250,7 @@ class CompleteScaleImageView(private val mContext: Context,
     fun recycler() {
         if (mViews.isNotEmpty()) {
             mViews.forEach {
-                it.recycle()
+                it.find<SubsamplingScaleImageView>(SUBSAMPLING_ID).recycle()
             }
         }
     }

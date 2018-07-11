@@ -8,6 +8,7 @@ import android.support.v4.widget.DrawerLayout
 import android.support.v7.widget.AppCompatSpinner
 import android.util.TypedValue
 import android.view.ViewManager
+import com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView
 import de.hdodenhof.circleimageview.CircleImageView
 import org.jetbrains.anko.custom.ankoView
 
@@ -23,6 +24,10 @@ inline fun ViewManager.appCompatSpineer(init: AppCompatSpinner.() -> Unit): AppC
 //CircleImageView
 inline fun ViewManager.circleImageView(init: CircleImageView.() -> Unit): CircleImageView =
         ankoView({ CircleImageView(it) }, theme = 0, init = init)
+
+//SubsamplingImageView
+inline fun ViewManager.subsamplingImageView(init: SubsamplingScaleImageView.() -> Unit): SubsamplingScaleImageView =
+        ankoView({ SubsamplingScaleImageView(it) }, theme = 0, init = init)
 
 inline fun Activity.myDrawerLayout(init: DrawerLayout.() -> Unit): DrawerLayout =
         ankoView({ DrawerLayout(it) }, theme = 0, init = init)
