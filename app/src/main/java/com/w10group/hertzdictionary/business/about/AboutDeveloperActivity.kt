@@ -24,10 +24,8 @@ import com.w10group.hertzdictionary.R
 import com.w10group.hertzdictionary.business.features.FeaturesActivity
 import com.w10group.hertzdictionary.business.manager.FileReadManagerService
 import com.w10group.hertzdictionary.business.manager.ImageManagerService
-import com.w10group.hertzdictionary.core.ActionBarSize
-import com.w10group.hertzdictionary.core.GlideApp
-import com.w10group.hertzdictionary.core.circleImageView
-import com.w10group.hertzdictionary.core.createTouchFeedbackBorderless
+import com.w10group.hertzdictionary.core.*
+import com.w10group.hertzdictionary.core.image.CompleteScaleImageView
 import org.jetbrains.anko.*
 import org.jetbrains.anko.appcompat.v7.toolbar
 import org.jetbrains.anko.cardview.v7.cardView
@@ -36,12 +34,16 @@ import org.jetbrains.anko.design.collapsingToolbarLayout
 import org.jetbrains.anko.design.coordinatorLayout
 import org.jetbrains.anko.design.snackbar
 import org.jetbrains.anko.support.v4.nestedScrollView
+import java.util.*
 
 class AboutDeveloperActivity : AppCompatActivity() {
 
     private companion object {
         const val DEVELOPER_NAME = "Raidriar"
         const val ABOUT_ME_FILE_NAME = "about_me.txt"
+
+        const val WECHAT_CODE_URL = "https://upload-images.jianshu.io/upload_images/12354730-20bdaff09e53dbdd.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"
+        const val ALIPAY_CODE_URL = "https://upload-images.jianshu.io/upload_images/12354730-c576dd762c8365e5.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"
 
         const val BTC_ADDRESS = "3589aqdNmzCuQeQcYWjF6w9Euq8FsWoDfg"
         const val ETH_ADDRESS = "0x98725b434f875f91604362be9deac3ad38a365fc"
@@ -59,6 +61,23 @@ class AboutDeveloperActivity : AppCompatActivity() {
     private lateinit var mTVContent2: TextView
     private lateinit var mTVContent3: TextView
     private lateinit var mTVFeature: TextView
+
+    private val mCompleteScaleImageView by lazy { createCompleteScaleImageView(ImageManagerService.urlList) }
+
+    private val mReceiptCodeUrlList by lazy {
+        val list = LinkedList<String>()
+        list.add(WECHAT_CODE_URL)
+        list.add(ALIPAY_CODE_URL)
+        list
+    }
+    private val mReceiptCompleteScaleImageView by lazy { createCompleteScaleImageView(mReceiptCodeUrlList) }
+
+    private fun createCompleteScaleImageView(list: MutableList<String>): CompleteScaleImageView {
+        val completeScaleImageView = CompleteScaleImageView(this, GlideDownloader)
+        completeScaleImageView.setDownloadEnable(true)
+        completeScaleImageView.mUrls = list
+        return completeScaleImageView
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -80,9 +99,7 @@ class AboutDeveloperActivity : AppCompatActivity() {
                         scaleType = ImageView.ScaleType.CENTER_CROP
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
                             foreground = createTouchFeedbackBorderless(this@AboutDeveloperActivity)
-                        setOnClickListener {
-
-                        }
+                        setOnClickListener {  mCompleteScaleImageView.show(1) }
                     }.lparams(matchParent, matchParent) {
                         collapseMode = COLLAPSE_MODE_PARALLAX
                     }
@@ -93,9 +110,7 @@ class AboutDeveloperActivity : AppCompatActivity() {
                         borderColor = Color.WHITE
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
                             foreground = createTouchFeedbackBorderless(this@AboutDeveloperActivity)
-                        setOnClickListener {
-
-                        }
+                        setOnClickListener { mCompleteScaleImageView.show() }
                     }.lparams(dip(80), dip(80)) {
                         gravity = Gravity.CENTER_HORIZONTAL or Gravity.TOP
                         topMargin = dip(88)
@@ -156,9 +171,7 @@ class AboutDeveloperActivity : AppCompatActivity() {
                         frameLayout {
                             backgroundColor = blueGray
                             foreground = createTouchFeedbackBorderless(this@AboutDeveloperActivity)
-                            setOnClickListener {
-
-                            }
+                            setOnClickListener { mReceiptCompleteScaleImageView.show() }
                             GlideApp.with(this@AboutDeveloperActivity).load(R.drawable.wechatpay).dontAnimate().into(
                                     imageView().lparams(dip(24), dip(24)) {
                                         gravity = Gravity.CENTER_VERTICAL
@@ -182,9 +195,7 @@ class AboutDeveloperActivity : AppCompatActivity() {
                         frameLayout {
                             backgroundColor = blueGray
                             foreground = createTouchFeedbackBorderless(this@AboutDeveloperActivity)
-                            setOnClickListener {
-
-                            }
+                            setOnClickListener { mReceiptCompleteScaleImageView.show(1) }
                             GlideApp.with(this@AboutDeveloperActivity).load(R.drawable.alipay).dontAnimate().into(
                                     imageView().lparams(dip(24), dip(24)) {
                                         gravity = Gravity.CENTER_VERTICAL
@@ -284,6 +295,12 @@ class AboutDeveloperActivity : AppCompatActivity() {
         ImageManagerService.loadBackground(this, mIMBackground)
         ImageManagerService.loadAvatar(this, mIMAvatar)
         FileReadManagerService.process(ABOUT_ME_FILE_NAME, this, mTVContent1, mTVContent2, mTVContent3)
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        mCompleteScaleImageView.recycler()
+        mReceiptCompleteScaleImageView.recycler()
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {

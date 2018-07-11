@@ -9,11 +9,13 @@
         <item name="android:textColorPrimary">@android:color/white</item>
         <item name="android:colorControlNormal">@android:color/white</item>
         <item name="drawerArrowStyle">@style/DrawerArrowStyle</item>
+        <item name="android:alertDialogTheme">@style/Theme.AppCompat.Light.Dialog.Alert</item>
     </style>
 
     <style name="DrawerArrowStyle" parent="Widget.AppCompat.DrawerArrowToggle">
         <item name="color">@android:color/white</item>
     </style>
+
 
     <style name="NewTheme" parent="AppTheme" >
         <item name="android:statusBarColor">@android:color/transparent</item>

@@ -19,13 +19,16 @@ import com.w10group.hertzdictionary.R
 import com.w10group.hertzdictionary.business.manager.FileReadManagerService
 import com.w10group.hertzdictionary.core.ActionBarSize
 import com.w10group.hertzdictionary.core.GlideApp
+import com.w10group.hertzdictionary.core.GlideDownloader
 import com.w10group.hertzdictionary.core.createTouchFeedbackBorderless
+import com.w10group.hertzdictionary.core.image.CompleteScaleImageView
 import org.jetbrains.anko.*
 import org.jetbrains.anko.appcompat.v7.toolbar
 import org.jetbrains.anko.cardview.v7.cardView
 import org.jetbrains.anko.design.appBarLayout
 import org.jetbrains.anko.design.coordinatorLayout
 import org.jetbrains.anko.support.v4.nestedScrollView
+import java.util.*
 
 class FeaturesActivity : AppCompatActivity() {
 
@@ -33,6 +36,7 @@ class FeaturesActivity : AppCompatActivity() {
         const val FEATURE_FILE_NAME = "feature.txt"
         const val MY_EMAIL = "qiaoyuang2012@gmail.com"
         const val GITHUB_ADDRESS = "https://github.com/qiaoyuang/HertzDictionary"
+        const val WECHAT_CODE = "https://upload-images.jianshu.io/upload_images/12354730-f08c7c37c316d1d8.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"
     }
 
     private val blue1 by lazy { ContextCompat.getColor(this, R.color.blue1) }
@@ -43,6 +47,18 @@ class FeaturesActivity : AppCompatActivity() {
     private lateinit var mTVBugFeedback2: TextView
     private lateinit var mTVAboutTech1: TextView
     private lateinit var mTVAboutTech2: TextView
+
+    private val mWechatCodeList by lazy {
+        val list = LinkedList<String>()
+        list.add(WECHAT_CODE)
+        list
+    }
+    private val mCompleteScaleImageView by lazy {
+        val completeScaleImageView = CompleteScaleImageView(this, GlideDownloader)
+        completeScaleImageView.setDownloadEnable(true)
+        completeScaleImageView.mUrls = mWechatCodeList
+        completeScaleImageView
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -171,9 +187,7 @@ class FeaturesActivity : AppCompatActivity() {
                             frameLayout {
                                 backgroundColorResource = R.color.blueGray
                                 foreground = createTouchFeedbackBorderless(this@FeaturesActivity)
-                                setOnClickListener {
-
-                                }
+                                setOnClickListener { mCompleteScaleImageView.show() }
                                 GlideApp.with(this@FeaturesActivity).load(R.drawable.wechat).dontAnimate().into(
                                         imageView().lparams(dip(24), dip(24)) {
                                             gravity = Gravity.CENTER_VERTICAL
@@ -269,6 +283,11 @@ class FeaturesActivity : AppCompatActivity() {
         FileReadManagerService.process(FEATURE_FILE_NAME, this,
                 mTVCurrentContent, mTVNextContent, mTVBugFeedback1,
                 mTVBugFeedback2, mTVAboutTech1, mTVAboutTech2)
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        mCompleteScaleImageView.recycler()
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {

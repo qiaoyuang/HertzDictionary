@@ -36,6 +36,13 @@ object ImageManagerService {
         getURLOnLocal(context, imageView)
     }
 
+    val urlList by lazy {
+        val list = LinkedList<String>()
+        list.add(AVATAR_URL)
+        list.add(todayURL)
+        list
+    }
+
     private fun getURLOnLocal(context: Context, imageView: ImageView) {
         if (!ImageManagerService::todayURL.isLateinit) {
             Glide.with(context).load(todayURL).into(imageView)

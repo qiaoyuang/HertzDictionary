@@ -1,60 +1,237 @@
 package com.w10group.hertzdictionary.core.image
 
+import android.animation.ArgbEvaluator
+import android.animation.ObjectAnimator
 import android.app.Dialog
 import android.content.Context
+import android.graphics.Color
+import android.net.Uri
+import android.provider.MediaStore
+import android.support.v4.view.ViewPager
 import android.view.Gravity
 import android.view.View
+import android.view.ViewGroup
+import android.widget.ImageView
+import android.widget.TextView
+import com.davemorrissey.labs.subscaleview.ImageSource
+import com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView
 import com.w10group.hertzdictionary.R
+import io.reactivex.Observable
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.rxkotlin.subscribeBy
+import io.reactivex.schedulers.Schedulers
 import org.jetbrains.anko.*
+import org.jetbrains.anko.design.snackbar
 import org.jetbrains.anko.support.v4.viewPager
+import java.io.File
+import java.util.*
 
 class CompleteScaleImageView(private val mContext: Context,
                              private val mImageDownloader: ImageDownloader) {
 
+    private lateinit var mViewPager: ViewPager
+    private val mAdapter by lazy { DialogPagerAdapter(mViews, mDialog) }
+
+    private lateinit var mIVBack: ImageView//后退按钮
+    private lateinit var mIVDownload: ImageView//下载按钮
+    private lateinit var mIVDelete: ImageView//删除按钮
+    private lateinit var mTVImageCount: TextView//显示当前为第几页的TextView
+
     private val mDialog = Dialog(mContext, R.style.Dialog_Fullscreen)
 
-    init {
-        mDialog.setContentView(initView())
+    private val mViews by lazy { LinkedList<SubsamplingScaleImageView>() }
+    private val mDownloadFiles by lazy { LinkedList<File>() }//下载图片列表，当使用网络查看模式时，该列表保存所有下载下来的完整尺寸图片
 
+    private var mSelectedPosition = 0//当前选中的位置
+
+    companion object {
+        const val URL = 0
+        const val FILE = 1
     }
+
+    //标示当前状态是网络图片显示模式还是本地图片显示模式
+    private var mStatus = URL
+
+    var mUrls: MutableList<String>? = null
+        set(value) {
+            field = value
+            mStatus = URL
+            if (mViews.isNotEmpty())
+                mViews.clear()
+            if (mDownloadFiles.isNotEmpty())
+                mDownloadFiles.clear()
+        }
+
+    var mFiles: MutableList<File>? = null
+        set(value) {
+            field = value
+            mStatus = FILE
+            if (mViews.isNotEmpty())
+                mViews.clear()
+        }
+
+    private val mAnim by lazy {
+        val colorAnim = ObjectAnimator.ofInt(mTVImageCount, "textColor", Color.WHITE, Color.TRANSPARENT)
+        colorAnim.duration = 1500
+        colorAnim.setEvaluator(ArgbEvaluator())
+        colorAnim
+    }
+
+    init { mDialog.setContentView(initView()) }
 
     private fun initView(): View =
         AnkoContext.create(mContext).apply {
             frameLayout {
-                viewPager().lparams(matchParent, matchParent)
+                backgroundColor = Color.BLACK
+                mViewPager = viewPager {
+                    addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
+                        override fun onPageScrollStateChanged(state: Int) {}
+                        override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {}
+                        override fun onPageSelected(position: Int) {
+                            mSelectedPosition = position
+                            val text = "${position + 1}/${mViews.size}"
+                            mTVImageCount.text = text
+                            mAnim.start()
+                        }
+                    })
+                }.lparams(matchParent, matchParent)
 
-                imageView {
+                mIVBack = imageView {
                     imageResource = R.drawable.ic_arrow_back_white_24dp
+                    setPadding(dip(24), dip(24), 0, 0)
+                    setOnClickListener { mDialog.dismiss() }
                 }.lparams(wrapContent, wrapContent) {
                     gravity = Gravity.START or Gravity.TOP
-                    marginEnd = dip(24)
-                    topMargin = dip(24)
                 }
 
-                imageView {
+                mIVDelete = imageView {
                     imageResource = R.drawable.ic_delete_white_24dp
+                    visibility = View.INVISIBLE
+                    setPadding(0, dip(24), dip(24), 0)
+                    setOnClickListener {
+                        val size = mViews.size
+                        if (mStatus == URL) {
+                            mUrls?.removeAt(mSelectedPosition)
+                        } else if (mStatus == FILE) {
+                            mFiles?.removeAt(mSelectedPosition)
+                        }
+                        onDelete(mSelectedPosition)
+                        mViewPager.removeViewAt(mSelectedPosition)
+                        if (mSelectedPosition != size) {
+                            val text = "${mSelectedPosition + 1}/${mViews.size}"
+                            mTVImageCount.text = text
+                        }
+                        mAdapter.notifyDataSetChanged()
+                    }
                 }.lparams(wrapContent, wrapContent) {
                     gravity = Gravity.END or Gravity.TOP
-                    marginEnd= dip(24)
-                    topMargin = dip(24)
                 }
 
-                imageView {
+                mIVDownload = imageView {
                     imageResource = R.drawable.ic_file_download_white_24dp
+                    visibility = View.INVISIBLE
+                    setPadding(0, 0, dip(24), dip(24))
+                    setOnClickListener {
+                        val file = mDownloadFiles[mSelectedPosition]
+                        MediaStore.Images.Media.insertImage(mContext.contentResolver,
+                                file.absolutePath, file.name, null)
+                        snackbar(it, "图片保存成功")
+                    }
                 }.lparams(wrapContent, wrapContent) {
                     gravity = Gravity.END or Gravity.BOTTOM
-                    marginEnd= dip(24)
-                    bottomMargin = dip(24)
                 }
 
-                textView {
-                    textSize = 16f
+                mTVImageCount = textView {
+                    textSize = 18f
+                    textColor = Color.WHITE
                 }.lparams(wrapContent, wrapContent) {
                     gravity = Gravity.CENTER_HORIZONTAL or Gravity.BOTTOM
-                    bottomMargin = dip(32)
+                    bottomMargin = dip(48)
                 }
 
             }
         }.view
+
+    private fun createItemView(): SubsamplingScaleImageView {
+        val subsamplingScaleImageView = SubsamplingScaleImageView(mContext)
+        subsamplingScaleImageView.layoutParams = ViewGroup.LayoutParams(matchParent, matchParent)
+        subsamplingScaleImageView.setOnClickListener { mAnim.start() }
+        return subsamplingScaleImageView
+    }
+
+    fun setDeleteUnable() { mIVDelete.visibility = View.INVISIBLE }
+
+    private var onDelete = { _: Int -> Unit }
+    fun setDeleteEnable(onDelete: (Int) -> Unit) {
+        mIVDelete.visibility = View.VISIBLE
+        this.onDelete = onDelete
+    }
+
+    //设置下载按钮是否启用
+    fun setDownloadEnable(isEnable: Boolean) {
+        mIVDownload.visibility = if (isEnable) {
+            View.VISIBLE
+        } else View.INVISIBLE
+    }
+
+    fun show(startPosition: Int = 0) {
+        if (mViews.isEmpty()) {
+            if (mStatus == URL) {
+                mUrls?.let { urls: MutableList<String> ->
+                    for (i in 0 until urls.size) {
+                        mViews.add(createItemView())
+                    }
+                    var index = 0
+                    Observable.create<File> {
+                        for (url in urls) {
+                            val downLoadFile = mImageDownloader.download(url, mContext)
+                            mDownloadFiles.add(downLoadFile)
+                            it.onNext(downLoadFile)
+                        }
+                        it.onComplete()
+                    }
+                            .subscribeOn(Schedulers.io())
+                            .observeOn(AndroidSchedulers.mainThread())
+                            .subscribeBy(onNext = {
+                                mViews[index].setImage(ImageSource.uri(Uri.fromFile(it)))
+                                index++
+                            },
+                                    onError = { it.printStackTrace() },
+                                    onComplete = { initShow(startPosition) })
+                }
+            } else if (mStatus == FILE) {
+                mFiles?.let {
+                    for (file in it) {
+                        val subsamplingScaleImageView = createItemView()
+                        mViews.add(subsamplingScaleImageView)
+                        subsamplingScaleImageView.setImage(ImageSource.uri(Uri.fromFile(file)))
+                    }
+                }
+                initShow(startPosition)
+            }
+        } else showAgain(startPosition)
+    }
+
+    private fun initShow(startPosition: Int) {
+        mViewPager.adapter = mAdapter
+        mSelectedPosition = startPosition
+        val text = "${startPosition + 1}/${mViews.size}"
+        mTVImageCount.text = text
+        showAgain(startPosition)
+    }
+
+    private fun showAgain(startPosition: Int) {
+        mViewPager.currentItem = startPosition
+        mDialog.show()
+        mAnim.start()
+    }
+
+    fun recycler() {
+        if (mViews.isNotEmpty()) {
+            mViews.forEach {
+                it.recycle()
+            }
+        }
+    }
 
 }
