@@ -220,25 +220,26 @@ class CompleteScaleImageView(private val mActivity: Activity,
         if (mViews.isEmpty()) {
             if (mStatus == URL) {
                 mUrls?.let { urls: MutableList<String> ->
-                    for (i in 0 until urls.size) {
-                        mViews.add(createItemView())
-                    }
-                    initShow(startPosition)
-                    var index = 0
-                    Observable.create<File> {
-                        for (url in urls) {
-                            val downLoadFile = mImageDownloader.download(url, mActivity)
-                            mDownloadFiles.add(downLoadFile)
-                            it.onNext(downLoadFile)
+                    Observable.create<Int> {
+                        for (i in 0 until urls.size) {
+                            mViews.add(createItemView())
+                            it.onNext(i)
                         }
+                        initShow(startPosition)
                         it.onComplete()
                     }
-                            .subscribeOn(Schedulers.io())
+                            .subscribeOn(AndroidSchedulers.mainThread())
+                            .observeOn(Schedulers.io())
+                            .map {
+                                val downLoadFile = mImageDownloader.download(urls[it], mActivity)
+                                mDownloadFiles.add(downLoadFile)
+                                Pair(it, downLoadFile)
+                            }
                             .observeOn(AndroidSchedulers.mainThread())
                             .subscribeBy {
-                                mViews[index].find<SubsamplingScaleImageView>(SUBSAMPLING_ID).setImage(ImageSource.uri(Uri.fromFile(it)))
+                                val (index, downloadFile) = it
+                                mViews[index].find<SubsamplingScaleImageView>(SUBSAMPLING_ID).setImage(ImageSource.uri(Uri.fromFile(downloadFile)))
                                 mViews[index].find<ProgressBar>(PROGRESS_BAR_ID).visibility = View.INVISIBLE
-                                index++
                             }
                 }
             } else if (mStatus == FILE) {

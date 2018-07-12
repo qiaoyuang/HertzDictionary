@@ -31,9 +31,7 @@ import com.w10group.hertzdictionary.business.features.FeaturesActivity
 import com.w10group.hertzdictionary.business.licence.LicenceActivity
 import com.w10group.hertzdictionary.business.manager.ImageManagerService
 import com.w10group.hertzdictionary.business.manager.NetworkService
-import com.w10group.hertzdictionary.core.ActionBarSize
-import com.w10group.hertzdictionary.core.NetworkUtil
-import com.w10group.hertzdictionary.core.createTouchFeedbackBorderless
+import com.w10group.hertzdictionary.core.*
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.rxkotlin.subscribeBy
@@ -118,6 +116,7 @@ class MainActivity : AppCompatActivity() {
     private val gray600 by lazy { ContextCompat.getColor(this, R.color.gray600) }
     private val deepWhite by lazy { ContextCompat.getColor(this, R.color.deepWhite) }
     private val blue1 by lazy { ContextCompat.getColor(this, R.color.blue1) }
+    private val blue2 by lazy { ContextCompat.getColor(this, R.color.blue2) }
 
     private val mProgressDialog by lazy {
         progressDialog(title = "请稍候......", message = "正在获取单词数据......") {
@@ -143,17 +142,25 @@ class MainActivity : AppCompatActivity() {
                 fitsSystemWindows = true
 
                 themedAppBarLayout(R.style.AppTheme_AppBarOverlay) {
+                    fitsSystemWindows = true
                     backgroundColor = Color.WHITE
                     isFocusableInTouchMode = true
                     elevation = dip(8).toFloat()
                     translationZ = dip(8).toFloat()
                     val scrollFlag = SCROLL_FLAG_SCROLL or SCROLL_FLAG_ENTER_ALWAYS or SCROLL_FLAG_SNAP
 
+                    view {
+                        fitsSystemWindows = true
+                        backgroundColor = blue2
+                    }.lparams(matchParent, getStatusBarSize(this@MainActivity)) {
+                        scrollFlags = scrollFlag
+                    }
+
                     mToolBar = toolbar {
                         titleResource = R.string.app_name
                         backgroundColor = blue1
                         popupTheme = R.style.ThemeOverlay_AppCompat_Light
-                    }.lparams(matchParent, ActionBarSize.get(this@MainActivity)) {
+                    }.lparams(matchParent, getActionBarSize(this@MainActivity)) {
                         scrollFlags = scrollFlag
                     }
 

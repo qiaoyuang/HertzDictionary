@@ -8,6 +8,7 @@ import android.util.TypedValue
 import android.view.ViewManager
 import com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView
 import de.hdodenhof.circleimageview.CircleImageView
+import org.jetbrains.anko.attr
 import org.jetbrains.anko.custom.ankoView
 
 /**
@@ -42,15 +43,13 @@ fun createTouchFeedbackBorderless(context: Context): Drawable? {
 }
 
 //获取系统的ActionBarSize
-object ActionBarSize {
-    private var mSize = 0
-    fun get(context: Context):Int =
-            if (mSize == 0) {
-                val styledAttributes = context.applicationContext
-                        .obtainStyledAttributes(intArrayOf(android.R.attr.actionBarSize))
-                val actionBarSize = styledAttributes.getDimension(0, 0f).toInt()
-                styledAttributes.recycle()
-                mSize = actionBarSize
-                mSize
-            } else mSize
+fun getActionBarSize(context: Context): Int {
+    val typedValue = context.attr(android.R.attr.actionBarSize).data
+    return TypedValue.complexToDimension(typedValue, context.resources.displayMetrics).toInt()
+}
+
+//获取系统StatusBarSize
+fun getStatusBarSize(context: Context): Int {
+    val resourceId = context.resources.getIdentifier("status_bar_height", "dimen", "android")
+    return context.resources.getDimensionPixelSize(resourceId)
 }

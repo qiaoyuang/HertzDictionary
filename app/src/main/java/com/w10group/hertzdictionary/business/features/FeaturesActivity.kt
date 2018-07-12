@@ -18,10 +18,7 @@ import android.view.MenuItem
 import android.widget.TextView
 import com.w10group.hertzdictionary.R
 import com.w10group.hertzdictionary.business.manager.FileReadManagerService
-import com.w10group.hertzdictionary.core.ActionBarSize
-import com.w10group.hertzdictionary.core.GlideApp
-import com.w10group.hertzdictionary.core.GlideDownloader
-import com.w10group.hertzdictionary.core.createTouchFeedbackBorderless
+import com.w10group.hertzdictionary.core.*
 import com.w10group.hertzdictionary.core.image.CompleteScaleImageView
 import org.jetbrains.anko.*
 import org.jetbrains.anko.appcompat.v7.toolbar
@@ -74,7 +71,7 @@ class FeaturesActivity : AppCompatActivity() {
                 toolbar = toolbar {
                     title = "未来新功能"
                     backgroundColorResource = R.color.blue1
-                }.lparams(matchParent, ActionBarSize.get(this@FeaturesActivity)) {
+                }.lparams(matchParent, getActionBarSize(this@FeaturesActivity)) {
                     scrollFlags = SCROLL_FLAG_SCROLL or SCROLL_FLAG_ENTER_ALWAYS or SCROLL_FLAG_SNAP
                 }
             }.lparams(matchParent, wrapContent)

@@ -118,6 +118,7 @@ class AboutDeveloperActivity : AppCompatActivity() {
                     }.lparams(dip(80), dip(80)) {
                         gravity = Gravity.CENTER_HORIZONTAL or Gravity.TOP
                         topMargin = dip(88)
+                        collapseMode = COLLAPSE_MODE_PARALLAX
                     }
 
                     textView {
@@ -127,11 +128,12 @@ class AboutDeveloperActivity : AppCompatActivity() {
                     }.lparams(wrapContent, wrapContent) {
                         gravity = Gravity.CENTER_HORIZONTAL or Gravity.BOTTOM
                         bottomMargin = dip(48)
+                        collapseMode = COLLAPSE_MODE_PARALLAX
                     }
 
                     mToolbar = toolbar {
                         title = "关于开发者"
-                    }.lparams(matchParent, ActionBarSize.get(this@AboutDeveloperActivity)) {
+                    }.lparams(matchParent, getActionBarSize(this@AboutDeveloperActivity)) {
                         collapseMode = COLLAPSE_MODE_PIN
                     }
 

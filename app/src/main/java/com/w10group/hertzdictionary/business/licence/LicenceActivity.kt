@@ -13,7 +13,7 @@ import android.support.v7.widget.Toolbar
 import android.view.MenuItem
 import com.w10group.hertzdictionary.business.licence.OSLAdapter.OSL
 import com.w10group.hertzdictionary.R
-import com.w10group.hertzdictionary.core.ActionBarSize
+import com.w10group.hertzdictionary.core.getActionBarSize
 import io.reactivex.Observable
 import io.reactivex.rxkotlin.subscribeBy
 import io.reactivex.schedulers.Schedulers
@@ -44,7 +44,7 @@ class LicenceActivity : AppCompatActivity() {
                 toolbar = toolbar {
                     title = "开源许可证"
                     backgroundColorResource = R.color.blue1
-                }.lparams(matchParent, ActionBarSize.get(this@LicenceActivity)) {
+                }.lparams(matchParent, getActionBarSize(this@LicenceActivity)) {
                     scrollFlags = SCROLL_FLAG_SCROLL or SCROLL_FLAG_ENTER_ALWAYS or SCROLL_FLAG_SNAP
                 }
             }.lparams(matchParent, wrapContent)
