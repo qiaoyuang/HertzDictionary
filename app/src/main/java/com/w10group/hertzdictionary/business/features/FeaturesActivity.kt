@@ -1,6 +1,7 @@
 package com.w10group.hertzdictionary.business.features
 
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.graphics.Color
 import android.graphics.Paint
 import android.net.Uri
@@ -53,8 +54,10 @@ class FeaturesActivity : AppCompatActivity() {
         list.add(WECHAT_CODE)
         list
     }
+
+    private val mRequestCode = 1
     private val mCompleteScaleImageView by lazy {
-        val completeScaleImageView = CompleteScaleImageView(this, GlideDownloader)
+        val completeScaleImageView = CompleteScaleImageView(this, GlideDownloader, mRequestCode)
         completeScaleImageView.setDownloadEnable(true)
         completeScaleImageView.mUrls = mWechatCodeList
         completeScaleImageView
@@ -295,6 +298,16 @@ class FeaturesActivity : AppCompatActivity() {
             android.R.id.home -> { onBackPressed() }
         }
         return super.onOptionsItemSelected(item)
+    }
+
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+        if (requestCode == mRequestCode) {
+            if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                mCompleteScaleImageView.restoreImage()
+            } else {
+                mCompleteScaleImageView.permissionsRejectSnack()
+            }
+        }
     }
 
     private fun openBrowser() {

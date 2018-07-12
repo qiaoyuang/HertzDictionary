@@ -137,12 +137,12 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
 
         mDrawerLayout = drawerLayout {
-            fitsSystemWindows = true
 
             coordinatorLayout {
                 backgroundColor = deepWhite
+                fitsSystemWindows = true
 
-                appBarLayout {
+                themedAppBarLayout(R.style.AppTheme_AppBarOverlay) {
                     backgroundColor = Color.WHITE
                     isFocusableInTouchMode = true
                     elevation = dip(8).toFloat()
@@ -302,7 +302,7 @@ class MainActivity : AppCompatActivity() {
                                     bottomMargin = dip(16)
                                     marginStart = dip(8)
                                 }
-                                mOtherMeanLayout = verticalLayout {}.lparams(matchParent, wrapContent)
+                                mOtherMeanLayout = verticalLayout().lparams(matchParent, wrapContent)
                             }.lparams(matchParent, wrapContent)
                         }.lparams(matchParent, wrapContent) {
                             marginStart = dip(8)
@@ -587,6 +587,7 @@ class MainActivity : AppCompatActivity() {
                         if (mIsMoved[0] >= 0) {
                             mAdapter.notifyItemRemoved(mIsMoved[0])
                             mAdapter.notifyItemInserted(mIsMoved[1])
+                            mAdapter.notifyItemRangeChanged(0, mData.size)
                         } else {
                             mAdapter.notifyItemRangeChanged(0, mData.size)
                         }

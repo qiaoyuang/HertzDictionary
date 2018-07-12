@@ -1,12 +1,18 @@
 package com.w10group.hertzdictionary.core.image
 
+import android.Manifest
 import android.animation.ArgbEvaluator
 import android.animation.ObjectAnimator
+import android.app.Activity
 import android.app.Dialog
-import android.content.Context
+import android.content.Intent
+import android.content.pm.PackageManager
 import android.graphics.Color
 import android.net.Uri
 import android.provider.MediaStore
+import android.provider.Settings
+import android.support.v4.app.ActivityCompat
+import android.support.v4.content.ContextCompat
 import android.support.v4.view.ViewPager
 import android.view.Gravity
 import android.view.View
@@ -22,6 +28,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.rxkotlin.subscribeBy
 import io.reactivex.schedulers.Schedulers
 import org.jetbrains.anko.*
+import org.jetbrains.anko.design.longSnackbar
 import org.jetbrains.anko.design.snackbar
 import org.jetbrains.anko.support.v4.viewPager
 import java.io.File
@@ -32,8 +39,9 @@ import java.util.*
  * 大图查看器封装，图片下载的时候还可以多利用线程池的并发进行重构
  */
 
-class CompleteScaleImageView(private val mContext: Context,
-                             private val mImageDownloader: ImageDownloader) {
+class CompleteScaleImageView(private val mActivity: Activity,
+                             private val mImageDownloader: ImageDownloader,
+                             private val mRequestCode: Int) {
 
     private lateinit var mViewPager: ViewPager
     private val mAdapter by lazy { DialogPagerAdapter(mViews, mDialog) }
@@ -43,12 +51,13 @@ class CompleteScaleImageView(private val mContext: Context,
     private lateinit var mIVDelete: ImageView//删除按钮
     private lateinit var mTVImageCount: TextView//显示当前为第几页的TextView
 
-    private val mDialog = Dialog(mContext, R.style.Dialog_Fullscreen)
+    private val mDialog = Dialog(mActivity, R.style.Dialog_Fullscreen)
 
     private val mViews by lazy { LinkedList<View>() }
     private val mDownloadFiles by lazy { LinkedList<File>() }//下载图片列表，当使用网络查看模式时，该列表保存所有下载下来的完整尺寸图片
 
     private var mSelectedPosition = 0//当前选中的位置
+    private val mAlbumName by lazy { mActivity.getString(R.string.app_name) }
 
     companion object {
         const val URL = 0
@@ -88,7 +97,7 @@ class CompleteScaleImageView(private val mContext: Context,
     init { mDialog.setContentView(initView()) }
 
     private fun initView(): View =
-        AnkoContext.create(mContext).apply {
+        AnkoContext.create(mActivity).apply {
             frameLayout {
                 backgroundColor = Color.BLACK
                 mViewPager = viewPager {
@@ -140,10 +149,11 @@ class CompleteScaleImageView(private val mContext: Context,
                     visibility = View.INVISIBLE
                     setPadding(0, 0, dip(24), dip(24))
                     setOnClickListener {
-                        val file = mDownloadFiles[mSelectedPosition]
-                        MediaStore.Images.Media.insertImage(mContext.contentResolver,
-                                file.absolutePath, file.name, null)
-                        snackbar(it, "图片保存成功")
+                        if (ContextCompat.checkSelfPermission(mActivity, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
+                            restoreImage()
+                        } else {
+                            ActivityCompat.requestPermissions(mActivity, arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE), mRequestCode)
+                        }
                     }
                 }.lparams(wrapContent, wrapContent) {
                     gravity = Gravity.END or Gravity.BOTTOM
@@ -160,8 +170,23 @@ class CompleteScaleImageView(private val mContext: Context,
             }
         }.view
 
+    fun restoreImage() {
+        val file = mDownloadFiles[mSelectedPosition]
+        MediaStore.Images.Media.insertImage(mActivity.contentResolver, file.absolutePath, file.name, mAlbumName)
+        snackbar(mViewPager, "图片保存成功")
+    }
+
+    fun permissionsRejectSnack() {
+        longSnackbar(mViewPager, "您拒绝了存储权限申请，保存图片失败", "设置") {
+            val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            intent.data = Uri.fromParts("package", mActivity.packageName, null)
+            mActivity.startActivity(intent)
+        }.setActionTextColor(Color.YELLOW)
+    }
+
     private fun createItemView(): View =
-        AnkoContext.create(mContext).apply {
+        AnkoContext.create(mActivity).apply {
             frameLayout {
                 progressBar {
                     id = PROGRESS_BAR_ID
@@ -202,7 +227,7 @@ class CompleteScaleImageView(private val mContext: Context,
                     var index = 0
                     Observable.create<File> {
                         for (url in urls) {
-                            val downLoadFile = mImageDownloader.download(url, mContext)
+                            val downLoadFile = mImageDownloader.download(url, mActivity)
                             mDownloadFiles.add(downLoadFile)
                             it.onNext(downLoadFile)
                         }

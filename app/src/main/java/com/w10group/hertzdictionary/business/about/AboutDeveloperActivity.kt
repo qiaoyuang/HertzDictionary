@@ -3,6 +3,7 @@ package com.w10group.hertzdictionary.business.about
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
+import android.content.pm.PackageManager
 import android.graphics.Color
 import android.os.Build
 import android.support.v7.app.AppCompatActivity
@@ -62,7 +63,8 @@ class AboutDeveloperActivity : AppCompatActivity() {
     private lateinit var mTVContent3: TextView
     private lateinit var mTVFeature: TextView
 
-    private val mCompleteScaleImageView by lazy { createCompleteScaleImageView(ImageManagerService.urlList) }
+    private val mCompleteRequestCode = 1
+    private val mCompleteScaleImageView by lazy { createCompleteScaleImageView(ImageManagerService.urlList, mCompleteRequestCode) }
 
     private val mReceiptCodeUrlList by lazy {
         val list = LinkedList<String>()
@@ -70,10 +72,12 @@ class AboutDeveloperActivity : AppCompatActivity() {
         list.add(ALIPAY_CODE_URL)
         list
     }
-    private val mReceiptCompleteScaleImageView by lazy { createCompleteScaleImageView(mReceiptCodeUrlList) }
 
-    private fun createCompleteScaleImageView(list: MutableList<String>): CompleteScaleImageView {
-        val completeScaleImageView = CompleteScaleImageView(this, GlideDownloader)
+    private val mReceiptRequestCode = 2
+    private val mReceiptCompleteScaleImageView by lazy { createCompleteScaleImageView(mReceiptCodeUrlList, mReceiptRequestCode) }
+
+    private fun createCompleteScaleImageView(list: MutableList<String>, requestCode: Int): CompleteScaleImageView {
+        val completeScaleImageView = CompleteScaleImageView(this, GlideDownloader, requestCode)
         completeScaleImageView.setDownloadEnable(true)
         completeScaleImageView.mUrls = list
         return completeScaleImageView
@@ -214,11 +218,15 @@ class AboutDeveloperActivity : AppCompatActivity() {
                             topMargin = dip(8)
                         }
 
+
+
                         mTVContent3 = textView {
                             textSize = 16f
                         }.lparams(matchParent, wrapContent) {
                             topMargin = dip(24)
                         }
+
+
 
                         frameLayout {
                             backgroundColor = blueGray
@@ -308,6 +316,25 @@ class AboutDeveloperActivity : AppCompatActivity() {
             android.R.id.home -> { onBackPressed() }
         }
         return super.onOptionsItemSelected(item)
+    }
+
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+        when (requestCode) {
+            mCompleteRequestCode -> {
+                if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    mCompleteScaleImageView.restoreImage()
+                } else {
+                    mCompleteScaleImageView.permissionsRejectSnack()
+                }
+            }
+            mReceiptRequestCode -> {
+                if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    mReceiptCompleteScaleImageView.restoreImage()
+                } else {
+                    mReceiptCompleteScaleImageView.permissionsRejectSnack()
+                }
+            }
+        }
     }
 
     private fun copyToClipBoard(view: View, content: String, address: String) {

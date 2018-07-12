@@ -1,10 +1,8 @@
 package com.w10group.hertzdictionary.core
 
-import android.app.Activity
 import android.content.Context
 import android.graphics.drawable.Drawable
 import android.support.v4.content.ContextCompat
-import android.support.v4.widget.DrawerLayout
 import android.support.v7.widget.AppCompatSpinner
 import android.util.TypedValue
 import android.view.ViewManager
@@ -28,9 +26,6 @@ inline fun ViewManager.circleImageView(init: CircleImageView.() -> Unit): Circle
 //SubsamplingImageView
 inline fun ViewManager.subsamplingImageView(init: SubsamplingScaleImageView.() -> Unit): SubsamplingScaleImageView =
         ankoView({ SubsamplingScaleImageView(it) }, theme = 0, init = init)
-
-inline fun Activity.myDrawerLayout(init: DrawerLayout.() -> Unit): DrawerLayout =
-        ankoView({ DrawerLayout(it) }, theme = 0, init = init)
 
 //创建触摸反馈效果Drawable
 fun createTouchFeedback(context: Context): Drawable? {
