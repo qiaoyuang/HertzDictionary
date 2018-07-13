@@ -94,6 +94,7 @@ class AboutDeveloperActivity : AppCompatActivity() {
 
                 collapsingToolbarLayout {
                     fitsSystemWindows = true
+                    title = "关于开发者"
                     setContentScrimColor(blue1)
                     setExpandedTitleColor(Color.TRANSPARENT)
 
@@ -130,9 +131,7 @@ class AboutDeveloperActivity : AppCompatActivity() {
                         collapseMode = COLLAPSE_MODE_PARALLAX
                     }
 
-                    mToolbar = toolbar {
-                        title = "关于开发者"
-                    }.lparams(matchParent, getActionBarSize(this@AboutDeveloperActivity)) {
+                    mToolbar = toolbar().lparams(matchParent, getActionBarSize(this@AboutDeveloperActivity)) {
                         collapseMode = COLLAPSE_MODE_PIN
                     }
 

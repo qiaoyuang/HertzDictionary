@@ -8,6 +8,7 @@ import android.os.Bundle
 import android.support.design.widget.AppBarLayout.LayoutParams.SCROLL_FLAG_EXIT_UNTIL_COLLAPSED
 import android.support.design.widget.AppBarLayout.LayoutParams.SCROLL_FLAG_SCROLL
 import android.support.design.widget.AppBarLayout.ScrollingViewBehavior
+import android.support.design.widget.CollapsingToolbarLayout
 import android.support.design.widget.CollapsingToolbarLayout.LayoutParams.COLLAPSE_MODE_PARALLAX
 import android.support.design.widget.CollapsingToolbarLayout.LayoutParams.COLLAPSE_MODE_PIN
 import android.support.v4.content.ContextCompat
@@ -16,6 +17,7 @@ import android.support.v4.widget.NestedScrollView
 import android.support.v7.app.ActionBarDrawerToggle
 import android.support.v7.widget.*
 import android.text.Editable
+import android.text.InputType
 import android.text.TextWatcher
 import android.view.*
 import android.view.inputmethod.EditorInfo
@@ -38,7 +40,6 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.rxkotlin.subscribeBy
 import io.reactivex.schedulers.Schedulers
 import org.jetbrains.anko.*
-import org.jetbrains.anko.appcompat.v7.titleResource
 import org.jetbrains.anko.appcompat.v7.toolbar
 import org.jetbrains.anko.cardview.v7.cardView
 import org.jetbrains.anko.design.*
@@ -56,6 +57,7 @@ import java.util.concurrent.CopyOnWriteArrayList
 class MainActivity : AppCompatActivity() {
 
     private lateinit var mDrawerLayout: DrawerLayout
+    private lateinit var mCollapsingToolbarLayout: CollapsingToolbarLayout
     private lateinit var mToolBar: Toolbar
     private lateinit var mNestedScrollView: NestedScrollView
     private lateinit var mRecyclerView: RecyclerView
@@ -122,6 +124,7 @@ class MainActivity : AppCompatActivity() {
     private val deepWhite by lazy { ContextCompat.getColor(this, R.color.deepWhite) }
     private val blue1 by lazy { ContextCompat.getColor(this, R.color.blue1) }
     private val blue2 by lazy { ContextCompat.getColor(this, R.color.blue2) }
+    private val mTitleText by lazy { getString(R.string.app_name) }
 
     private val mProgressDialog by lazy {
         progressDialog(title = "请稍候......", message = "正在获取单词数据......") {
@@ -146,16 +149,16 @@ class MainActivity : AppCompatActivity() {
                 backgroundColor = deepWhite
                 fitsSystemWindows = true
 
-                themedAppBarLayout(R.style.AppTheme_AppBarOverlay) {
+                appBarLayout {
                     fitsSystemWindows = true
-                    backgroundColor = blue1
+                    backgroundColor = Color.WHITE
                     isFocusableInTouchMode = true
                     elevation = dip(8).toFloat()
                     translationZ = dip(8).toFloat()
 
-                    collapsingToolbarLayout {
+                    mCollapsingToolbarLayout = collapsingToolbarLayout {
                         fitsSystemWindows = true
-                        setContentScrimColor(blue1)
+                        title = mTitleText
                         setExpandedTitleColor(Color.TRANSPARENT)
 
                         view {
@@ -166,12 +169,14 @@ class MainActivity : AppCompatActivity() {
                         }
 
                         verticalLayout {
-                            mETInput = themedEditText(R.style.MainEditTheme) {
+                            mETInput = editText {
                                 hint = "点击可输入单词"
-                                hintTextColor = Color.WHITE
+                                hintTextColor = gray600
+                                textColor = Color.BLACK
                                 background = null
                                 textSize = 22f
                                 singleLine = true
+                                inputType = InputType.TYPE_TEXT_FLAG_CAP_WORDS
                                 imeOptions = EditorInfo.IME_ACTION_SEARCH
                                 setOnEditorActionListener { _, actionId, _ ->
                                     if (actionId == EditorInfo.IME_ACTION_SEARCH) {
@@ -194,19 +199,19 @@ class MainActivity : AppCompatActivity() {
 
                             mTVSrcPronunciation = textView {
                                 visibility = View.GONE
-                                textColor = Color.WHITE
+                                textColor = Color.BLACK
                                 textSize = 14f
                             }.lparams(wrapContent, wrapContent) {
                                 marginStart = dip(16)
                                 bottomMargin = dip(16)
                             }
                         }.lparams(matchParent, wrapContent) {
-                            topMargin = dip(96)
+                            topMargin = dip(100)
                             collapseMode = COLLAPSE_MODE_PARALLAX
                         }
 
                         mToolBar = toolbar {
-                            titleResource = R.string.app_name
+                            backgroundColor = blue1
                         }.lparams(matchParent, getActionBarSize(this@MainActivity)) {
                             collapseMode = COLLAPSE_MODE_PIN
                         }
@@ -439,6 +444,7 @@ class MainActivity : AppCompatActivity() {
         mRecyclerView.visibility = View.VISIBLE
         mNestedScrollView.visibility = View.GONE
         mTVSrcPronunciation.visibility = View.GONE
+        mCollapsingToolbarLayout.title = mTitleText
         mETInput.setText("")
     }
 
@@ -459,6 +465,7 @@ class MainActivity : AppCompatActivity() {
                         mRecyclerView.visibility = View.GONE
                         mNestedScrollView.visibility = View.VISIBLE
                         mTVSrcPronunciation.visibility = View.VISIBLE
+                        mCollapsingToolbarLayout.title = word
                         status = STATUS_INQUIRED
                     }
                     //展示读音信息

@@ -59,7 +59,7 @@ class CompleteScaleImageView(private val mActivity: Activity,
     private var mSelectedPosition = 0//当前选中的位置
     private val mAlbumName by lazy { mActivity.getString(R.string.app_name) }
 
-    companion object {
+    private companion object {
         const val URL = 0
         const val FILE = 1
         const val PROGRESS_BAR_ID = 10
