@@ -20,8 +20,12 @@
         <item name="android:textColor">@color/gray600</item>
     </style>
 
-    <style name="NewTheme" parent="AppTheme" >
+    <style name="TransparentTheme" parent="AppTheme" >
         <item name="android:statusBarColor">@android:color/transparent</item>
+    </style>
+
+    <style name="MainEditTheme" parent="AppTheme">
+        <item name="colorAccent">@android:color/white</item>
     </style>
 
     <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />

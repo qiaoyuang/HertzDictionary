@@ -5,10 +5,11 @@ import android.graphics.Color
 import android.os.Build
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
-import android.support.design.widget.AppBarLayout.ScrollingViewBehavior
+import android.support.design.widget.AppBarLayout.LayoutParams.SCROLL_FLAG_EXIT_UNTIL_COLLAPSED
 import android.support.design.widget.AppBarLayout.LayoutParams.SCROLL_FLAG_SCROLL
-import android.support.design.widget.AppBarLayout.LayoutParams.SCROLL_FLAG_ENTER_ALWAYS
-import android.support.design.widget.AppBarLayout.LayoutParams.SCROLL_FLAG_SNAP
+import android.support.design.widget.AppBarLayout.ScrollingViewBehavior
+import android.support.design.widget.CollapsingToolbarLayout.LayoutParams.COLLAPSE_MODE_PARALLAX
+import android.support.design.widget.CollapsingToolbarLayout.LayoutParams.COLLAPSE_MODE_PIN
 import android.support.v4.content.ContextCompat
 import android.support.v4.widget.DrawerLayout
 import android.support.v4.widget.NestedScrollView
@@ -47,6 +48,11 @@ import org.jetbrains.anko.support.v4.nestedScrollView
 import org.litepal.LitePal
 import java.util.concurrent.CopyOnWriteArrayList
 
+/**
+ * Created by Administrator on 2018/6/15.
+ * 主界面Activity
+ */
+
 class MainActivity : AppCompatActivity() {
 
     private lateinit var mDrawerLayout: DrawerLayout
@@ -56,7 +62,6 @@ class MainActivity : AppCompatActivity() {
     private lateinit var mBackgroundImageView: ImageView
     private lateinit var mOtherMeanCard: CardView
     private lateinit var mOtherMeanLayout: LinearLayout
-    private lateinit var mIVClose: ImageView
     private lateinit var mETInput: EditText
 
     private lateinit var mTVSrcPronunciation: TextView
@@ -143,78 +148,71 @@ class MainActivity : AppCompatActivity() {
 
                 themedAppBarLayout(R.style.AppTheme_AppBarOverlay) {
                     fitsSystemWindows = true
-                    backgroundColor = Color.WHITE
+                    backgroundColor = blue1
                     isFocusableInTouchMode = true
                     elevation = dip(8).toFloat()
                     translationZ = dip(8).toFloat()
-                    val scrollFlag = SCROLL_FLAG_SCROLL or SCROLL_FLAG_ENTER_ALWAYS or SCROLL_FLAG_SNAP
 
-                    view {
+                    collapsingToolbarLayout {
                         fitsSystemWindows = true
-                        backgroundColor = blue2
-                    }.lparams(matchParent, getStatusBarSize(this@MainActivity)) {
-                        scrollFlags = scrollFlag
-                    }
+                        setContentScrimColor(blue1)
+                        setExpandedTitleColor(Color.TRANSPARENT)
 
-                    mToolBar = toolbar {
-                        titleResource = R.string.app_name
-                        backgroundColor = blue1
-                        popupTheme = R.style.ThemeOverlay_AppCompat_Light
-                    }.lparams(matchParent, getActionBarSize(this@MainActivity)) {
-                        scrollFlags = scrollFlag
-                    }
-
-                    mIVClose = imageView {
-                        visibility = View.GONE
-                        setImageDrawable(ContextCompat.getDrawable(this@MainActivity, R.drawable.ic_clear_black_24dp))
-                        setOnClickListener {
-                            if (status == STATUS_INQUIRED) {
-                                restore()
-                            }
+                        view {
+                            fitsSystemWindows = true
+                            backgroundColor = blue2
+                        }.lparams(matchParent, getStatusBarSize(this@MainActivity)) {
+                            collapseMode = COLLAPSE_MODE_PIN
                         }
-                    }.lparams(wrapContent, wrapContent) {
-                        gravity = Gravity.END or Gravity.TOP
-                        topMargin = dip(16)
-                        marginEnd = dip(16)
-                        scrollFlags = scrollFlag
-                    }
 
-                    mETInput = editText {
-                        hint = "点击可输入单词"
-                        hintTextColor = gray600
-                        textColor = Color.BLACK
-                        background = null
-                        textSize = 22f
-                        singleLine = true
-                        imeOptions = EditorInfo.IME_ACTION_SEARCH
-                        setOnEditorActionListener { _, actionId, _ ->
-                            if (actionId == EditorInfo.IME_ACTION_SEARCH) {
-                                val text = text.toString().trim()
-                                inquire(text)
+                        verticalLayout {
+                            mETInput = themedEditText(R.style.MainEditTheme) {
+                                hint = "点击可输入单词"
+                                hintTextColor = Color.WHITE
+                                background = null
+                                textSize = 22f
+                                singleLine = true
+                                imeOptions = EditorInfo.IME_ACTION_SEARCH
+                                setOnEditorActionListener { _, actionId, _ ->
+                                    if (actionId == EditorInfo.IME_ACTION_SEARCH) {
+                                        val text = text.toString().trim()
+                                        inquire(text)
+                                    }
+                                    false
+                                }
+                                addTextChangedListener(object : TextWatcher {
+                                    override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+                                    override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+                                    override fun afterTextChanged(s: Editable?) {
+                                        if (status == STATUS_INQUIRED) restore()
+                                    }
+                                })
+                            }.lparams(matchParent, wrapContent) {
+                                marginStart = dip(16)
+                                marginEnd = dip(16)
                             }
-                            false
+
+                            mTVSrcPronunciation = textView {
+                                visibility = View.GONE
+                                textColor = Color.WHITE
+                                textSize = 14f
+                            }.lparams(wrapContent, wrapContent) {
+                                marginStart = dip(16)
+                                bottomMargin = dip(16)
+                            }
+                        }.lparams(matchParent, wrapContent) {
+                            topMargin = dip(96)
+                            collapseMode = COLLAPSE_MODE_PARALLAX
                         }
-                        addTextChangedListener(object : TextWatcher {
-                            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-                            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
-                            override fun afterTextChanged(s: Editable?) {
-                                if (status == STATUS_INQUIRED) restore()
-                            }
-                        })
+
+                        mToolBar = toolbar {
+                            titleResource = R.string.app_name
+                        }.lparams(matchParent, getActionBarSize(this@MainActivity)) {
+                            collapseMode = COLLAPSE_MODE_PIN
+                        }
+
                     }.lparams(matchParent, wrapContent) {
-                        marginStart = dip(16)
-                        marginEnd = dip(16)
-                        scrollFlags = scrollFlag
-                    }
-
-                    mTVSrcPronunciation = textView {
-                        visibility = View.GONE
-                        textColor = Color.BLACK
-                        textSize = 14f
-                    }.lparams(wrapContent, wrapContent) {
-                        marginStart = dip(16)
-                        bottomMargin = dip(16)
-                        scrollFlags = scrollFlag
+                        scrollFlags = SCROLL_FLAG_SCROLL or SCROLL_FLAG_EXIT_UNTIL_COLLAPSED
                     }
 
                 }.lparams(matchParent, wrapContent)
@@ -234,6 +232,19 @@ class MainActivity : AppCompatActivity() {
                             val otherTranslationsId = 4
 
                             relativeLayout {
+                                imageView {
+                                    setImageDrawable(ContextCompat.getDrawable(this@MainActivity, R.drawable.ic_clear_black_24dp))
+                                    setOnClickListener {
+                                        if (status == STATUS_INQUIRED) {
+                                            restore()
+                                        }
+                                    }
+                                }.lparams(wrapContent, wrapContent) {
+                                    alignParentTop()
+                                    alignParentEnd()
+                                    topMargin = dip(16)
+                                    marginEnd = dip(16)
+                                }
                                 textView {
                                     id = sourceLanguageId
                                     textColor = Color.WHITE
@@ -428,7 +439,6 @@ class MainActivity : AppCompatActivity() {
         mRecyclerView.visibility = View.VISIBLE
         mNestedScrollView.visibility = View.GONE
         mTVSrcPronunciation.visibility = View.GONE
-        mIVClose.visibility = View.GONE
         mETInput.setText("")
     }
 
@@ -449,7 +459,6 @@ class MainActivity : AppCompatActivity() {
                         mRecyclerView.visibility = View.GONE
                         mNestedScrollView.visibility = View.VISIBLE
                         mTVSrcPronunciation.visibility = View.VISIBLE
-                        mIVClose.visibility = View.VISIBLE
                         status = STATUS_INQUIRED
                     }
                     //展示读音信息

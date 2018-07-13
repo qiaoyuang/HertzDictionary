@@ -18,7 +18,7 @@
             android:name=".business.main.MainActivity"
             android:launchMode="singleTask"
             android:screenOrientation="portrait"
-            android:theme="@style/NewTheme" >
+            android:theme="@style/TransparentTheme" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -33,7 +33,7 @@
             android:name=".business.about.AboutDeveloperActivity"
             android:screenOrientation="portrait"
             android:launchMode="singleTop"
-            android:theme="@style/NewTheme"/>
+            android:theme="@style/TransparentTheme"/>
         <activity
             android:name=".business.licence.LicenceActivity"
             android:screenOrientation="portrait"

@@ -11,7 +11,6 @@ import android.os.Bundle
 import android.support.design.widget.AppBarLayout.LayoutParams.SCROLL_FLAG_EXIT_UNTIL_COLLAPSED
 import android.support.design.widget.AppBarLayout.LayoutParams.SCROLL_FLAG_SCROLL
 import android.support.design.widget.AppBarLayout.ScrollingViewBehavior
-import android.support.design.widget.CollapsingToolbarLayout
 import android.support.design.widget.CollapsingToolbarLayout.LayoutParams.COLLAPSE_MODE_PARALLAX
 import android.support.design.widget.CollapsingToolbarLayout.LayoutParams.COLLAPSE_MODE_PIN
 import android.support.v4.content.ContextCompat
@@ -54,7 +53,6 @@ class AboutDeveloperActivity : AppCompatActivity() {
     private val blueGray by lazy { ContextCompat.getColor(this, R.color.blueGray) }
     private val coin by lazy { ContextCompat.getColor(this, R.color.coin) }
 
-    private lateinit var mCollapsingToolbarLayout: CollapsingToolbarLayout
     private lateinit var mToolbar: Toolbar
     private lateinit var mIMBackground: ImageView
     private lateinit var mIMAvatar: ImageView
@@ -94,9 +92,10 @@ class AboutDeveloperActivity : AppCompatActivity() {
                 elevation = dip(4).toFloat()
                 translationZ = dip(4).toFloat()
 
-                mCollapsingToolbarLayout = collapsingToolbarLayout {
+                collapsingToolbarLayout {
                     fitsSystemWindows = true
                     setContentScrimColor(blue1)
+                    setExpandedTitleColor(Color.TRANSPARENT)
 
                     mIMBackground = imageView {
                         fitsSystemWindows = true
@@ -299,8 +298,6 @@ class AboutDeveloperActivity : AppCompatActivity() {
 
         setSupportActionBar(mToolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        val transparent = ContextCompat.getColor(this, android.R.color.transparent)
-        mCollapsingToolbarLayout.setExpandedTitleColor(transparent)
 
         ImageManagerService.loadBackground(this, mIMBackground)
         ImageManagerService.loadAvatar(this, mIMAvatar)
