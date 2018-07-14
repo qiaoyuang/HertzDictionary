@@ -14,6 +14,11 @@ import com.w10group.hertzdictionary.business.main.OtherMeanAdapter.OtherMeanView
 import com.w10group.hertzdictionary.core.createTouchFeedback
 import org.jetbrains.anko.*
 
+/**
+ * Created by Administrator on 2018/6/25.
+ * 展示其它义项的RecyclerView适配器
+ */
+
 class OtherMeanAdapter(private val mContext: Context,
                        private val mData: List<DictInfo>) : Adapter<OtherMeanViewHolder>() {
 

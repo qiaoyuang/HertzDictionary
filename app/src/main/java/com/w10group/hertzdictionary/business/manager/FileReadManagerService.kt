@@ -9,6 +9,11 @@ import io.reactivex.schedulers.Schedulers
 import java.io.BufferedReader
 import java.io.InputStreamReader
 
+/**
+ * Created by Administrator on 2018/7/8.
+ * 本地文件读取并显示服务
+ */
+
 object FileReadManagerService {
 
     fun process(fileName: String, context: Context, vararg list: TextView) {

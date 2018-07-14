@@ -1,10 +1,8 @@
 package com.w10group.hertzdictionary.business.features
 
-import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Color
 import android.graphics.Paint
-import android.net.Uri
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.design.widget.AppBarLayout.ScrollingViewBehavior
@@ -27,6 +25,11 @@ import org.jetbrains.anko.design.appBarLayout
 import org.jetbrains.anko.design.coordinatorLayout
 import org.jetbrains.anko.support.v4.nestedScrollView
 import java.util.*
+
+/**
+ * Created by Administrator on 2018/6/25.
+ * 未来新功能Activity
+ */
 
 class FeaturesActivity : AppCompatActivity() {
 

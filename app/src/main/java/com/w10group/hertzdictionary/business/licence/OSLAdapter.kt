@@ -11,6 +11,11 @@ import android.widget.TextView
 import com.w10group.hertzdictionary.core.createTouchFeedbackBorderless
 import org.jetbrains.anko.*
 
+/**
+ * Created by Administrator on 2018/6/26.
+ * 开源许可证的RecyclerView的Adapter
+ */
+
 class OSLAdapter(private val mContext: Context, private val mData: List<OSL>) : Adapter<OSLAdapter.OSLViewHolder>() {
 
     private companion object {

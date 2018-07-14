@@ -10,6 +10,7 @@ import retrofit2.converter.gson.GsonConverterFactory
  * Created by Administrator on 2018/2/6 0006.
  * 网络工具类
  */
+
 object NetworkUtil {
 
     private const val BASE_URL = "http://translate.google.cn/"

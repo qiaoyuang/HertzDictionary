@@ -36,6 +36,11 @@ import org.jetbrains.anko.design.snackbar
 import org.jetbrains.anko.support.v4.nestedScrollView
 import java.util.*
 
+/**
+ * Created by Administrator on 2018/6/25.
+ * 关于开发者Activity
+ */
+
 class AboutDeveloperActivity : AppCompatActivity() {
 
     private companion object {

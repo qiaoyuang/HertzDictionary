@@ -26,6 +26,11 @@ import java.io.BufferedReader
 import java.io.InputStreamReader
 import java.util.*
 
+/**
+ * Created by Administrator on 2018/6/26.
+ * 开源许可证Activity
+ */
+
 class LicenceActivity : AppCompatActivity() {
 
     private companion object {

@@ -7,6 +7,11 @@ import retrofit2.http.GET
 import retrofit2.http.Query
 import retrofit2.http.Url
 
+/**
+ * Created by Administrator on 2018/6/26.
+ * Retrofit网络接口服务
+ */
+
 interface NetworkService {
 
     @GET

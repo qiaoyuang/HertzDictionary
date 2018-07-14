@@ -5,6 +5,11 @@ import android.support.v4.view.PagerAdapter
 import android.view.View
 import android.view.ViewGroup
 
+/**
+ * Created by Administrator on 2018/7/9.
+ * 大图查看器的ViewPager适配器
+ */
+
 internal class DialogPagerAdapter(private val mViews: List<View>,
                                   private val mDialog: Dialog) : PagerAdapter() {
 
