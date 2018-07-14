@@ -170,7 +170,7 @@ class FeaturesActivity : AppCompatActivity() {
                                 paint.flags = Paint.UNDERLINE_TEXT_FLAG
                                 paint.isAntiAlias = true
                                 gravity = Gravity.CENTER_HORIZONTAL
-                                setOnClickListener { sendEmail() }
+                                setOnClickListener { email(MY_EMAIL, "赫兹词典bug反馈") }
                             }.lparams(wrapContent, wrapContent) {
                                 gravity = Gravity.CENTER_HORIZONTAL
                                 topMargin = dip(8)
@@ -248,7 +248,7 @@ class FeaturesActivity : AppCompatActivity() {
                                 paint.flags = Paint.UNDERLINE_TEXT_FLAG
                                 paint.isAntiAlias = true
                                 gravity = Gravity.CENTER_HORIZONTAL
-                                setOnClickListener { openBrowser() }
+                                setOnClickListener { browse(GITHUB_ADDRESS, true) }
                             }.lparams(wrapContent, wrapContent) {
                                 gravity = Gravity.CENTER_HORIZONTAL
                                 topMargin = dip(8)
@@ -305,22 +305,6 @@ class FeaturesActivity : AppCompatActivity() {
                 mCompleteScaleImageView.permissionsRejectSnack()
             }
         }
-    }
-
-    private fun openBrowser() {
-        val intent = Intent()
-        intent.action = "android.intent.action.VIEW"
-        val uri = Uri.parse(GITHUB_ADDRESS)
-        intent.data = uri
-        startActivity(intent)
-    }
-
-    private fun sendEmail() {
-        val subject = "赫兹词典bug反馈"
-        val content = "mailto:$MY_EMAIL?subject=$subject"
-        val intent = Intent(Intent.ACTION_SENDTO)
-        intent.data = Uri.parse(content)
-        startActivity(intent)
     }
 
 }

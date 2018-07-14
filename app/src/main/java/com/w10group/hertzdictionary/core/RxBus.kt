@@ -8,6 +8,11 @@ import java.util.*
 import kotlin.collections.HashMap
 import kotlin.reflect.KClass
 
+/**
+ * Created by Administrator on 2018/5/17.
+ * RxBus事件总线，暂时还不完善。
+ */
+
 object RxBus {
 
     const val MAIN = 0

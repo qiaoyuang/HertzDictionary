@@ -5,6 +5,7 @@ import android.graphics.Color
 import android.os.Build
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import android.support.design.widget.AppBarLayout
 import android.support.design.widget.AppBarLayout.LayoutParams.SCROLL_FLAG_EXIT_UNTIL_COLLAPSED
 import android.support.design.widget.AppBarLayout.LayoutParams.SCROLL_FLAG_SCROLL
 import android.support.design.widget.AppBarLayout.ScrollingViewBehavior
@@ -57,6 +58,7 @@ import java.util.concurrent.CopyOnWriteArrayList
 class MainActivity : AppCompatActivity() {
 
     private lateinit var mDrawerLayout: DrawerLayout
+    private lateinit var mAppBarLayout: AppBarLayout
     private lateinit var mCollapsingToolbarLayout: CollapsingToolbarLayout
     private lateinit var mToolBar: Toolbar
     private lateinit var mNestedScrollView: NestedScrollView
@@ -149,7 +151,7 @@ class MainActivity : AppCompatActivity() {
                 backgroundColor = deepWhite
                 fitsSystemWindows = true
 
-                appBarLayout {
+                mAppBarLayout = appBarLayout {
                     fitsSystemWindows = true
                     backgroundColor = Color.WHITE
                     isFocusableInTouchMode = true
@@ -176,7 +178,7 @@ class MainActivity : AppCompatActivity() {
                                 background = null
                                 textSize = 22f
                                 singleLine = true
-                                inputType = InputType.TYPE_TEXT_FLAG_CAP_WORDS
+                                inputType = InputType.TYPE_TEXT_VARIATION_URI
                                 imeOptions = EditorInfo.IME_ACTION_SEARCH
                                 setOnEditorActionListener { _, actionId, _ ->
                                     if (actionId == EditorInfo.IME_ACTION_SEARCH) {
@@ -192,21 +194,18 @@ class MainActivity : AppCompatActivity() {
                                         if (status == STATUS_INQUIRED) restore()
                                     }
                                 })
-                            }.lparams(matchParent, wrapContent) {
-                                marginStart = dip(16)
-                                marginEnd = dip(16)
-                            }
+                            }.lparams(matchParent, wrapContent)
 
                             mTVSrcPronunciation = textView {
                                 visibility = View.GONE
                                 textColor = Color.BLACK
                                 textSize = 14f
-                            }.lparams(wrapContent, wrapContent) {
-                                marginStart = dip(16)
-                                bottomMargin = dip(16)
-                            }
+                            }.lparams(wrapContent, wrapContent)
+
                         }.lparams(matchParent, wrapContent) {
                             topMargin = dip(100)
+                            marginStart = dip(16)
+                            marginEnd = dip(16)
                             collapseMode = COLLAPSE_MODE_PARALLAX
                         }
 
@@ -238,7 +237,7 @@ class MainActivity : AppCompatActivity() {
 
                             relativeLayout {
                                 imageView {
-                                    setImageDrawable(ContextCompat.getDrawable(this@MainActivity, R.drawable.ic_clear_black_24dp))
+                                    setImageDrawable(ContextCompat.getDrawable(this@MainActivity, R.drawable.ic_close_white_24dp))
                                     setOnClickListener {
                                         if (status == STATUS_INQUIRED) {
                                             restore()
@@ -465,6 +464,7 @@ class MainActivity : AppCompatActivity() {
                         mRecyclerView.visibility = View.GONE
                         mNestedScrollView.visibility = View.VISIBLE
                         mTVSrcPronunciation.visibility = View.VISIBLE
+                        mAppBarLayout.setExpanded(true, true)
                         mCollapsingToolbarLayout.title = word
                         status = STATUS_INQUIRED
                     }

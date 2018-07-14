@@ -113,7 +113,6 @@ dependencies {
     implementation "org.jetbrains.anko:anko-support-v4:$anko_version"
 
     // ConstraintLayout
-
     //implementation "org.jetbrains.anko:anko-constraint-layout:$anko_version"
 
     testImplementation 'junit:junit:4.12'
