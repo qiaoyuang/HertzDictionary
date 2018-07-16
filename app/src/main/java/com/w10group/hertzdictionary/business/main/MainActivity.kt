@@ -35,6 +35,7 @@ import com.w10group.hertzdictionary.business.features.FeaturesActivity
 import com.w10group.hertzdictionary.business.licence.LicenceActivity
 import com.w10group.hertzdictionary.business.manager.ImageManagerService
 import com.w10group.hertzdictionary.business.manager.NetworkService
+import com.w10group.hertzdictionary.business.manager.WordManagerService
 import com.w10group.hertzdictionary.core.*
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -55,7 +56,7 @@ import java.util.concurrent.CopyOnWriteArrayList
  * 主界面Activity
  */
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), RxBus.OnWorkListener<List<LocalWord>> {
 
     private lateinit var mDrawerLayout: DrawerLayout
     private lateinit var mAppBarLayout: AppBarLayout
@@ -374,7 +375,8 @@ class MainActivity : AppCompatActivity() {
         mDrawerLayout.addDrawerListener(toggle)
         toggle.syncState()
         ImageManagerService.loadBackground(this, mBackgroundImageView)
-        initRecyclerViewData()
+        WordManagerService.getAllWord()
+        //initRecyclerViewData()
     }
 
     private fun createHeaderView() =
@@ -398,6 +400,11 @@ class MainActivity : AppCompatActivity() {
                     it?.let { mData.addAll(it) }
                     mRecyclerView.adapter = mAdapter
                 }
+    }
+
+    override fun onWork(event: List<LocalWord>) {
+        mData.addAll(event)
+        mRecyclerView.adapter = mAdapter
     }
 
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
