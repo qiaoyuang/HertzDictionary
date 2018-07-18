@@ -214,7 +214,7 @@ class WordManagerService(private val mView: WordDisplayView) {
     }
 
     //第一个数字为负的时候表示未移动过，非负时表示移动前的位置，第二个数表示移动后的位置
-    private val mIsMoved = intArrayOf(-1, -1)
+    private val mIsMoved by lazy { intArrayOf(-1, -1) }
 
     //调整LocalWord在mData中的位置，并返回链表是否被调整过
     private fun LocalWord.reSort(index: Int) {
