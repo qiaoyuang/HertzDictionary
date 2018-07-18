@@ -21,7 +21,6 @@ object NetworkUtil {
             .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
             .build()
 
-
     fun checkNetwork(context: Context): Boolean {
         val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
         val networkInfo = connectivityManager.activeNetworkInfo
