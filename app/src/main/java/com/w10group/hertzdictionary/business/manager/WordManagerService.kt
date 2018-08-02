@@ -53,7 +53,7 @@ class WordManagerService(private val mView: WordDisplayView) {
                                     mData.removeAt(index)
                                     WordListAdapter.sumCount -= localWord.count
                                     adapter.notifyItemRemoved(index)
-                                    adapter.notifyItemChanged(0, mData.size)
+                                    adapter.notifyItemRangeChanged(0, mData.size)
                                     Observable.just(localWord)
                                             .subscribeOn(Schedulers.io())
                                             .observeOn(Schedulers.io())
