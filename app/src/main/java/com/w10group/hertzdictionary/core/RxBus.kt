@@ -44,10 +44,10 @@ object RxBus {
 
     inline fun <reified T : Any> unRegister(observer: OnWorkListener<T>) {
         val list = get(T :: class)
-        list?.let {
-            it.forEach {
+        list?.let { linkedList ->
+            linkedList.forEach {
                 if (it === observer) {
-                    list.remove(it)
+                    linkedList.remove(it)
                     return
                 }
             }
@@ -57,12 +57,11 @@ object RxBus {
     inline fun <reified T : Any> post(event: T, observableThread: Int = MAIN, observerThread: Int = MAIN) {
         val observable = Observable.just(event).subscribeOn(intToScheduler(observableThread))
         val list = get(T :: class)
-        list?.let {
-            it.forEach {
-                val observe = it
+        list?.let { linkedList ->
+            linkedList.forEach { listener ->
                 observable
                         .observeOn(intToScheduler(observerThread))
-                        .subscribe { observe.onWork(it) }
+                        .subscribe { listener.onWork(it) }
             }
         }
     }

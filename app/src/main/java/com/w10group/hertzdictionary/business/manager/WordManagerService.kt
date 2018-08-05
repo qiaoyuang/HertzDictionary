@@ -1,6 +1,7 @@
 package com.w10group.hertzdictionary.business.manager
 
 import android.content.Context
+import android.support.design.widget.FloatingActionButton
 import android.support.v7.widget.RecyclerView
 import android.widget.EditText
 import com.w10group.hertzdictionary.business.bean.InquireResult
@@ -26,6 +27,7 @@ class WordManagerService(private val mView: WordDisplayView) {
     interface WordDisplayView {
         fun getEditText(): EditText
         fun getRecyclerView(): RecyclerView
+        fun getSnackBarView(): FloatingActionButton
         fun getContext(): Context
         fun displayInquireResult(inquireResult: InquireResult, word: String)
         fun displayOtherTranslation(words: String)
@@ -35,6 +37,7 @@ class WordManagerService(private val mView: WordDisplayView) {
     private val mContext by lazy { mView.getContext() }
     private val mETInput by lazy { mView.getEditText() }
     private val mRecyclerView by lazy { mView.getRecyclerView() }
+    private val mSnackBarView by lazy { mView.getSnackBarView() }
 
     private val mData by lazy { CopyOnWriteArrayList<LocalWord>() }
     private val mAdapter by lazy {
@@ -49,16 +52,16 @@ class WordManagerService(private val mView: WordDisplayView) {
                             mContext.alert {
                                 title = "您确定要删除${localWord.en}吗？"
                                 message = "删除单词会使单词的查询次数清零，且不可恢复，请您确认。"
-                                okButton {
+                                okButton { alertDialog ->
                                     mData.removeAt(index)
-                                    WordListAdapter.sumCount -= localWord.count
+                                    adapter.sumCount -= localWord.count
                                     adapter.notifyItemRemoved(index)
                                     adapter.notifyItemRangeChanged(0, mData.size)
                                     Observable.just(localWord)
                                             .subscribeOn(Schedulers.io())
                                             .observeOn(Schedulers.io())
                                             .subscribeBy { it.delete() }
-                                    it.dismiss()
+                                    alertDialog.dismiss()
                                 }
                                 cancelButton { it.dismiss() }
                             }.show()
@@ -66,15 +69,15 @@ class WordManagerService(private val mView: WordDisplayView) {
                             mContext.alert {
                                 title = "您确定要清空所有单词吗？"
                                 message = "清空所有单词会使所有保存的已查询单词数据全部清零，且不可恢复，请您确认。"
-                                yesButton {
+                                okButton { alertDialog ->
                                     mData.clear()
-                                    WordListAdapter.sumCount = 0
+                                    adapter.sumCount = 0
                                     adapter.notifyDataSetChanged()
                                     Observable.just(LocalWord::class.java)
                                             .subscribeOn(Schedulers.io())
                                             .observeOn(Schedulers.io())
                                             .subscribeBy { LitePal.deleteAll(it) }
-                                    it.dismiss()
+                                    alertDialog.dismiss()
                                 }
                                 cancelButton { it.dismiss() }
                             }.show()
@@ -91,20 +94,28 @@ class WordManagerService(private val mView: WordDisplayView) {
         }
     }
 
+    fun scrollToTop() {
+        mRecyclerView.smoothScrollToPosition(0)
+    }
+
+    fun scrollToBottom() {
+        mRecyclerView.smoothScrollToPosition(mData.size - 1)
+    }
+
     fun getAllWord() {
         Observable.just(LitePal.order("count desc")
                 .find(LocalWord::class.java))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribeBy {
-                    it?.let { mData.addAll(it) }
+                .subscribeBy { list ->
+                    list?.let { mData.addAll(it) }
                     mRecyclerView.adapter = mAdapter
                 }
     }
 
     fun inquire(word: String) {
         if (!NetworkUtil.checkNetwork(mContext)) {
-            snackbar(mRecyclerView, "当前无网络连接")
+            snackbar(mSnackBarView, "当前无网络连接")
             return
         }
         mProgressDialog.show()
@@ -120,10 +131,10 @@ class WordManagerService(private val mView: WordDisplayView) {
                 .map {
                     //拼接其它义项
                     val builder1 = StringBuilder()
-                    it.alternativeTranslations?.let {
-                        it[0].words?.let {
-                            val last = it.size - 1
-                            it.forEachIndexed { index, alternative ->
+                    it.alternativeTranslations?.let { list ->
+                        list[0].words?.let { _list ->
+                            val last = _list.size - 1
+                            _list.forEachIndexed { index, alternative ->
                                 if (index != 0) {
                                     if (index == last) {
                                         builder1.append(alternative.word)
@@ -136,10 +147,10 @@ class WordManagerService(private val mView: WordDisplayView) {
                     }
                     //拼接相关词组
                     val builder2 = StringBuilder()
-                    it.relatedWords?.let {
-                        it.words?.let {
-                            val last = it.size - 1
-                            it.forEachIndexed { index, word ->
+                    it.relatedWords?.let { relatedWords ->
+                        relatedWords.words?.let { list ->
+                            val last = list.size - 1
+                            list.forEachIndexed { index, word ->
                                 if (index == last) {
                                     builder2.append(word)
                                 } else {
@@ -159,7 +170,7 @@ class WordManagerService(private val mView: WordDisplayView) {
                         onError = {
                             it.printStackTrace()
                             mProgressDialog.dismiss()
-                            snackbar(mRecyclerView, "网络出现问题，请稍后再试。")
+                            snackbar(mSnackBarView, "网络出现问题，请稍后再试。")
                         },
                         onComplete = { mProgressDialog.dismiss() }
                 )
@@ -187,7 +198,7 @@ class WordManagerService(private val mView: WordDisplayView) {
                         mData.add(word!!)
                     }
 
-                    WordListAdapter.sumCount++
+                    mAdapter.sumCount++
                     word!!
                 }
                 .observeOn(AndroidSchedulers.mainThread())

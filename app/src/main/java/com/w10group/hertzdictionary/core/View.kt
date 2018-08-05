@@ -18,15 +18,15 @@ import org.jetbrains.anko.custom.ankoView
 
 //AppCompatSpinner
 inline fun ViewManager.appCompatSpineer(init: AppCompatSpinner.() -> Unit): AppCompatSpinner =
-        ankoView({ AppCompatSpinner(it) }, theme = 0) { init() }
+        ankoView({ AppCompatSpinner(it) }, theme = 0, init = init)
 
 //CircleImageView
 inline fun ViewManager.circleImageView(init: CircleImageView.() -> Unit): CircleImageView =
-        ankoView({ CircleImageView(it) }, theme = 0) { init() }
+        ankoView({ CircleImageView(it) }, theme = 0, init = init)
 
 //SubsamplingImageView
 inline fun ViewManager.subsamplingImageView(init: SubsamplingScaleImageView.() -> Unit): SubsamplingScaleImageView =
-        ankoView({ SubsamplingScaleImageView(it) }, theme = 0) { init() }
+        ankoView({ SubsamplingScaleImageView(it) }, theme = 0, init = init)
 
 //创建触摸反馈效果Drawable
 fun createTouchFeedback(context: Context): Drawable? {

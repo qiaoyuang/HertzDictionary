@@ -32,16 +32,16 @@ class WordListAdapter(private val mContext: Context,
         const val TV_COUNT_ID = 3
         const val TV_INQUIRE_RATE_ID = 4
         const val CARD_ITEM_ID = 5
-        var sumCount = 0
     }
 
     private val gray by lazy { ContextCompat.getColor(mContext, R.color.gray600) }
 
     private val mFormat = NumberFormat.getPercentInstance()
 
+    var sumCount = mData.sumBy { it.count }
+
     init {
         mFormat.maximumFractionDigits = 2
-        sumCount = mData.sumBy { it.count }
     }
 
     override fun getItemCount(): Int = mData.size

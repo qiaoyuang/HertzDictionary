@@ -36,7 +36,7 @@ import java.util.*
 
 /**
  * Created by qiaoyuang on 2018/7/9.
- * 大图查看器封装，图片下载的时候还可以多利用线程池的并发进行重构
+ * 大图查看器封装(网络查看模式支持并发)
  */
 
 class CompleteScaleImageView(private val mActivity: Activity,
