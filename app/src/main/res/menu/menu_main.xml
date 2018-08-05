@@ -1,24 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
+<menu
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".business.main.MainActivity" >
 
-    <group
-        android:checkableBehavior="single" >
+    <item
+        android:id="@+id/move_to_top"
+        android:orderInCategory="100"
+        android:title="@string/move_to_top"
+        android:icon="@drawable/ic_vertical_align_top_white_24dp"
+        app:showAsAction="ifRoom" />
 
-        <item
-            android:id="@+id/main_menu_more_features"
-            android:icon="@drawable/ic_extension_grey600_24dp"
-            android:title="@string/more_features" />
-
-        <item
-            android:id="@+id/main_menu_mine"
-            android:icon="@drawable/ic_account_circle_grey600_24dp"
-            android:title="@string/mine" />
-
-        <item
-            android:id="@+id/main_menu_licence"
-            android:icon="@drawable/ic_subject_grey600_24dp"
-            android:title="@string/open_source_license" />
-
-    </group>
+    <item
+        android:id="@+id/move_to_Bottom"
+        android:orderInCategory="100"
+        android:title="@string/move_to_bottom"
+        android:icon="@drawable/ic_vertical_align_bottom_white_24dp"
+        app:showAsAction="ifRoom" />
 
 </menu>

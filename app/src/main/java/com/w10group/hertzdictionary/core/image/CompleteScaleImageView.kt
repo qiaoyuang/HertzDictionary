@@ -16,6 +16,7 @@ import android.support.v4.content.ContextCompat
 import android.support.v4.view.ViewPager
 import android.view.Gravity
 import android.view.View
+import android.view.animation.LinearInterpolator
 import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.TextView
@@ -88,8 +89,9 @@ class CompleteScaleImageView(private val mActivity: Activity,
         }
 
     private val mAnim by lazy {
-        val colorAnim = ObjectAnimator.ofInt(mTVImageCount, "textColor", Color.WHITE, Color.TRANSPARENT)
+        val colorAnim = ObjectAnimator.ofArgb(mTVImageCount, "textColor", Color.WHITE, Color.TRANSPARENT)
         colorAnim.duration = 1500
+        colorAnim.interpolator = LinearInterpolator()
         colorAnim.setEvaluator(ArgbEvaluator())
         colorAnim
     }

@@ -1,7 +1,6 @@
 package com.w10group.hertzdictionary.business.manager
 
 import android.content.Context
-import android.support.design.widget.FloatingActionButton
 import android.support.v7.widget.RecyclerView
 import android.widget.EditText
 import com.w10group.hertzdictionary.business.bean.InquireResult
@@ -27,7 +26,6 @@ class WordManagerService(private val mView: WordDisplayView) {
     interface WordDisplayView {
         fun getEditText(): EditText
         fun getRecyclerView(): RecyclerView
-        fun getSnackBarView(): FloatingActionButton
         fun getContext(): Context
         fun displayInquireResult(inquireResult: InquireResult, word: String)
         fun displayOtherTranslation(words: String)
@@ -37,7 +35,6 @@ class WordManagerService(private val mView: WordDisplayView) {
     private val mContext by lazy { mView.getContext() }
     private val mETInput by lazy { mView.getEditText() }
     private val mRecyclerView by lazy { mView.getRecyclerView() }
-    private val mSnackBarView by lazy { mView.getSnackBarView() }
 
     private val mData by lazy { CopyOnWriteArrayList<LocalWord>() }
     private val mAdapter by lazy {
@@ -102,6 +99,8 @@ class WordManagerService(private val mView: WordDisplayView) {
         mRecyclerView.smoothScrollToPosition(mData.size - 1)
     }
 
+    fun lastPosition(): Int = mData.size - 1
+
     fun getAllWord() {
         Observable.just(LitePal.order("count desc")
                 .find(LocalWord::class.java))
@@ -115,7 +114,7 @@ class WordManagerService(private val mView: WordDisplayView) {
 
     fun inquire(word: String) {
         if (!NetworkUtil.checkNetwork(mContext)) {
-            snackbar(mSnackBarView, "当前无网络连接")
+            snackbar(mRecyclerView, "当前无网络连接")
             return
         }
         mProgressDialog.show()
@@ -170,7 +169,7 @@ class WordManagerService(private val mView: WordDisplayView) {
                         onError = {
                             it.printStackTrace()
                             mProgressDialog.dismiss()
-                            snackbar(mSnackBarView, "网络出现问题，请稍后再试。")
+                            snackbar(mRecyclerView, "网络出现问题，请稍后再试。")
                         },
                         onComplete = { mProgressDialog.dismiss() }
                 )

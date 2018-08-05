@@ -12,7 +12,6 @@ import android.support.design.widget.AppBarLayout.ScrollingViewBehavior
 import android.support.design.widget.CollapsingToolbarLayout
 import android.support.design.widget.CollapsingToolbarLayout.LayoutParams.COLLAPSE_MODE_PARALLAX
 import android.support.design.widget.CollapsingToolbarLayout.LayoutParams.COLLAPSE_MODE_PIN
-import android.support.design.widget.FloatingActionButton
 import android.support.v4.content.ContextCompat
 import android.support.v4.widget.DrawerLayout
 import android.support.v4.widget.NestedScrollView
@@ -61,7 +60,6 @@ class MainActivity : AppCompatActivity(), WordManagerService.WordDisplayView {
     private lateinit var mOtherMeanCard: CardView
     private lateinit var mOtherMeanLayout: LinearLayout
     private lateinit var mETInput: EditText
-    private lateinit var mFABTopAndDown: FloatingActionButton
 
     private lateinit var mTVSrcPronunciation: TextView
     private lateinit var mTVResult: TextView
@@ -277,8 +275,6 @@ class MainActivity : AppCompatActivity(), WordManagerService.WordDisplayView {
                     behavior = ScrollingViewBehavior()
                 }
 
-                //用来标识RecyclerView目前处于上一半还是下一半
-                var isTop = true
                 mRecyclerView = recyclerView {
                     val linearLayoutManager = LinearLayoutManager(this@MainActivity, LinearLayoutManager.VERTICAL, false)
                     layoutManager = linearLayoutManager
@@ -286,17 +282,10 @@ class MainActivity : AppCompatActivity(), WordManagerService.WordDisplayView {
                     addOnScrollListener(object : RecyclerView.OnScrollListener() {
                         override fun onScrolled(recyclerView: RecyclerView?, dx: Int, dy: Int) {
                             super.onScrolled(recyclerView, dx, dy)
-                            isTop = linearLayoutManager.findFirstVisibleItemPosition() <= adapter.itemCount shr 1
-                            if (isTop) {
-
-                            } else {
-
-                            }
-                        }
-
-                        override fun onScrollStateChanged(recyclerView: RecyclerView?, newState: Int) {
-                            super.onScrollStateChanged(recyclerView, newState)
-
+                            if (linearLayoutManager.findFirstCompletelyVisibleItemPosition() == 0)
+                                snackbar(this@recyclerView, "已滑动到顶部")
+                            if (linearLayoutManager.findLastCompletelyVisibleItemPosition() == mWordManagerService.lastPosition())
+                                snackbar(this@recyclerView, "已滑动到底部")
                         }
                     })
                 }.lparams(matchParent, matchParent) {
@@ -305,32 +294,10 @@ class MainActivity : AppCompatActivity(), WordManagerService.WordDisplayView {
                     bottomMargin = dip(4)
                 }
 
-                mFABTopAndDown = floatingActionButton {
-                    elevation = dip(8).toFloat()
-                    translationZ = dip(8).toFloat()
-                    backgroundTintList = ContextCompat.getColorStateList(this@MainActivity, R.color.blue1)
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
-                        foreground = createTouchFeedbackBorderless(this@MainActivity)
-                    setImageResource(R.drawable.ic_vertical_align_bottom_white_24dp)
-                    setOnClickListener {
-                        val (str, scroll) = if (isTop)
-                            Pair("底", mWordManagerService::scrollToBottom)
-                        else
-                            Pair("顶", mWordManagerService::scrollToTop)
-                        scroll()
-                        longSnackbar(it, "已到达列表${str}部")
-                    }
-
-                }.lparams(wrapContent, wrapContent) {
-                    gravity = Gravity.END or Gravity.BOTTOM
-                    marginEnd = dip(16)
-                    bottomMargin = dip(16)
-                }
-
             }.lparams(matchParent, matchParent)
 
             navigationView {
-                inflateMenu(R.menu.menu_main)
+                inflateMenu(R.menu.menu_navigation)
                 fitsSystemWindows = true
                 isClickable = true
                 backgroundColor = deepWhite
@@ -370,6 +337,19 @@ class MainActivity : AppCompatActivity(), WordManagerService.WordDisplayView {
                         foreground = createTouchFeedbackBorderless(this@MainActivity)
                 }
             }.view
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.menu_main, menu)
+        return super.onCreateOptionsMenu(menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
+        when (item?.itemId) {
+            R.id.move_to_Bottom -> mWordManagerService.scrollToBottom()
+            R.id.move_to_top -> mWordManagerService.scrollToTop()
+        }
+        return super.onOptionsItemSelected(item)
+    }
 
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
@@ -414,21 +394,18 @@ class MainActivity : AppCompatActivity(), WordManagerService.WordDisplayView {
         mRecyclerView.visibility = View.VISIBLE
         mNestedScrollView.visibility = View.GONE
         mTVSrcPronunciation.visibility = View.GONE
-        mFABTopAndDown.visibility = View.VISIBLE
         mCollapsingToolbarLayout.title = mTitleText
         mETInput.setText("")
     }
 
     override fun getEditText(): EditText = mETInput
     override fun getRecyclerView(): RecyclerView = mRecyclerView
-    override fun getSnackBarView(): FloatingActionButton = mFABTopAndDown
     override fun getContext(): Context = this
 
     override fun displayInquireResult(inquireResult: InquireResult, word: String) {
         //改变控件状态
         if (status == STATUS_INQUIRED_NOT) {
             mRecyclerView.visibility = View.GONE
-            mFABTopAndDown.visibility = View.INVISIBLE
             mNestedScrollView.visibility = View.VISIBLE
             mTVSrcPronunciation.visibility = View.VISIBLE
             mAppBarLayout.setExpanded(true, true)
