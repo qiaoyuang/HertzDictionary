@@ -99,8 +99,6 @@ class WordManagerService(private val mView: WordDisplayView) {
         mRecyclerView.smoothScrollToPosition(mData.size - 1)
     }
 
-    fun lastPosition(): Int = mData.size - 1
-
     fun getAllWord() {
         Observable.just(LitePal.order("count desc")
                 .find(LocalWord::class.java))

@@ -279,13 +279,23 @@ class MainActivity : AppCompatActivity(), WordManagerService.WordDisplayView {
                     val linearLayoutManager = LinearLayoutManager(this@MainActivity, LinearLayoutManager.VERTICAL, false)
                     layoutManager = linearLayoutManager
                     itemAnimator = DefaultItemAnimator()
+                    var firstPosition = 0
+                    var lastPosition = 0
                     addOnScrollListener(object : RecyclerView.OnScrollListener() {
                         override fun onScrolled(recyclerView: RecyclerView?, dx: Int, dy: Int) {
                             super.onScrolled(recyclerView, dx, dy)
-                            if (linearLayoutManager.findFirstCompletelyVisibleItemPosition() == 0)
-                                snackbar(this@recyclerView, "已滑动到顶部")
-                            if (linearLayoutManager.findLastCompletelyVisibleItemPosition() == mWordManagerService.lastPosition())
-                                snackbar(this@recyclerView, "已滑动到底部")
+                            firstPosition = linearLayoutManager.findFirstCompletelyVisibleItemPosition()
+                            lastPosition = linearLayoutManager.findLastCompletelyVisibleItemPosition()
+                        }
+
+                        override fun onScrollStateChanged(recyclerView: RecyclerView?, newState: Int) {
+                            super.onScrollStateChanged(recyclerView, newState)
+                            if (newState == RecyclerView.SCROLL_STATE_IDLE) {
+                                if (firstPosition == 0)
+                                    snackbar(this@recyclerView, "已滑动到顶部")
+                                if (lastPosition + 1 == adapter.itemCount)
+                                    snackbar(this@recyclerView, "已滑动到底部")
+                            }
                         }
                     })
                 }.lparams(matchParent, matchParent) {
