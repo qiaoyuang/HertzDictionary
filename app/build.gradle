@@ -3,11 +3,11 @@ apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
 android {
-    compileSdkVersion 27
+    compileSdkVersion 28
     defaultConfig {
         applicationId "com.w10group.hertzdictionary"
         minSdkVersion 21
-        targetSdkVersion 27
+        targetSdkVersion 28
         versionCode 1
         versionName "1.0"
         multiDexEnabled true
@@ -87,6 +87,7 @@ dependencies {
 
     // Appcompat-v7 (Anko Layouts)
     implementation "org.jetbrains.anko:anko-appcompat-v7:$anko_version"
+    implementation "org.jetbrains.anko:anko-coroutines:$anko_version"
 
     // CardView-v7
     implementation "org.jetbrains.anko:anko-cardview-v7:$anko_version"

@@ -282,19 +282,23 @@ class MainActivity : AppCompatActivity(), WordManagerService.WordDisplayView {
                     var firstPosition = 0
                     var lastPosition = 0
                     addOnScrollListener(object : RecyclerView.OnScrollListener() {
-                        override fun onScrolled(recyclerView: RecyclerView?, dx: Int, dy: Int) {
+                        override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                             super.onScrolled(recyclerView, dx, dy)
                             firstPosition = linearLayoutManager.findFirstCompletelyVisibleItemPosition()
                             lastPosition = linearLayoutManager.findLastCompletelyVisibleItemPosition()
                         }
 
-                        override fun onScrollStateChanged(recyclerView: RecyclerView?, newState: Int) {
+                        override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
                             super.onScrollStateChanged(recyclerView, newState)
                             if (newState == RecyclerView.SCROLL_STATE_IDLE) {
-                                if (firstPosition == 0)
+                                if (firstPosition == 0 && mScrollFlag) {
                                     snackbar(this@recyclerView, "已滑动到顶部")
-                                if (lastPosition + 1 == adapter.itemCount)
+                                    mScrollFlag = false
+                                }
+                                if (lastPosition + 1 == adapter?.itemCount && mScrollFlag) {
                                     snackbar(this@recyclerView, "已滑动到底部")
+                                    mScrollFlag = false
+                                }
                             }
                         }
                     })
@@ -353,10 +357,18 @@ class MainActivity : AppCompatActivity(), WordManagerService.WordDisplayView {
         return super.onCreateOptionsMenu(menu)
     }
 
+    //标记位，当值为true时，RecyclerView滑动到顶部或底部才会有弹窗。
+    private var mScrollFlag = false
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         when (item?.itemId) {
-            R.id.move_to_Bottom -> mWordManagerService.scrollToBottom()
-            R.id.move_to_top -> mWordManagerService.scrollToTop()
+            R.id.move_to_Bottom -> {
+                mScrollFlag = true
+                mWordManagerService.scrollToBottom()
+            }
+            R.id.move_to_top -> {
+                mScrollFlag = true
+                mWordManagerService.scrollToTop()
+            }
         }
         return super.onOptionsItemSelected(item)
     }
@@ -375,7 +387,7 @@ class MainActivity : AppCompatActivity(), WordManagerService.WordDisplayView {
         ev?.let { event ->
             if (event.action == MotionEvent.ACTION_DOWN) {
                 if (isShouldHideInput(currentFocus, event)) {
-                    currentFocus.windowToken?.let {
+                    currentFocus?.windowToken?.let {
                         val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
                         imm.hideSoftInputFromWindow(it, 0)
                     }

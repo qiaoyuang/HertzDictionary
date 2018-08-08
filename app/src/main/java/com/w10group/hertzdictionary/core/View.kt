@@ -17,7 +17,7 @@ import org.jetbrains.anko.custom.ankoView
  */
 
 //AppCompatSpinner
-inline fun ViewManager.appCompatSpineer(init: AppCompatSpinner.() -> Unit): AppCompatSpinner =
+inline fun ViewManager.appCompatSpinner(init: AppCompatSpinner.() -> Unit): AppCompatSpinner =
         ankoView({ AppCompatSpinner(it) }, theme = 0, init = init)
 
 //CircleImageView
