@@ -13,6 +13,8 @@ android {
         multiDexEnabled true
         kotlin { experimental { coroutines 'enable' } }
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        renderscriptTargetApi 28
+        renderscriptSupportModeEnabled true
     }
     packagingOptions {
         exclude 'META-INF/LGPL2.1'
@@ -29,7 +31,7 @@ android {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
-    buildToolsVersion '28.0.1'
+    buildToolsVersion '28.0.2'
 }
 
 dependencies {
@@ -81,6 +83,10 @@ dependencies {
 
     // Anko Layouts
     implementation "org.jetbrains.anko:anko-sdk25:$anko_version"
+
+    // Coroutine listeners for Anko Layouts
+    implementation "org.jetbrains.anko:anko-sdk25-coroutines:$anko_version"
+    implementation "org.jetbrains.anko:anko-appcompat-v7-coroutines:$anko_version"
 
     // Appcompat-v7 (only Anko Commons)
     implementation "org.jetbrains.anko:anko-appcompat-v7-commons:$anko_version"

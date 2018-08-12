@@ -42,10 +42,7 @@ object FileReadManagerService {
         }
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribeBy {
-                    list[i].text = it
-                    i++
-                }
+                .subscribeBy { list[i++].text = it }
     }
 
 }

@@ -17,9 +17,12 @@ import android.support.v4.widget.DrawerLayout
 import android.support.v4.widget.NestedScrollView
 import android.support.v7.app.ActionBarDrawerToggle
 import android.support.v7.widget.*
+import android.support.v8.renderscript.Allocation
+import android.support.v8.renderscript.RenderScript
 import android.text.Editable
 import android.text.InputType
 import android.text.TextWatcher
+import android.util.Log
 import android.view.*
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
@@ -34,6 +37,7 @@ import com.w10group.hertzdictionary.business.features.FeaturesActivity
 import com.w10group.hertzdictionary.business.licence.LicenceActivity
 import com.w10group.hertzdictionary.business.manager.ImageManagerService
 import com.w10group.hertzdictionary.business.manager.WordManagerService
+import com.w10group.hertzdictionary.business.rs.ScriptC_computation
 import com.w10group.hertzdictionary.core.*
 import org.jetbrains.anko.*
 import org.jetbrains.anko.appcompat.v7.toolbar
@@ -338,6 +342,13 @@ class MainActivity : AppCompatActivity(), WordManagerService.WordDisplayView {
         toggle.syncState()
         ImageManagerService.loadBackground(this, mBackgroundImageView)
         mWordManagerService.getAllWord()
+
+        val rs = RenderScript.create(this)
+        val script = ScriptC_computation(rs)
+        val aIn = Allocation.createFromBitmapResource(rs, resources, R.drawable.ic_close_white_24dp)
+        val aOut = Allocation.createTyped(rs, aIn.type)
+        script.forEach_invert(aIn, aOut)
+        Log.d("输出", aOut.byteBuffer.char.toString())
     }
 
     private fun createHeaderView() =
@@ -361,16 +372,18 @@ class MainActivity : AppCompatActivity(), WordManagerService.WordDisplayView {
     private var mScrollFlag = false
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         when (item?.itemId) {
-            R.id.move_to_Bottom -> {
-                mScrollFlag = true
-                mWordManagerService.scrollToBottom()
-            }
-            R.id.move_to_top -> {
-                mScrollFlag = true
-                mWordManagerService.scrollToTop()
-            }
+            R.id.move_to_Bottom -> recyclerViewScroll(false)
+            R.id.move_to_top -> recyclerViewScroll(true)
         }
         return super.onOptionsItemSelected(item)
+    }
+
+    private fun recyclerViewScroll(isTop: Boolean) {
+        if (status == STATUS_INQUIRED_NOT) {
+            mScrollFlag = true
+            if (isTop) mWordManagerService.scrollToTop()
+            else mWordManagerService.scrollToBottom()
+        }
     }
 
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
