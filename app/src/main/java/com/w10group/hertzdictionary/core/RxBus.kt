@@ -19,7 +19,7 @@ object RxBus {
     const val IO = 1
     const val COMPUTATION = 2
 
-    private val map = HashMap<KClass<*>, LinkedList<out OnWorkListener<*>>>()
+    val map = HashMap<KClass<*>, LinkedList<out OnWorkListener<*>>>()
 
     fun <T : Any> put(key: KClass<T>, value: LinkedList<OnWorkListener<T>>) {
         map[key] = value
@@ -34,16 +34,16 @@ object RxBus {
     }
 
     inline fun <reified T : Any> register(observer: OnWorkListener<T>) {
-        var list = get(T :: class)
+        var list = get(T::class)
         if (list == null) {
             list = LinkedList()
-            put(T :: class, list)
+            put(T::class, list)
         }
         list.add(observer)
     }
 
     inline fun <reified T : Any> unRegister(observer: OnWorkListener<T>) {
-        val list = get(T :: class)
+        val list = get(T::class)
         list?.let { linkedList ->
             linkedList.forEach {
                 if (it === observer) {
@@ -51,12 +51,15 @@ object RxBus {
                     return
                 }
             }
+            if (linkedList.isEmpty()) {
+                map.remove(T::class)
+            }
         }
     }
 
     inline fun <reified T : Any> post(event: T, observableThread: Int = MAIN, observerThread: Int = MAIN) {
         val observable = Observable.just(event).subscribeOn(intToScheduler(observableThread))
-        val list = get(T :: class)
+        val list = get(T::class)
         list?.let { linkedList ->
             linkedList.forEach { listener ->
                 observable

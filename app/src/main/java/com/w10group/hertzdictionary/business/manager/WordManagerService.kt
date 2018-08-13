@@ -7,6 +7,9 @@ import com.w10group.hertzdictionary.business.bean.InquireResult
 import com.w10group.hertzdictionary.business.bean.LocalWord
 import com.w10group.hertzdictionary.business.main.WordListAdapter
 import com.w10group.hertzdictionary.core.NetworkUtil
+import com.w10group.hertzdictionary.core.RxBus
+import com.w10group.hertzdictionary.core.gpu.HashService
+import com.w10group.hertzdictionary.core.gpu.InquireDataEvent
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.rxkotlin.subscribeBy
@@ -91,6 +94,8 @@ class WordManagerService(private val mView: WordDisplayView) {
         }
     }
 
+    init { mContext.startService<HashService>() }
+
     fun scrollToTop() {
         mRecyclerView.smoothScrollToPosition(0)
     }
@@ -121,6 +126,7 @@ class WordManagerService(private val mView: WordDisplayView) {
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnNext {
+                    RxBus.post(InquireDataEvent.newInstance(it.toString()), RxBus.COMPUTATION, RxBus.COMPUTATION)
                     refreshRecyclerViewData(it)
                     mView.displayInquireResult(it, word)
                 }

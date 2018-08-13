@@ -18,7 +18,7 @@
             android:name=".business.main.MainActivity"
             android:launchMode="singleTask"
             android:screenOrientation="portrait"
-            android:theme="@style/TransparentTheme" >
+            android:theme="@style/TransparentTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -27,17 +27,22 @@
         </activity>
         <activity
             android:name=".business.features.FeaturesActivity"
-            android:screenOrientation="portrait"
-            android:launchMode="singleTop" />
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".business.about.AboutDeveloperActivity"
-            android:screenOrientation="portrait"
             android:launchMode="singleTop"
-            android:theme="@style/TransparentTheme"/>
+            android:screenOrientation="portrait"
+            android:theme="@style/TransparentTheme" />
         <activity
             android:name=".business.licence.LicenceActivity"
-            android:screenOrientation="portrait"
-            android:launchMode="singleTop" />
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait" />
+
+        <service
+            android:name=".core.gpu.HashService"
+            android:enabled="true"
+            android:exported="true" />
     </application>
 
 </manifest>
