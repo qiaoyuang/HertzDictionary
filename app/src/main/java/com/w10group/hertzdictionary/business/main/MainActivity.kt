@@ -1,5 +1,6 @@
 package com.w10group.hertzdictionary.business.main
 
+import android.animation.LayoutTransition
 import android.content.Context
 import android.graphics.Color
 import android.os.Build
@@ -85,6 +86,7 @@ class MainActivity : AppCompatActivity(), WordManagerService.WordDisplayView {
         super.onCreate(savedInstanceState)
 
         mDrawerLayout = drawerLayout {
+            layoutTransition = LayoutTransition()
 
             coordinatorLayout {
                 backgroundColor = deepWhite
