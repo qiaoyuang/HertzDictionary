@@ -2,6 +2,7 @@ package com.w10group.hertzdictionary.business.main
 
 import android.content.Context
 import android.graphics.Color
+import android.support.constraint.ConstraintLayout.LayoutParams.PARENT_ID
 import android.support.v4.content.ContextCompat
 import android.support.v7.widget.CardView
 import android.support.v7.widget.RecyclerView.Adapter
@@ -15,6 +16,11 @@ import org.jetbrains.anko.*
 import org.jetbrains.anko.cardview.v7.cardView
 import com.w10group.hertzdictionary.business.main.WordListAdapter.WordListViewHolder
 import com.w10group.hertzdictionary.core.createTouchFeedbackBorderless
+import io.reactivex.Observable
+import io.reactivex.rxkotlin.subscribeBy
+import io.reactivex.schedulers.Schedulers
+import org.jetbrains.anko.constraint.layout.constraintLayout
+import org.litepal.LitePal
 import java.text.NumberFormat
 
 /**
@@ -22,9 +28,8 @@ import java.text.NumberFormat
  * MainFragment中单词RecyclerView的Adapter.
  */
 class WordListAdapter(private val mContext: Context,
-                      private val mData: List<LocalWord>,
-                      private val itemOnClickListener: (String) -> Unit,
-                      private val itemOnLongClickListener: (LocalWord, Int, WordListAdapter) -> Unit) : Adapter<WordListViewHolder>() {
+                      private val mData: MutableList<LocalWord>,
+                      private val itemOnClickListener: (String) -> Unit) : Adapter<WordListViewHolder>() {
 
     companion object {
         const val TV_ENGLISH_ID = 1
@@ -61,15 +66,14 @@ class WordListAdapter(private val mContext: Context,
                 isClickable = true
                 backgroundColor = Color.WHITE
                 foreground = createTouchFeedbackBorderless(mContext)
-
-                relativeLayout {
+                constraintLayout {
                     textView {
                         id = TV_ENGLISH_ID
                         textColor = Color.BLACK
                         textSize = 20f
                     }.lparams(wrapContent, wrapContent) {
-                        alignParentTop()
-                        alignParentStart()
+                        topToTop = PARENT_ID
+                        startToStart = PARENT_ID
                         topMargin = dip(16)
                         marginStart = dip(16)
                     }
@@ -78,8 +82,9 @@ class WordListAdapter(private val mContext: Context,
                         textColor = gray
                         textSize = 16f
                     }.lparams(wrapContent, wrapContent) {
-                        alignStart(TV_ENGLISH_ID)
-                        below(TV_ENGLISH_ID)
+                        topToBottom = TV_ENGLISH_ID
+                        bottomToBottom = PARENT_ID
+                        startToStart = TV_ENGLISH_ID
                         topMargin = dip(4)
                         bottomMargin = dip(16)
                     }
@@ -87,16 +92,17 @@ class WordListAdapter(private val mContext: Context,
                         id = TV_COUNT_ID
                         textColor = gray
                     }.lparams(wrapContent, wrapContent) {
-                        endOf(TV_CHINESE_ID)
-                        sameBottom(TV_CHINESE_ID)
-                        marginStart = dip(32)
+                        startToStart = PARENT_ID
+                        endToEnd = PARENT_ID
+                        bottomToBottom = TV_CHINESE_ID
+                        horizontalBias = 0.35f
                     }
                     textView {
                         id = TV_INQUIRE_RATE_ID
                         textColor = gray
                     }.lparams(wrapContent, wrapContent) {
-                        alignParentEnd()
-                        sameBottom(TV_COUNT_ID)
+                        endToEnd = PARENT_ID
+                        bottomToBottom = TV_CHINESE_ID
                         marginEnd = dip(16)
                     }
                 }.lparams(matchParent, wrapContent)
@@ -114,10 +120,48 @@ class WordListAdapter(private val mContext: Context,
         val rateStr = "查询比例：${mFormat.format(word.count.toDouble() / sumCount.toDouble())}"
         holder.tvInquireRate.text = rateStr
         holder.cardView.setOnClickListener { itemOnClickListener(word.en) }
-        holder.cardView.setOnLongClickListener {
-            itemOnLongClickListener(word, position, this)
-            false
+        holder.cardView.setOnLongClickListener { onLongClick(word, position) }
+    }
+
+    private fun onLongClick(localWord: LocalWord, index: Int): Boolean {
+        mContext.selector("", listOf("删除：${localWord.en}", "清空所有单词")) { dialog, which ->
+            if (which == 0) {
+                mContext.alert {
+                    title = "您确定要删除${localWord.en}吗？"
+                    message = "删除单词会使单词的查询次数清零，且不可恢复，请您确认。"
+                    okButton { alertDialog ->
+                        mData.removeAt(index)
+                        sumCount -= localWord.count
+                        notifyItemRemoved(index)
+                        notifyItemRangeChanged(0, mData.size)
+                        Observable.just(localWord)
+                                .subscribeOn(Schedulers.io())
+                                .observeOn(Schedulers.io())
+                                .subscribeBy { it.delete() }
+                        alertDialog.dismiss()
+                    }
+                    cancelButton { it.dismiss() }
+                }.show()
+            } else {
+                mContext.alert {
+                    title = "您确定要清空所有单词吗？"
+                    message = "清空所有单词会使所有保存的已查询单词数据全部清零，且不可恢复，请您确认。"
+                    okButton { alertDialog ->
+                        mData.clear()
+                        sumCount = 0
+                        notifyDataSetChanged()
+                        Observable.just(LocalWord::class.java)
+                                .subscribeOn(Schedulers.io())
+                                .observeOn(Schedulers.io())
+                                .subscribeBy { LitePal.deleteAll(it) }
+                        alertDialog.dismiss()
+                    }
+                    cancelButton { it.dismiss() }
+                }.show()
+            }
+            dialog.dismiss()
         }
+        return false
     }
 
     class WordListViewHolder(itemView: View) : ViewHolder(itemView) {

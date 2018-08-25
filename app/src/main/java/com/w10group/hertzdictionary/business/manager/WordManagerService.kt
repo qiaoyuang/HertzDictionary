@@ -7,9 +7,6 @@ import com.w10group.hertzdictionary.business.bean.InquireResult
 import com.w10group.hertzdictionary.business.bean.LocalWord
 import com.w10group.hertzdictionary.business.main.WordListAdapter
 import com.w10group.hertzdictionary.core.NetworkUtil
-import com.w10group.hertzdictionary.core.RxBus
-import com.w10group.hertzdictionary.core.gpu.HashService
-import com.w10group.hertzdictionary.core.gpu.InquireDataEvent
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.rxkotlin.subscribeBy
@@ -45,45 +42,6 @@ class WordManagerService(private val mView: WordDisplayView) {
                 itemOnClickListener = {
                     mETInput.setText(it)
                     inquire(it)
-                },
-                itemOnLongClickListener = { localWord, index, adapter ->
-                    mContext.selector("", listOf("删除：${localWord.en}", "清空所有单词")) { dialog, which ->
-                        if (which == 0) {
-                            mContext.alert {
-                                title = "您确定要删除${localWord.en}吗？"
-                                message = "删除单词会使单词的查询次数清零，且不可恢复，请您确认。"
-                                okButton { alertDialog ->
-                                    mData.removeAt(index)
-                                    adapter.sumCount -= localWord.count
-                                    adapter.notifyItemRemoved(index)
-                                    adapter.notifyItemRangeChanged(0, mData.size)
-                                    Observable.just(localWord)
-                                            .subscribeOn(Schedulers.io())
-                                            .observeOn(Schedulers.io())
-                                            .subscribeBy { it.delete() }
-                                    alertDialog.dismiss()
-                                }
-                                cancelButton { it.dismiss() }
-                            }.show()
-                        } else {
-                            mContext.alert {
-                                title = "您确定要清空所有单词吗？"
-                                message = "清空所有单词会使所有保存的已查询单词数据全部清零，且不可恢复，请您确认。"
-                                okButton { alertDialog ->
-                                    mData.clear()
-                                    adapter.sumCount = 0
-                                    adapter.notifyDataSetChanged()
-                                    Observable.just(LocalWord::class.java)
-                                            .subscribeOn(Schedulers.io())
-                                            .observeOn(Schedulers.io())
-                                            .subscribeBy { LitePal.deleteAll(it) }
-                                    alertDialog.dismiss()
-                                }
-                                cancelButton { it.dismiss() }
-                            }.show()
-                        }
-                        dialog.dismiss()
-                    }
                 })
     }
 
@@ -93,8 +51,6 @@ class WordManagerService(private val mView: WordDisplayView) {
             setProgressStyle(0)
         }
     }
-
-    init { mContext.startService<HashService>() }
 
     fun scrollToTop() {
         mRecyclerView.smoothScrollToPosition(0)
@@ -126,7 +82,6 @@ class WordManagerService(private val mView: WordDisplayView) {
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnNext {
-                    RxBus.post(InquireDataEvent.newInstance(it.toString()), RxBus.COMPUTATION, RxBus.COMPUTATION)
                     refreshRecyclerViewData(it)
                     mView.displayInquireResult(it, word)
                 }

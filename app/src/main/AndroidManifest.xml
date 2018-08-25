@@ -38,11 +38,6 @@
             android:name=".business.licence.LicenceActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait" />
-
-        <service
-            android:name=".core.gpu.HashService"
-            android:enabled="true"
-            android:exported="true" />
     </application>
 
 </manifest>
