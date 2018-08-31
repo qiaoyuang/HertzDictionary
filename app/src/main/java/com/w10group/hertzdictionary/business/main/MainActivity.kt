@@ -6,6 +6,7 @@ import android.graphics.Color
 import android.os.Build
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import android.support.constraint.ConstraintLayout.LayoutParams.PARENT_ID
 import android.support.design.widget.AppBarLayout
 import android.support.design.widget.AppBarLayout.LayoutParams.SCROLL_FLAG_EXIT_UNTIL_COLLAPSED
 import android.support.design.widget.AppBarLayout.LayoutParams.SCROLL_FLAG_SCROLL
@@ -39,6 +40,7 @@ import com.w10group.hertzdictionary.core.*
 import org.jetbrains.anko.*
 import org.jetbrains.anko.appcompat.v7.toolbar
 import org.jetbrains.anko.cardview.v7.cardView
+import org.jetbrains.anko.constraint.layout.constraintLayout
 import org.jetbrains.anko.design.*
 import org.jetbrains.anko.recyclerview.v7.recyclerView
 import org.jetbrains.anko.support.v4.drawerLayout
@@ -175,20 +177,13 @@ class MainActivity : AppCompatActivity(), WordManagerService.WordDisplayView {
                             val resultId = 2
                             val pronunciationId = 3
                             val otherTranslationsId = 4
-
-                            relativeLayout {
+                            constraintLayout {
                                 imageView {
                                     setImageDrawable(ContextCompat.getDrawable(this@MainActivity, R.drawable.ic_close_white_24dp))
-                                    setOnClickListener {
-                                        if (status == STATUS_INQUIRED) {
-                                            restore()
-                                        }
-                                    }
+                                    setOnClickListener { if (status == STATUS_INQUIRED) restore() }
                                 }.lparams(wrapContent, wrapContent) {
-                                    alignParentTop()
-                                    alignParentEnd()
-                                    topMargin = dip(16)
-                                    marginEnd = dip(16)
+                                    topToTop = PARENT_ID
+                                    endToEnd = PARENT_ID
                                 }
                                 textView {
                                     id = sourceLanguageId
@@ -196,55 +191,49 @@ class MainActivity : AppCompatActivity(), WordManagerService.WordDisplayView {
                                     textSize = 16f
                                     text = "简体中文"
                                 }.lparams(wrapContent, wrapContent) {
-                                    alignParentTop()
-                                    alignParentStart()
-                                    topMargin = dip(8)
-                                    marginStart = dip(8)
+                                    topToTop = PARENT_ID
+                                    startToStart = PARENT_ID
                                 }
                                 mTVResult = textView {
                                     id = resultId
                                     textColor = Color.WHITE
                                     textSize = 22f
                                 }.lparams(wrapContent, wrapContent) {
-                                    below(sourceLanguageId)
-                                    alignParentStart()
+                                    topToBottom = sourceLanguageId
+                                    startToStart = PARENT_ID
                                     topMargin = dip(16)
-                                    marginStart = dip(16)
+                                    marginStart = dip(8)
                                 }
-
                                 mTVPronunciation = textView {
                                     id = pronunciationId
                                     textColor = Color.WHITE
                                     textSize = 14f
                                 }.lparams(wrapContent, wrapContent) {
-                                    below(resultId)
-                                    alignParentStart()
+                                    topToBottom = resultId
+                                    startToStart = resultId
                                     topMargin = dip(4)
-                                    marginStart = dip(16)
                                 }
-
                                 mTVOtherTranslation = textView {
                                     id = otherTranslationsId
                                     textColor = Color.WHITE
                                     textSize = 14f
                                 }.lparams(wrapContent, wrapContent) {
-                                    below(pronunciationId)
-                                    alignParentStart()
+                                    topToBottom = pronunciationId
+                                    startToStart = pronunciationId
                                     topMargin = dip(16)
-                                    marginStart = dip(16)
-                                    marginEnd = dip(16)
                                 }
-
                                 mTVRelatedWords = textView {
                                     textColor = Color.WHITE
                                     textSize = 14f
                                 }.lparams(wrapContent, wrapContent) {
-                                    below(otherTranslationsId)
-                                    alignParentStart()
-                                    margin = dip(16)
+                                    topToBottom = otherTranslationsId
+                                    bottomToBottom = PARENT_ID
+                                    startToStart = otherTranslationsId
+                                    topMargin = dip(16)
                                 }
-
-                            }.lparams(matchParent, wrapContent)
+                            }.lparams(matchParent, wrapContent) {
+                                margin = dip(16)
+                            }
                         }.lparams(matchParent, wrapContent) {
                             margin = dip(8)
                         }
