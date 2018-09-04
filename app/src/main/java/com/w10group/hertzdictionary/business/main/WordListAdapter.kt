@@ -95,7 +95,7 @@ class WordListAdapter(private val mContext: Context,
                         startToStart = PARENT_ID
                         endToEnd = PARENT_ID
                         bottomToBottom = TV_CHINESE_ID
-                        horizontalBias = 0.35f
+                        horizontalBias = 0.45f
                     }
                     textView {
                         id = TV_INQUIRE_RATE_ID
