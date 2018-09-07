@@ -1,4 +1,4 @@
-package com.w10group.hertzdictionary.business.licence
+package com.w10group.hertzdictionary.biz.licence
 
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
@@ -11,7 +11,7 @@ import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.Toolbar
 import android.view.MenuItem
-import com.w10group.hertzdictionary.business.licence.OSLAdapter.OSL
+import com.w10group.hertzdictionary.biz.licence.OSLAdapter.OSL
 import com.w10group.hertzdictionary.R
 import com.w10group.hertzdictionary.core.getActionBarSize
 import io.reactivex.Observable

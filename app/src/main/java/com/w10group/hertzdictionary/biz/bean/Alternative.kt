@@ -1,4 +1,4 @@
-package com.w10group.hertzdictionary.business.bean
+package com.w10group.hertzdictionary.biz.bean
 
 import com.google.gson.annotations.SerializedName
 

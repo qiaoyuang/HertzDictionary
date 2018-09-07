@@ -5,7 +5,7 @@
     <version value="1" />
 
     <list>
-        <mapping class="com.w10group.hertzdictionary.business.bean.LocalWord" />
+        <mapping class="com.w10group.hertzdictionary.biz.bean.LocalWord" />
     </list>
 
 </litepal>

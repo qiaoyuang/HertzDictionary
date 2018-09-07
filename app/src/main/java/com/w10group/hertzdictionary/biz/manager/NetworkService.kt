@@ -1,6 +1,6 @@
-package com.w10group.hertzdictionary.business.manager
+package com.w10group.hertzdictionary.biz.manager
 
-import com.w10group.hertzdictionary.business.bean.InquireResult
+import com.w10group.hertzdictionary.biz.bean.InquireResult
 import io.reactivex.Observable
 import okhttp3.ResponseBody
 import retrofit2.http.GET

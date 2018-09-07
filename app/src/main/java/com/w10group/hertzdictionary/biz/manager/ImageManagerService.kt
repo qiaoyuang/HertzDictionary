@@ -1,4 +1,4 @@
-package com.w10group.hertzdictionary.business.manager
+package com.w10group.hertzdictionary.biz.manager
 
 import android.content.Context
 import android.content.SharedPreferences

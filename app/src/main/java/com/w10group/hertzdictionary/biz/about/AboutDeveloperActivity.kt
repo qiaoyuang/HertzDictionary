@@ -1,4 +1,4 @@
-package com.w10group.hertzdictionary.business.about
+package com.w10group.hertzdictionary.biz.about
 
 import android.content.ClipData
 import android.content.ClipboardManager
@@ -21,9 +21,9 @@ import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
 import com.w10group.hertzdictionary.R
-import com.w10group.hertzdictionary.business.features.FeaturesActivity
-import com.w10group.hertzdictionary.business.manager.FileReadManagerService
-import com.w10group.hertzdictionary.business.manager.ImageManagerService
+import com.w10group.hertzdictionary.biz.features.FeaturesActivity
+import com.w10group.hertzdictionary.biz.manager.FileReadManagerService
+import com.w10group.hertzdictionary.biz.manager.ImageManagerService
 import com.w10group.hertzdictionary.core.*
 import com.w10group.hertzdictionary.core.image.CompleteScaleImageView
 import org.jetbrains.anko.*

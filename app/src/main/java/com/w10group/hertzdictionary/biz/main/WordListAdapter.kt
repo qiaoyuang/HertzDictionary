@@ -1,4 +1,4 @@
-package com.w10group.hertzdictionary.business.main
+package com.w10group.hertzdictionary.biz.main
 
 import android.content.Context
 import android.graphics.Color
@@ -11,10 +11,10 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import com.w10group.hertzdictionary.R
-import com.w10group.hertzdictionary.business.bean.LocalWord
+import com.w10group.hertzdictionary.biz.bean.LocalWord
 import org.jetbrains.anko.*
 import org.jetbrains.anko.cardview.v7.cardView
-import com.w10group.hertzdictionary.business.main.WordListAdapter.WordListViewHolder
+import com.w10group.hertzdictionary.biz.main.WordListAdapter.WordListViewHolder
 import com.w10group.hertzdictionary.core.createTouchFeedbackBorderless
 import io.reactivex.Observable
 import io.reactivex.rxkotlin.subscribeBy

@@ -1,4 +1,4 @@
-package com.w10group.hertzdictionary.business.features
+package com.w10group.hertzdictionary.biz.features
 
 import android.content.pm.PackageManager
 import android.graphics.Color
@@ -15,7 +15,7 @@ import android.view.Gravity
 import android.view.MenuItem
 import android.widget.TextView
 import com.w10group.hertzdictionary.R
-import com.w10group.hertzdictionary.business.manager.FileReadManagerService
+import com.w10group.hertzdictionary.biz.manager.FileReadManagerService
 import com.w10group.hertzdictionary.core.*
 import com.w10group.hertzdictionary.core.image.CompleteScaleImageView
 import org.jetbrains.anko.*

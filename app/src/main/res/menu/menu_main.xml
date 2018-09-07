@@ -3,7 +3,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".business.main.MainActivity" >
+    tools:context=".biz.main.MainActivity" >
 
     <item
         android:id="@+id/move_to_top"

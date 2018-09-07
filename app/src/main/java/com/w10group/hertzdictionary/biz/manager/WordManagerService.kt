@@ -1,11 +1,11 @@
-package com.w10group.hertzdictionary.business.manager
+package com.w10group.hertzdictionary.biz.manager
 
 import android.content.Context
 import android.support.v7.widget.RecyclerView
 import android.widget.EditText
-import com.w10group.hertzdictionary.business.bean.InquireResult
-import com.w10group.hertzdictionary.business.bean.LocalWord
-import com.w10group.hertzdictionary.business.main.WordListAdapter
+import com.w10group.hertzdictionary.biz.bean.InquireResult
+import com.w10group.hertzdictionary.biz.bean.LocalWord
+import com.w10group.hertzdictionary.biz.main.WordListAdapter
 import com.w10group.hertzdictionary.core.NetworkUtil
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers

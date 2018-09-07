@@ -1,4 +1,4 @@
-package com.w10group.hertzdictionary.business.main
+package com.w10group.hertzdictionary.biz.main
 
 import android.animation.LayoutTransition
 import android.content.Context
@@ -30,12 +30,12 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import com.w10group.hertzdictionary.R
-import com.w10group.hertzdictionary.business.about.AboutDeveloperActivity
-import com.w10group.hertzdictionary.business.bean.InquireResult
-import com.w10group.hertzdictionary.business.features.FeaturesActivity
-import com.w10group.hertzdictionary.business.licence.LicenceActivity
-import com.w10group.hertzdictionary.business.manager.ImageManagerService
-import com.w10group.hertzdictionary.business.manager.WordManagerService
+import com.w10group.hertzdictionary.biz.about.AboutDeveloperActivity
+import com.w10group.hertzdictionary.biz.bean.InquireResult
+import com.w10group.hertzdictionary.biz.features.FeaturesActivity
+import com.w10group.hertzdictionary.biz.licence.LicenceActivity
+import com.w10group.hertzdictionary.biz.manager.ImageManagerService
+import com.w10group.hertzdictionary.biz.manager.WordManagerService
 import com.w10group.hertzdictionary.core.*
 import org.jetbrains.anko.*
 import org.jetbrains.anko.appcompat.v7.toolbar
