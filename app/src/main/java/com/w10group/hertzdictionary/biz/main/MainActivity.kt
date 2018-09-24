@@ -427,6 +427,7 @@ class MainActivity : AppCompatActivity(), WordManagerService.WordDisplayView {
             mCollapsingToolbarLayout.title = word
             status = STATUS_INQUIRED
         }
+
         //展示读音信息
         inquireResult.word?.let {
             mTVResult.text = it[0].ch
