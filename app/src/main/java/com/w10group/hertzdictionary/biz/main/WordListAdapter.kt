@@ -31,7 +31,7 @@ class WordListAdapter(private val mContext: Context,
                       private val mData: MutableList<LocalWord>,
                       private val itemOnClickListener: (String) -> Unit) : Adapter<WordListViewHolder>() {
 
-    companion object {
+    private companion object {
         const val TV_ENGLISH_ID = 1
         const val TV_CHINESE_ID = 2
         const val TV_COUNT_ID = 3
@@ -55,8 +55,7 @@ class WordListAdapter(private val mContext: Context,
         val view = AnkoContext.create(mContext).apply {
             cardView {
                 lparams(matchParent, wrapContent) {
-                    topMargin = dip(4)
-                    bottomMargin = dip(4)
+                    topMargin = dip(8)
                     marginStart = dip(8)
                     marginEnd = dip(8)
                 }

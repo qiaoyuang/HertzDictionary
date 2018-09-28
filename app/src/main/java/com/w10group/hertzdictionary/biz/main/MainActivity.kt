@@ -262,7 +262,7 @@ class MainActivity : AppCompatActivity(), WordManagerService.WordDisplayView {
                             bottomMargin = dip(16)
                         }
                     }.lparams(matchParent, wrapContent)
-                }.lparams(matchParent, matchParent) {
+                }.lparams(matchParent, wrapContent) {
                     behavior = ScrollingViewBehavior()
                 }
 
@@ -293,10 +293,8 @@ class MainActivity : AppCompatActivity(), WordManagerService.WordDisplayView {
                             }
                         }
                     })
-                }.lparams(matchParent, matchParent) {
+                }.lparams(matchParent, wrapContent) {
                     behavior = ScrollingViewBehavior()
-                    topMargin = dip(4)
-                    bottomMargin = dip(4)
                 }
 
             }.lparams(matchParent, matchParent)
