@@ -45,6 +45,7 @@ class WordManagerService(private val mView: WordDisplayView) {
                 })
     }
 
+    @Suppress("DEPRECATION")
     private val mProgressDialog by lazy {
         mContext.progressDialog(title = "请稍候......", message = "正在获取单词数据......") {
             setCancelable(false)
@@ -73,7 +74,7 @@ class WordManagerService(private val mView: WordDisplayView) {
 
     fun inquire(word: String) {
         if (!NetworkUtil.checkNetwork(mContext)) {
-            snackbar(mRecyclerView, "当前无网络连接")
+            mRecyclerView.snackbar("当前无网络连接")
             return
         }
         mProgressDialog.show()
@@ -128,7 +129,7 @@ class WordManagerService(private val mView: WordDisplayView) {
                         onError = {
                             it.printStackTrace()
                             mProgressDialog.dismiss()
-                            snackbar(mRecyclerView, "网络出现问题，请稍后再试。")
+                            mRecyclerView.snackbar("网络出现问题，请稍后再试。")
                         },
                         onComplete = { mProgressDialog.dismiss() }
                 )
@@ -136,7 +137,7 @@ class WordManagerService(private val mView: WordDisplayView) {
 
     //查询动作成功发生后调用此方法来进行数据库操作以及RecyclerView更新
     private fun refreshRecyclerViewData(inquireResult: InquireResult) {
-        Observable.just(inquireResult)
+        val disposable = Observable.just(inquireResult)
                 .subscribeOn(Schedulers.computation())
                 .observeOn(Schedulers.computation())
                 .map {
@@ -180,6 +181,7 @@ class WordManagerService(private val mView: WordDisplayView) {
                         onNext = { it.save() },
                         onError = { it.printStackTrace() }
                 )
+        disposable.dispose()
     }
 
     //第一个数字为负的时候表示未移动过，非负时表示移动前的位置，第二个数表示移动后的位置

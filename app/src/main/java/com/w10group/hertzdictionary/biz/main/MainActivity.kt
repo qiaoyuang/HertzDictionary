@@ -262,7 +262,7 @@ class MainActivity : AppCompatActivity(), WordManagerService.WordDisplayView {
                             bottomMargin = dip(16)
                         }
                     }.lparams(matchParent, wrapContent)
-                }.lparams(matchParent, wrapContent) {
+                }.lparams(matchParent, matchParent) {
                     behavior = ScrollingViewBehavior()
                 }
 
@@ -283,11 +283,11 @@ class MainActivity : AppCompatActivity(), WordManagerService.WordDisplayView {
                             super.onScrollStateChanged(recyclerView, newState)
                             if (newState == RecyclerView.SCROLL_STATE_IDLE) {
                                 if (firstPosition == 0 && mScrollFlag) {
-                                    snackbar(this@recyclerView, "已滑动到顶部")
+                                    recyclerView.snackbar( "已滑动到顶部")
                                     mScrollFlag = false
                                 }
                                 if (lastPosition + 1 == adapter?.itemCount && mScrollFlag) {
-                                    snackbar(this@recyclerView, "已滑动到底部")
+                                    recyclerView.snackbar("已滑动到底部")
                                     mScrollFlag = false
                                 }
                             }
@@ -483,18 +483,21 @@ class MainActivity : AppCompatActivity(), WordManagerService.WordDisplayView {
     }
 
     override fun displayOtherTranslation(words: String) {
-        if (words.isBlank()) {
-            mTVOtherTranslation.visibility = View.GONE
-        } else {
-            mTVOtherTranslation.visibility = View.VISIBLE
-            val otherTranslationText = "其它义项：\n$words"
-            mTVOtherTranslation.text = otherTranslationText
-        }
+        mTVOtherTranslation.setWords(words)
     }
 
     override fun displayRelatedWords(words: String) {
-        val relatedWordsText = "相关词组：\n$words"
-        mTVRelatedWords.text = relatedWordsText
+        mTVRelatedWords.setWords(words)
+    }
+
+    private fun TextView.setWords(words: String) {
+        if (words.isBlank()) {
+            visibility = View.GONE
+        } else {
+            visibility = View.VISIBLE
+            val wordText = "相关词组：\n$words"
+            text = wordText
+        }
     }
 
 }

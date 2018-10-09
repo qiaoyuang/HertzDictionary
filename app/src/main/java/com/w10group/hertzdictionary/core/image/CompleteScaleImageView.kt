@@ -175,11 +175,11 @@ class CompleteScaleImageView(private val mActivity: Activity,
     fun restoreImage() {
         val file = mDownloadFiles[mSelectedPosition]
         MediaStore.Images.Media.insertImage(mActivity.contentResolver, file.absolutePath, file.name, mAlbumName)
-        snackbar(mViewPager, "图片保存成功")
+        mViewPager.snackbar("图片保存成功")
     }
 
     fun permissionsRejectSnack() {
-        longSnackbar(mViewPager, "您拒绝了存储权限申请，保存图片失败", "设置") {
+        mViewPager.longSnackbar("您拒绝了存储权限申请，保存图片失败", "设置") {
             val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             intent.data = Uri.fromParts("package", mActivity.packageName, null)

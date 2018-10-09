@@ -343,7 +343,7 @@ class AboutDeveloperActivity : AppCompatActivity() {
     private fun copyToClipBoard(view: View, content: String, address: String) {
         val cmb = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
         cmb.primaryClip = ClipData.newPlainText("label", address)
-        snackbar(view, "${content}已复制到剪贴板")
+        view.snackbar("${content}已复制到剪贴板")
     }
 
 }

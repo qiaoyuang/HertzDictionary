@@ -55,7 +55,7 @@ class WordListAdapter(private val mContext: Context,
         val view = AnkoContext.create(mContext).apply {
             cardView {
                 lparams(matchParent, wrapContent) {
-                    topMargin = dip(8)
+                    topMargin = dip(4)
                     marginStart = dip(8)
                     marginEnd = dip(8)
                 }
