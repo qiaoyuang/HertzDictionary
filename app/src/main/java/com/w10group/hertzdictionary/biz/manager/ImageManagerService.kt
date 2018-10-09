@@ -51,6 +51,7 @@ object ImageManagerService {
         getURLOnInternet(context, imageView, sharedPreferences)
     }
 
+    @Suppress("CheckResult")
     private fun getURLOnInternet(context: Context, imageView: ImageView, sharedPreferences: SharedPreferences) {
         if (!NetworkUtil.checkNetwork(context)) {
             imageView.snackbar("当前无网络连接")

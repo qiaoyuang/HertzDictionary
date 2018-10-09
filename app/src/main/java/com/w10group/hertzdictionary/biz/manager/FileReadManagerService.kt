@@ -16,6 +16,7 @@ import java.io.InputStreamReader
 
 object FileReadManagerService {
 
+    @Suppress("CheckResult")
     fun process(fileName: String, context: Context, vararg list: TextView) {
         var i = 0
         Observable.create<String> {

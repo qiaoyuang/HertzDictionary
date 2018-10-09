@@ -61,6 +61,7 @@ class WordManagerService(private val mView: WordDisplayView) {
         mRecyclerView.smoothScrollToPosition(mData.size - 1)
     }
 
+    @Suppress("CheckResult")
     fun getAllWord() {
         Observable.just(LitePal.order("count desc")
                 .find(LocalWord::class.java))
@@ -72,6 +73,7 @@ class WordManagerService(private val mView: WordDisplayView) {
                 }
     }
 
+    @Suppress("CheckResult")
     fun inquire(word: String) {
         if (!NetworkUtil.checkNetwork(mContext)) {
             mRecyclerView.snackbar("当前无网络连接")
@@ -136,8 +138,9 @@ class WordManagerService(private val mView: WordDisplayView) {
     }
 
     //查询动作成功发生后调用此方法来进行数据库操作以及RecyclerView更新
+    @Suppress("CheckResult")
     private fun refreshRecyclerViewData(inquireResult: InquireResult) {
-        val disposable = Observable.just(inquireResult)
+        Observable.just(inquireResult)
                 .subscribeOn(Schedulers.computation())
                 .observeOn(Schedulers.computation())
                 .map {
@@ -181,7 +184,6 @@ class WordManagerService(private val mView: WordDisplayView) {
                         onNext = { it.save() },
                         onError = { it.printStackTrace() }
                 )
-        disposable.dispose()
     }
 
     //第一个数字为负的时候表示未移动过，非负时表示移动前的位置，第二个数表示移动后的位置

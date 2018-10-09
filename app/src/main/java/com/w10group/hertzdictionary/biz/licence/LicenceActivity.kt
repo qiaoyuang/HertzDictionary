@@ -76,6 +76,7 @@ class LicenceActivity : AppCompatActivity() {
         return super.onOptionsItemSelected(item)
     }
 
+    @Suppress("CheckResult")
     private fun loadData() {
         Observable.create<OSLAdapter> {
             val inputStream = assets.open(OPEN_SOURCE_FILE_NAME)
