@@ -483,19 +483,19 @@ class MainActivity : AppCompatActivity(), WordManagerService.WordDisplayView {
     }
 
     override fun displayOtherTranslation(words: String) {
-        mTVOtherTranslation.setWords(words)
+        mTVOtherTranslation.setWords("其它义项：", words)
     }
 
     override fun displayRelatedWords(words: String) {
-        mTVRelatedWords.setWords(words)
+        mTVRelatedWords.setWords("相关词组：", words)
     }
 
-    private fun TextView.setWords(words: String) {
+    private fun TextView.setWords(tips: String, words: String) {
         if (words.isBlank()) {
             visibility = View.GONE
         } else {
             visibility = View.VISIBLE
-            val wordText = "相关词组：\n$words"
+            val wordText = "$tips\n$words"
             text = wordText
         }
     }
