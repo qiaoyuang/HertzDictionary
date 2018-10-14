@@ -69,7 +69,6 @@ class FeaturesActivity : AppCompatActivity() {
         coordinatorLayout {
             backgroundColorResource = R.color.deepWhite
             appBarLayout {
-                elevation = dip(8).toFloat()
                 translationZ = dip(8).toFloat()
                 toolbar = toolbar {
                     title = "未来新功能"
@@ -83,7 +82,6 @@ class FeaturesActivity : AppCompatActivity() {
                 verticalLayout {
                     cardView {
                         elevation = dip(4).toFloat()
-                        translationZ = dip(4).toFloat()
                         isClickable = true
                         foreground = createTouchFeedbackBorderless(this@FeaturesActivity)
                         verticalLayout {
@@ -107,14 +105,13 @@ class FeaturesActivity : AppCompatActivity() {
                         }
 
                     }.lparams(matchParent, wrapContent) {
-                        marginStart = dip(8)
-                        marginEnd = dip(8)
-                        topMargin = dip(16)
+                        marginStart = dip(4)
+                        marginEnd = dip(4)
+                        topMargin = dip(8)
                     }
 
                     cardView {
                         elevation = dip(4).toFloat()
-                        translationZ = dip(4).toFloat()
                         isClickable = true
                         foreground = createTouchFeedbackBorderless(this@FeaturesActivity)
 
@@ -139,14 +136,13 @@ class FeaturesActivity : AppCompatActivity() {
                         }
 
                     }.lparams(matchParent, wrapContent) {
-                        marginStart = dip(8)
-                        marginEnd = dip(8)
-                        topMargin = dip(8)
+                        marginStart = dip(4)
+                        marginEnd = dip(4)
+                        topMargin = dip(4)
                     }
 
                     cardView {
                         elevation = dip(4).toFloat()
-                        translationZ = dip(4).toFloat()
                         isClickable = true
                         foreground = createTouchFeedbackBorderless(this@FeaturesActivity)
 
@@ -215,14 +211,13 @@ class FeaturesActivity : AppCompatActivity() {
                         }
 
                     }.lparams(matchParent, wrapContent) {
-                        topMargin = dip(8)
-                        marginStart = dip(8)
-                        marginEnd = dip(8)
+                        topMargin = dip(4)
+                        marginStart = dip(4)
+                        marginEnd = dip(4)
                     }
 
                     cardView {
                         elevation = dip(4).toFloat()
-                        translationZ = dip(4).toFloat()
                         isClickable = true
                         foreground = createTouchFeedbackBorderless(this@FeaturesActivity)
 
@@ -268,10 +263,10 @@ class FeaturesActivity : AppCompatActivity() {
                         }
 
                     }.lparams(matchParent, wrapContent) {
-                        marginStart = dip(8)
-                        marginEnd = dip(8)
-                        topMargin = dip(8)
-                        bottomMargin = dip(16)
+                        marginStart = dip(4)
+                        marginEnd = dip(4)
+                        topMargin = dip(4)
+                        bottomMargin = dip(8)
                     }
 
                 }.lparams(matchParent, matchParent)

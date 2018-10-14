@@ -98,7 +98,6 @@ class MainActivity : AppCompatActivity(), WordManagerService.WordDisplayView {
                     fitsSystemWindows = true
                     backgroundColor = Color.WHITE
                     isFocusableInTouchMode = true
-                    elevation = dip(8).toFloat()
                     translationZ = dip(8).toFloat()
 
                     mCollapsingToolbarLayout = collapsingToolbarLayout {
@@ -169,7 +168,6 @@ class MainActivity : AppCompatActivity(), WordManagerService.WordDisplayView {
                     verticalLayout {
                         cardView {
                             elevation = dip(4).toFloat()
-                            translationZ = dip(4).toFloat()
                             isClickable = true
                             backgroundColor = blue1
                             foreground = createTouchFeedbackBorderless(this@MainActivity)
@@ -240,7 +238,6 @@ class MainActivity : AppCompatActivity(), WordManagerService.WordDisplayView {
 
                         mOtherMeanCard = cardView {
                             elevation = dip(4).toFloat()
-                            translationZ = dip(4).toFloat()
                             isClickable = true
                             backgroundColor = Color.WHITE
                             foreground = createTouchFeedbackBorderless(this@MainActivity)

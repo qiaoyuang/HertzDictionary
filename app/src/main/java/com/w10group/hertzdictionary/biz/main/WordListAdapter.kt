@@ -56,12 +56,11 @@ class WordListAdapter(private val mContext: Context,
             cardView {
                 lparams(matchParent, wrapContent) {
                     topMargin = dip(4)
-                    marginStart = dip(8)
-                    marginEnd = dip(8)
+                    marginStart = dip(4)
+                    marginEnd = dip(4)
                 }
                 id = CARD_ITEM_ID
                 elevation = dip(4).toFloat()
-                translationZ = dip(4).toFloat()
                 isClickable = true
                 backgroundColor = Color.WHITE
                 foreground = createTouchFeedbackBorderless(mContext)

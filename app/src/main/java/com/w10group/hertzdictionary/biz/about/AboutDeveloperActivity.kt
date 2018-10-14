@@ -95,7 +95,6 @@ class AboutDeveloperActivity : AppCompatActivity() {
             appBarLayout {
                 fitsSystemWindows = true
                 elevation = dip(4).toFloat()
-                translationZ = dip(4).toFloat()
 
                 collapsingToolbarLayout {
                     fitsSystemWindows = true
@@ -149,7 +148,6 @@ class AboutDeveloperActivity : AppCompatActivity() {
 
                 cardView {
                     elevation = dip(4).toFloat()
-                    translationZ = dip(4).toFloat()
                     isClickable = true
                     foreground = createTouchFeedbackBorderless(this@AboutDeveloperActivity)
 
@@ -291,7 +289,7 @@ class AboutDeveloperActivity : AppCompatActivity() {
                     }
 
                 }.lparams(matchParent, wrapContent) {
-                    margin = dip(8)
+                    margin = dip(4)
                 }
 
             }.lparams(matchParent, matchParent) {
