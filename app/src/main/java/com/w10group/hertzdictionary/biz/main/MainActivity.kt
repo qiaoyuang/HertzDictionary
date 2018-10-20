@@ -315,7 +315,6 @@ class MainActivity : AppCompatActivity(), WordManagerService.WordDisplayView {
             }.lparams(matchParent, matchParent) {
                 gravity = Gravity.START
             }
-
         }
 
         setSupportActionBar(mToolBar)
