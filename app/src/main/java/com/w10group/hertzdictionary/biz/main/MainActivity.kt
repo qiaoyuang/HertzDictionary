@@ -290,7 +290,7 @@ class MainActivity : AppCompatActivity(), WordManagerService.WordDisplayView {
                             }
                         }
                     })
-                }.lparams(matchParent, wrapContent) {
+                }.lparams(matchParent, matchParent) {
                     behavior = ScrollingViewBehavior()
                 }
 
