@@ -487,12 +487,12 @@ class MainActivity : AppCompatActivity(), WordManagerService.WordDisplayView {
     }
 
     private fun TextView.setWords(tips: String, words: String) {
-        if (words.isBlank()) {
-            visibility = View.GONE
+        visibility = if (words.isBlank()) {
+            View.GONE
         } else {
-            visibility = View.VISIBLE
             val wordText = "$tips\n$words"
             text = wordText
+            View.VISIBLE
         }
     }
 

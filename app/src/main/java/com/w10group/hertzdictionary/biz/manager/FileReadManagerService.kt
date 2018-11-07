@@ -20,26 +20,25 @@ object FileReadManagerService {
     fun process(fileName: String, context: Context, vararg list: TextView) {
         var i = 0
         Observable.create<String> {
-            val inputStream = context.assets.open(fileName)
-            val bufferedReader = BufferedReader(InputStreamReader(inputStream, "UTF-8"))
-            val builder = StringBuilder()
-            var line = bufferedReader.readLine()
-            var isFirst = true
-            while (line != null) {
-                if (line == "*") {
-                    it.onNext(builder.toString())
-                    builder.delete(0, builder.length)
-                    isFirst = true
-                } else {
-                    if (isFirst) isFirst = false
-                    else builder.append("\n\n")
-                    builder.append(line)
+            BufferedReader(InputStreamReader(context.assets.open(fileName),
+                    "UTF-8")).use { bufferedReader ->
+                val builder = StringBuilder()
+                var line = bufferedReader.readLine()
+                var isFirst = true
+                while (line != null) {
+                    if (line == "*") {
+                        it.onNext(builder.toString())
+                        builder.delete(0, builder.length)
+                        isFirst = true
+                    } else {
+                        if (isFirst) isFirst = false
+                        else builder.append("\n\n")
+                        builder.append(line)
+                    }
+                    line = bufferedReader.readLine()
                 }
-                line = bufferedReader.readLine()
             }
             it.onComplete()
-            bufferedReader.close()
-            inputStream.close()
         }
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
