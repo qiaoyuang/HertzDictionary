@@ -14,6 +14,7 @@ import android.provider.Settings
 import android.support.v4.app.ActivityCompat
 import android.support.v4.content.ContextCompat
 import android.support.v4.view.ViewPager
+import android.util.Log
 import android.view.Gravity
 import android.view.View
 import android.view.animation.LinearInterpolator
@@ -28,6 +29,7 @@ import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.rxkotlin.subscribeBy
 import io.reactivex.schedulers.Schedulers
+import kotlinx.coroutines.*
 import org.jetbrains.anko.*
 import org.jetbrains.anko.design.longSnackbar
 import org.jetbrains.anko.design.snackbar
@@ -221,7 +223,7 @@ class CompleteScaleImageView(private val mActivity: Activity,
     fun show(startPosition: Int = 0) {
         if (mViews.isEmpty()) {
             if (mStatus == URL) {
-                mUrls?.let { urls: MutableList<String> ->
+                mUrls?.let { urls ->
                     Observable.create<Int> {
                         for (i in 0 until urls.size) {
                             mViews.add(createItemView())
@@ -249,7 +251,7 @@ class CompleteScaleImageView(private val mActivity: Activity,
                     for (file in it) {
                         val view = createItemView()
                         val subsamplingScaleImageView = view.find<SubsamplingScaleImageView>(SUBSAMPLING_ID)
-                        mViews.add(subsamplingScaleImageView)
+                        mViews.add(view)
                         subsamplingScaleImageView.setImage(ImageSource.uri(Uri.fromFile(file)))
                     }
                 }
@@ -258,12 +260,43 @@ class CompleteScaleImageView(private val mActivity: Activity,
         } else showAgain(startPosition)
     }
 
+    fun showByCoroutines(startPosition: Int = 0): Job = GlobalScope.launch(Dispatchers.Main) {
+        if (mViews.isEmpty()) {
+            if (mStatus == URL) {
+                mUrls?.let { urls ->
+                    for (i in 0 until urls.size) {
+                        mViews.add(createItemView())
+                        val deferred = async(Dispatchers.IO) {
+                            val downloadFile = mImageDownloader.download(urls[i], mActivity)
+                            mDownloadFiles.add(downloadFile)
+                            Log.d("加载图片", i.toString())
+                            downloadFile
+                        }
+                        launch(Dispatchers.Main) {
+                            mViews[i].find<SubsamplingScaleImageView>(SUBSAMPLING_ID).setImage(ImageSource.uri(Uri.fromFile(deferred.await())))
+                            Log.d("设置图片", i.toString())
+                            mViews[i].find<ProgressBar>(PROGRESS_BAR_ID).visibility = View.INVISIBLE
+                        }
+                    }
+                    initShow(startPosition)
+                }
+            } else if (mStatus == FILE) {
+                mFiles?.let {
+                    for (file in it) {
+                        val view = createItemView()
+                        val subsamplingScaleImageView = view.find<SubsamplingScaleImageView>(SUBSAMPLING_ID)
+                        mViews.add(view)
+                        subsamplingScaleImageView.setImage(ImageSource.uri(Uri.fromFile(file)))
+                    }
+                }
+            }
+        } else showAgain(startPosition)
+    }
+
     private fun initShow(startPosition: Int) {
         mViewPager.adapter = mAdapter
         mSelectedPosition = startPosition
-        val size = if (mStatus == URL) {
-            mUrls!!.size
-        } else mFiles!!.size
+        val size = if (mStatus == URL) mUrls!!.size else mFiles!!.size
         val text = "${startPosition + 1}/$size"
         mTVImageCount.text = text
         showAgain(startPosition)

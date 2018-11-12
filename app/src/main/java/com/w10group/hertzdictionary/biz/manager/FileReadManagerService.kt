@@ -6,6 +6,10 @@ import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.rxkotlin.subscribeBy
 import io.reactivex.schedulers.Schedulers
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
 import java.io.BufferedReader
 import java.io.InputStreamReader
 
@@ -16,12 +20,14 @@ import java.io.InputStreamReader
 
 object FileReadManagerService {
 
+    /**
+     * 使用RxJava来进行异步流读取
+     */
     @Suppress("CheckResult")
     fun process(fileName: String, context: Context, vararg list: TextView) {
         var i = 0
         Observable.create<String> {
-            BufferedReader(InputStreamReader(context.assets.open(fileName),
-                    "UTF-8")).use { bufferedReader ->
+            BufferedReader(InputStreamReader(context.assets.open(fileName), "UTF-8")).use { bufferedReader ->
                 val builder = StringBuilder()
                 var line = bufferedReader.readLine()
                 var isFirst = true
@@ -43,6 +49,30 @@ object FileReadManagerService {
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeBy { list[i++].text = it }
+    }
+
+    /**
+     * 使用协程来进行非阻塞异步读取
+     */
+    fun processByCoroutines(fileName: String, context: Context, vararg list: TextView): Job = GlobalScope.launch(Dispatchers.Main) {
+        BufferedReader(InputStreamReader(context.assets.open(fileName), "UTF-8")).use {
+            var i = 0
+            val builder = StringBuilder()
+            var line = it.readLine()
+            var isFirst = true
+            while (line != null) {
+                if (line == "*") {
+                    list[i++].text = builder.toString()
+                    builder.delete(0, builder.length)
+                    isFirst = true
+                } else {
+                    if (isFirst) isFirst = false
+                    else builder.append("\n\n")
+                    builder.append(line)
+                }
+                line = it.readLine()
+            }
+        }
     }
 
 }

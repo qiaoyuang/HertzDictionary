@@ -107,7 +107,7 @@ class AboutDeveloperActivity : AppCompatActivity() {
                         scaleType = ImageView.ScaleType.CENTER_CROP
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
                             foreground = createTouchFeedbackBorderless(this@AboutDeveloperActivity)
-                        setOnClickListener {  mCompleteScaleImageView.show(1) }
+                        setOnClickListener {  mCompleteScaleImageView.showByCoroutines(1) }
                     }.lparams(matchParent, matchParent) {
                         collapseMode = COLLAPSE_MODE_PARALLAX
                     }
@@ -118,7 +118,7 @@ class AboutDeveloperActivity : AppCompatActivity() {
                         borderColor = Color.WHITE
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
                             foreground = createTouchFeedbackBorderless(this@AboutDeveloperActivity)
-                        setOnClickListener { mCompleteScaleImageView.show() }
+                        setOnClickListener { mCompleteScaleImageView.showByCoroutines() }
                     }.lparams(dip(80), dip(80)) {
                         gravity = Gravity.CENTER_HORIZONTAL or Gravity.TOP
                         topMargin = dip(88)
@@ -178,7 +178,7 @@ class AboutDeveloperActivity : AppCompatActivity() {
                         frameLayout {
                             backgroundColor = blueGray
                             foreground = createTouchFeedbackBorderless(this@AboutDeveloperActivity)
-                            setOnClickListener { mReceiptCompleteScaleImageView.show() }
+                            setOnClickListener { mReceiptCompleteScaleImageView.showByCoroutines() }
                             GlideApp.with(this@AboutDeveloperActivity).load(R.drawable.wechatpay).dontAnimate().into(
                                     imageView().lparams(dip(24), dip(24)) {
                                         gravity = Gravity.CENTER_VERTICAL
@@ -202,7 +202,7 @@ class AboutDeveloperActivity : AppCompatActivity() {
                         frameLayout {
                             backgroundColor = blueGray
                             foreground = createTouchFeedbackBorderless(this@AboutDeveloperActivity)
-                            setOnClickListener { mReceiptCompleteScaleImageView.show(1) }
+                            setOnClickListener { mReceiptCompleteScaleImageView.showByCoroutines(1) }
                             GlideApp.with(this@AboutDeveloperActivity).load(R.drawable.alipay).dontAnimate().into(
                                     imageView().lparams(dip(24), dip(24)) {
                                         gravity = Gravity.CENTER_VERTICAL
@@ -303,7 +303,7 @@ class AboutDeveloperActivity : AppCompatActivity() {
 
         ImageManagerService.loadBackground(this, mIMBackground)
         ImageManagerService.loadAvatar(this, mIMAvatar)
-        FileReadManagerService.process(ABOUT_ME_FILE_NAME, this, mTVContent1, mTVContent2, mTVContent3)
+        FileReadManagerService.processByCoroutines(ABOUT_ME_FILE_NAME, this, mTVContent1, mTVContent2, mTVContent3)
     }
 
     override fun onDestroy() {

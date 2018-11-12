@@ -17,6 +17,10 @@ import com.w10group.hertzdictionary.core.getActionBarSize
 import io.reactivex.Observable
 import io.reactivex.rxkotlin.subscribeBy
 import io.reactivex.schedulers.Schedulers
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
 import org.jetbrains.anko.*
 import org.jetbrains.anko.appcompat.v7.toolbar
 import org.jetbrains.anko.design.appBarLayout
@@ -66,7 +70,7 @@ class LicenceActivity : AppCompatActivity() {
 
         setSupportActionBar(toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        loadData()
+        loadDataByCoroutines()
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -76,13 +80,53 @@ class LicenceActivity : AppCompatActivity() {
         return super.onOptionsItemSelected(item)
     }
 
+    /**
+     * 使用RxJava多线程异步读取数据
+     */
     @Suppress("CheckResult")
     private fun loadData() {
         Observable.create<OSLAdapter> {
-            val inputStream = assets.open(OPEN_SOURCE_FILE_NAME)
-            val bufferedReader = BufferedReader(InputStreamReader(inputStream, "UTF-8"))
+            BufferedReader(InputStreamReader(assets.open(OPEN_SOURCE_FILE_NAME), "UTF-8")).use { bufferedReader ->
+                val builder = StringBuilder()
+                var line = bufferedReader.readLine()
+                var isFirst = true
+                while (line != null) {
+                    when (line) {
+                        "&" -> {
+                            val osl = OSL(builder.toString())
+                            builder.delete(0, builder.length)
+                            mData.add(osl)
+                            isFirst = true
+                        }
+                        "*" -> {
+                            mData.last.content = builder.toString()
+                            builder.delete(0, builder.length)
+                            isFirst = true
+                        }
+                        else -> {
+                            if (isFirst) isFirst = false
+                            else builder.append("\n")
+                            builder.append(line)
+                        }
+                    }
+                    line = bufferedReader.readLine()
+                }
+                it.onNext(OSLAdapter(this, mData))
+                it.onComplete()
+            }
+        }
+                .subscribeOn(Schedulers.io())
+                .observeOn(Schedulers.computation())
+                .subscribeBy { mRecyclerView.adapter = it }
+    }
+
+    /**
+     * 使用协程非阻塞单线程读取数据
+     */
+    private fun loadDataByCoroutines(): Job = GlobalScope.launch(Dispatchers.Main) {
+        BufferedReader(InputStreamReader(assets.open(OPEN_SOURCE_FILE_NAME), "UTF-8")).use {
             val builder = StringBuilder()
-            var line = bufferedReader.readLine()
+            var line = it.readLine()
             var isFirst = true
             while (line != null) {
                 when (line) {
@@ -103,16 +147,10 @@ class LicenceActivity : AppCompatActivity() {
                         builder.append(line)
                     }
                 }
-                line = bufferedReader.readLine()
+                line = it.readLine()
             }
-            it.onNext(OSLAdapter(this, mData))
-            it.onComplete()
-            bufferedReader.close()
-            inputStream.close()
         }
-                .subscribeOn(Schedulers.io())
-                .observeOn(Schedulers.computation())
-                .subscribeBy { mRecyclerView.adapter = it }
+        mRecyclerView.adapter = OSLAdapter(this@LicenceActivity, mData)
     }
 
 }

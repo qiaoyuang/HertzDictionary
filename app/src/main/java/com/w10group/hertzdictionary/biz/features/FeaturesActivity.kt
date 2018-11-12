@@ -186,7 +186,7 @@ class FeaturesActivity : AppCompatActivity() {
                             frameLayout {
                                 backgroundColorResource = R.color.blueGray
                                 foreground = createTouchFeedbackBorderless(this@FeaturesActivity)
-                                setOnClickListener { mCompleteScaleImageView.show() }
+                                setOnClickListener { mCompleteScaleImageView.showByCoroutines() }
                                 GlideApp.with(this@FeaturesActivity).load(R.drawable.wechat).dontAnimate().into(
                                         imageView().lparams(dip(24), dip(24)) {
                                             gravity = Gravity.CENTER_VERTICAL
@@ -278,7 +278,7 @@ class FeaturesActivity : AppCompatActivity() {
 
         setSupportActionBar(toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        FileReadManagerService.process(FEATURE_FILE_NAME, this,
+        FileReadManagerService.processByCoroutines(FEATURE_FILE_NAME, this,
                 mTVCurrentContent, mTVNextContent, mTVBugFeedback1,
                 mTVBugFeedback2, mTVAboutTech1, mTVAboutTech2)
     }
