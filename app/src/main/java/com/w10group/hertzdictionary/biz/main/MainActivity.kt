@@ -322,7 +322,7 @@ class MainActivity : AppCompatActivity(), WordManagerService.WordDisplayView {
         mDrawerLayout.addDrawerListener(toggle)
         toggle.syncState()
         ImageManagerService.loadBackground(this, mBackgroundImageView)
-        mWordManagerService.getAllWord()
+        mWordManagerService.getAllWordByCoroutines()
     }
 
     private fun createHeaderView() =

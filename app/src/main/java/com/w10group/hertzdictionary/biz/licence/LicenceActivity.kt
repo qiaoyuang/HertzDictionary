@@ -123,7 +123,7 @@ class LicenceActivity : AppCompatActivity() {
     /**
      * 使用协程非阻塞单线程读取数据
      */
-    private fun loadDataByCoroutines(): Job = GlobalScope.launch(Dispatchers.Main) {
+    private fun loadDataByCoroutines(): Job = GlobalScope.launch(Dispatchers.IO) {
         BufferedReader(InputStreamReader(assets.open(OPEN_SOURCE_FILE_NAME), "UTF-8")).use {
             val builder = StringBuilder()
             var line = it.readLine()
@@ -150,7 +150,9 @@ class LicenceActivity : AppCompatActivity() {
                 line = it.readLine()
             }
         }
-        mRecyclerView.adapter = OSLAdapter(this@LicenceActivity, mData)
+        launch(Dispatchers.Main) {
+            mRecyclerView.adapter = OSLAdapter(this@LicenceActivity, mData)
+        }
     }
 
 }

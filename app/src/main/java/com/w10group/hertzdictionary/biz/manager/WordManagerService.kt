@@ -11,6 +11,9 @@ import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.rxkotlin.subscribeBy
 import io.reactivex.schedulers.Schedulers
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import org.jetbrains.anko.*
 import org.jetbrains.anko.design.snackbar
 import org.litepal.LitePal
@@ -71,6 +74,14 @@ class WordManagerService(private val mView: WordDisplayView) {
                     list?.let { mData.addAll(it) }
                     mRecyclerView.adapter = mAdapter
                 }
+    }
+
+    fun getAllWordByCoroutines() = GlobalScope.launch(Dispatchers.IO) {
+        val list = LitePal.order("count desc").find(LocalWord::class.java)
+        list?.let { mData.addAll(it) }
+        launch(Dispatchers.Main) {
+            mRecyclerView.adapter = mAdapter
+        }
     }
 
     @Suppress("CheckResult")

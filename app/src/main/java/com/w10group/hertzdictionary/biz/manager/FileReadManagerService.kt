@@ -54,7 +54,7 @@ object FileReadManagerService {
     /**
      * 使用协程来进行非阻塞异步读取
      */
-    fun processByCoroutines(fileName: String, context: Context, vararg list: TextView): Job = GlobalScope.launch(Dispatchers.Main) {
+    fun processByCoroutines(fileName: String, context: Context, vararg list: TextView): Job = GlobalScope.launch(Dispatchers.IO) {
         BufferedReader(InputStreamReader(context.assets.open(fileName), "UTF-8")).use {
             var i = 0
             val builder = StringBuilder()
@@ -62,7 +62,10 @@ object FileReadManagerService {
             var isFirst = true
             while (line != null) {
                 if (line == "*") {
-                    list[i++].text = builder.toString()
+                    val text = builder.toString()
+                    launch(Dispatchers.Main) {
+                        list[i++].text = text
+                    }
                     builder.delete(0, builder.length)
                     isFirst = true
                 } else {
