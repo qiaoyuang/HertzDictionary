@@ -3,7 +3,6 @@ package com.w10group.hertzdictionary.biz.features
 import android.content.pm.PackageManager
 import android.graphics.Color
 import android.graphics.Paint
-import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.design.widget.AppBarLayout.ScrollingViewBehavior
 import android.support.design.widget.AppBarLayout.LayoutParams.SCROLL_FLAG_SCROLL
@@ -31,7 +30,7 @@ import java.util.*
  * 未来新功能Activity
  */
 
-class FeaturesActivity : AppCompatActivity() {
+class FeaturesActivity : CoroutinesScopeActivity() {
 
     private companion object {
         const val FEATURE_FILE_NAME = "feature.txt"
@@ -186,7 +185,7 @@ class FeaturesActivity : AppCompatActivity() {
                             frameLayout {
                                 backgroundColorResource = R.color.blueGray
                                 foreground = createTouchFeedbackBorderless(this@FeaturesActivity)
-                                setOnClickListener { mCompleteScaleImageView.showByCoroutines() }
+                                setOnClickListener { mCompleteScaleImageView.showByCoroutines(this@FeaturesActivity) }
                                 GlideApp.with(this@FeaturesActivity).load(R.drawable.wechat).dontAnimate().into(
                                         imageView().lparams(dip(24), dip(24)) {
                                             gravity = Gravity.CENTER_VERTICAL
@@ -278,7 +277,7 @@ class FeaturesActivity : AppCompatActivity() {
 
         setSupportActionBar(toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        FileReadManagerService.processByCoroutines(FEATURE_FILE_NAME, this,
+        FileReadManagerService.processByCoroutines(this, this, FEATURE_FILE_NAME,
                 mTVCurrentContent, mTVNextContent, mTVBugFeedback1,
                 mTVBugFeedback2, mTVAboutTech1, mTVAboutTech2)
     }

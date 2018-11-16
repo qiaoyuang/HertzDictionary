@@ -6,7 +6,6 @@ import android.content.Context
 import android.content.pm.PackageManager
 import android.graphics.Color
 import android.os.Build
-import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.design.widget.AppBarLayout.LayoutParams.SCROLL_FLAG_EXIT_UNTIL_COLLAPSED
 import android.support.design.widget.AppBarLayout.LayoutParams.SCROLL_FLAG_SCROLL
@@ -41,7 +40,7 @@ import java.util.*
  * 关于开发者Activity
  */
 
-class AboutDeveloperActivity : AppCompatActivity() {
+class AboutDeveloperActivity : CoroutinesScopeActivity() {
 
     private companion object {
         const val DEVELOPER_NAME = "Raidriar"
@@ -107,7 +106,7 @@ class AboutDeveloperActivity : AppCompatActivity() {
                         scaleType = ImageView.ScaleType.CENTER_CROP
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
                             foreground = createTouchFeedbackBorderless(this@AboutDeveloperActivity)
-                        setOnClickListener {  mCompleteScaleImageView.showByCoroutines(1) }
+                        setOnClickListener {  mCompleteScaleImageView.showByCoroutines(this@AboutDeveloperActivity, 1) }
                     }.lparams(matchParent, matchParent) {
                         collapseMode = COLLAPSE_MODE_PARALLAX
                     }
@@ -118,7 +117,7 @@ class AboutDeveloperActivity : AppCompatActivity() {
                         borderColor = Color.WHITE
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
                             foreground = createTouchFeedbackBorderless(this@AboutDeveloperActivity)
-                        setOnClickListener { mCompleteScaleImageView.showByCoroutines() }
+                        setOnClickListener { mCompleteScaleImageView.showByCoroutines(this@AboutDeveloperActivity) }
                     }.lparams(dip(80), dip(80)) {
                         gravity = Gravity.CENTER_HORIZONTAL or Gravity.TOP
                         topMargin = dip(88)
@@ -178,7 +177,7 @@ class AboutDeveloperActivity : AppCompatActivity() {
                         frameLayout {
                             backgroundColor = blueGray
                             foreground = createTouchFeedbackBorderless(this@AboutDeveloperActivity)
-                            setOnClickListener { mReceiptCompleteScaleImageView.showByCoroutines() }
+                            setOnClickListener { mReceiptCompleteScaleImageView.showByCoroutines(this@AboutDeveloperActivity) }
                             GlideApp.with(this@AboutDeveloperActivity).load(R.drawable.wechatpay).dontAnimate().into(
                                     imageView().lparams(dip(24), dip(24)) {
                                         gravity = Gravity.CENTER_VERTICAL
@@ -202,7 +201,7 @@ class AboutDeveloperActivity : AppCompatActivity() {
                         frameLayout {
                             backgroundColor = blueGray
                             foreground = createTouchFeedbackBorderless(this@AboutDeveloperActivity)
-                            setOnClickListener { mReceiptCompleteScaleImageView.showByCoroutines(1) }
+                            setOnClickListener { mReceiptCompleteScaleImageView.showByCoroutines(this@AboutDeveloperActivity,1) }
                             GlideApp.with(this@AboutDeveloperActivity).load(R.drawable.alipay).dontAnimate().into(
                                     imageView().lparams(dip(24), dip(24)) {
                                         gravity = Gravity.CENTER_VERTICAL
@@ -303,7 +302,7 @@ class AboutDeveloperActivity : AppCompatActivity() {
 
         ImageManagerService.loadBackground(this, mIMBackground)
         ImageManagerService.loadAvatar(this, mIMAvatar)
-        FileReadManagerService.processByCoroutines(ABOUT_ME_FILE_NAME, this, mTVContent1, mTVContent2, mTVContent3)
+        FileReadManagerService.processByCoroutines(this, this, ABOUT_ME_FILE_NAME, mTVContent1, mTVContent2, mTVContent3)
     }
 
     override fun onDestroy() {

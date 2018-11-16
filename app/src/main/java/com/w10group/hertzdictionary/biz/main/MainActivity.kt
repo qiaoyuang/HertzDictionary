@@ -4,7 +4,6 @@ import android.animation.LayoutTransition
 import android.content.Context
 import android.graphics.Color
 import android.os.Build
-import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.constraint.ConstraintLayout.LayoutParams.PARENT_ID
 import android.support.design.widget.AppBarLayout
@@ -51,7 +50,7 @@ import org.jetbrains.anko.support.v4.nestedScrollView
  * 主界面Activity
  */
 
-class MainActivity : AppCompatActivity(), WordManagerService.WordDisplayView {
+class MainActivity : CoroutinesScopeActivity(), WordManagerService.WordDisplayView {
 
     private lateinit var mDrawerLayout: DrawerLayout
     private lateinit var mAppBarLayout: AppBarLayout
@@ -322,7 +321,7 @@ class MainActivity : AppCompatActivity(), WordManagerService.WordDisplayView {
         mDrawerLayout.addDrawerListener(toggle)
         toggle.syncState()
         ImageManagerService.loadBackground(this, mBackgroundImageView)
-        mWordManagerService.getAllWordByCoroutines()
+        mWordManagerService.getAllWordByCoroutines(this)
     }
 
     private fun createHeaderView() =

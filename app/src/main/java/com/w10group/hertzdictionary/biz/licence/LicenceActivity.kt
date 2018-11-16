@@ -1,6 +1,5 @@
 package com.w10group.hertzdictionary.biz.licence
 
-import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.design.widget.AppBarLayout.ScrollingViewBehavior
 import android.support.design.widget.AppBarLayout.LayoutParams.SCROLL_FLAG_SCROLL
@@ -13,14 +12,15 @@ import android.support.v7.widget.Toolbar
 import android.view.MenuItem
 import com.w10group.hertzdictionary.biz.licence.OSLAdapter.OSL
 import com.w10group.hertzdictionary.R
+import com.w10group.hertzdictionary.core.CoroutinesScopeActivity
 import com.w10group.hertzdictionary.core.getActionBarSize
 import io.reactivex.Observable
 import io.reactivex.rxkotlin.subscribeBy
 import io.reactivex.schedulers.Schedulers
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import org.jetbrains.anko.*
 import org.jetbrains.anko.appcompat.v7.toolbar
 import org.jetbrains.anko.design.appBarLayout
@@ -35,7 +35,7 @@ import java.util.*
  * 开源许可证Activity
  */
 
-class LicenceActivity : AppCompatActivity() {
+class LicenceActivity : CoroutinesScopeActivity() {
 
     private companion object {
         const val OPEN_SOURCE_FILE_NAME = "open_source.txt"
@@ -123,7 +123,7 @@ class LicenceActivity : AppCompatActivity() {
     /**
      * 使用协程非阻塞单线程读取数据
      */
-    private fun loadDataByCoroutines(): Job = GlobalScope.launch(Dispatchers.IO) {
+    private fun loadDataByCoroutines(): Job = launch {
         BufferedReader(InputStreamReader(assets.open(OPEN_SOURCE_FILE_NAME), "UTF-8")).use {
             val builder = StringBuilder()
             var line = it.readLine()
@@ -150,7 +150,7 @@ class LicenceActivity : AppCompatActivity() {
                 line = it.readLine()
             }
         }
-        launch(Dispatchers.Main) {
+        withContext(Dispatchers.Main) {
             mRecyclerView.adapter = OSLAdapter(this@LicenceActivity, mData)
         }
     }

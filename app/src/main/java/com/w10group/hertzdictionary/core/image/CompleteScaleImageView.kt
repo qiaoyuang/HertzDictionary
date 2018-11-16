@@ -260,7 +260,7 @@ class CompleteScaleImageView(private val mActivity: Activity,
         } else showAgain(startPosition)
     }
 
-    fun showByCoroutines(startPosition: Int = 0): Job = GlobalScope.launch(Dispatchers.Main) {
+   fun showByCoroutines(coroutineScope: CoroutineScope, startPosition: Int = 0): Job = coroutineScope.launch(Dispatchers.Main) {
         if (mViews.isEmpty()) {
             if (mStatus == URL) {
                 mUrls?.let { urls ->
