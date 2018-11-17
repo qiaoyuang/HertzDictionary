@@ -14,7 +14,6 @@ import android.provider.Settings
 import android.support.v4.app.ActivityCompat
 import android.support.v4.content.ContextCompat
 import android.support.v4.view.ViewPager
-import android.util.Log
 import android.view.Gravity
 import android.view.View
 import android.view.animation.LinearInterpolator
@@ -260,7 +259,7 @@ class CompleteScaleImageView(private val mActivity: Activity,
         } else showAgain(startPosition)
     }
 
-   fun showByCoroutines(coroutineScope: CoroutineScope, startPosition: Int = 0): Job = coroutineScope.launch(Dispatchers.Main) {
+   fun showByCoroutines(coroutineScope: CoroutineScope, startPosition: Int = 0): Job = coroutineScope.launch {
         if (mViews.isEmpty()) {
             if (mStatus == URL) {
                 mUrls?.let { urls ->
@@ -269,12 +268,10 @@ class CompleteScaleImageView(private val mActivity: Activity,
                         val deferred = async(Dispatchers.IO) {
                             val downloadFile = mImageDownloader.download(urls[i], mActivity)
                             mDownloadFiles.add(downloadFile)
-                            Log.d("加载图片", i.toString())
                             downloadFile
                         }
                         launch(Dispatchers.Main) {
                             mViews[i].find<SubsamplingScaleImageView>(SUBSAMPLING_ID).setImage(ImageSource.uri(Uri.fromFile(deferred.await())))
-                            Log.d("设置图片", i.toString())
                             mViews[i].find<ProgressBar>(PROGRESS_BAR_ID).visibility = View.INVISIBLE
                         }
                     }

@@ -63,7 +63,7 @@ object FileReadManagerService {
             while (line != null) {
                 if (line == "*") {
                     val text = builder.toString()
-                    withContext(Dispatchers.Main) { list[i++].text = text }
+                    launch(Dispatchers.Main) { list[i++].text = text }
                     builder.delete(0, builder.length)
                     isFirst = true
                 } else {

@@ -123,7 +123,7 @@ class LicenceActivity : CoroutinesScopeActivity() {
     /**
      * 使用协程非阻塞单线程读取数据
      */
-    private fun loadDataByCoroutines(): Job = launch {
+    private fun loadDataByCoroutines(): Job = launch(Dispatchers.IO) {
         BufferedReader(InputStreamReader(assets.open(OPEN_SOURCE_FILE_NAME), "UTF-8")).use {
             val builder = StringBuilder()
             var line = it.readLine()
