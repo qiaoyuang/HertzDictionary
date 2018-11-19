@@ -6,10 +6,7 @@ import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.rxkotlin.subscribeBy
 import io.reactivex.schedulers.Schedulers
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 import java.io.BufferedReader
 import java.io.InputStreamReader
 
@@ -54,7 +51,10 @@ object FileReadManagerService {
     /**
      * 使用协程来进行非阻塞异步读取
      */
-    fun processByCoroutines(fileName: String, context: Context, vararg list: TextView): Job = GlobalScope.launch(Dispatchers.IO) {
+    fun processByCoroutines(coroutineScope: CoroutineScope,
+                            context: Context,
+                            fileName: String,
+                            vararg list: TextView): Job = coroutineScope.launch(Dispatchers.IO) {
         BufferedReader(InputStreamReader(context.assets.open(fileName), "UTF-8")).use {
             var i = 0
             val builder = StringBuilder()
@@ -63,9 +63,7 @@ object FileReadManagerService {
             while (line != null) {
                 if (line == "*") {
                     val text = builder.toString()
-                    launch(Dispatchers.Main) {
-                        list[i++].text = text
-                    }
+                    launch(Dispatchers.Main) { list[i++].text = text }
                     builder.delete(0, builder.length)
                     isFirst = true
                 } else {
