@@ -21,7 +21,7 @@ import java.util.concurrent.CopyOnWriteArrayList
  * 单词查询存储计算等管理服务
  */
 
-@Deprecated("这个类已经过时了，请使用协程重构的V2版本", ReplaceWith("com.w10group.hertzdictionary.biz.manager.WordManagerServiceV2"))
+@Deprecated("这个类已经过时了，请使用协程重构的V2版本。")
 class WordManagerService(private val mView: WordDisplayView) {
 
     interface WordDisplayView {
