@@ -2,6 +2,7 @@ package com.w10group.hertzdictionary.core
 
 import android.content.Context
 import android.net.ConnectivityManager
+import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory
 import com.jakewharton.retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -19,6 +20,7 @@ object NetworkUtil {
             .baseUrl(BASE_URL)
             .addConverterFactory(GsonConverterFactory.create())
             .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
+            .addCallAdapterFactory(CoroutineCallAdapterFactory())
             .build()
 
     fun checkNetwork(context: Context): Boolean {

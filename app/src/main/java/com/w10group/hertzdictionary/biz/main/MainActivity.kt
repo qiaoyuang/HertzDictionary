@@ -321,7 +321,7 @@ class MainActivity : CoroutinesScopeActivity(), WordManagerService.WordDisplayVi
         mDrawerLayout.addDrawerListener(toggle)
         toggle.syncState()
         ImageManagerService.loadBackground(this, mBackgroundImageView)
-        mWordManagerService.getAllWordByCoroutines(this)
+        mWordManagerService.getAllWord()
     }
 
     private fun createHeaderView() =

@@ -8,6 +8,9 @@ import com.w10group.hertzdictionary.core.NetworkUtil
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.rxkotlin.subscribeBy
 import io.reactivex.schedulers.Schedulers
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import org.jetbrains.anko.design.snackbar
 import java.util.*
 
@@ -48,7 +51,7 @@ object ImageManagerService {
             todayURL = sharedPreferences.getString(KEY_URL, DEFAULT_VALUE)!!
         }
         GlideApp.with(context).load(todayURL).dontAnimate().into(imageView)
-        getURLOnInternet(context, imageView, sharedPreferences)
+        getURLOnInternetByCoroutines(context, imageView, sharedPreferences)
     }
 
     @Suppress("CheckResult")
@@ -72,5 +75,18 @@ object ImageManagerService {
                     }
                 }, onError = { it.printStackTrace() })
     }
+
+    private fun getURLOnInternetByCoroutines(context: Context, imageView: ImageView, sharedPreferences: SharedPreferences) =
+        GlobalScope.launch(Dispatchers.Main) {
+            val requestBody =  NetworkUtil.create<NetworkService>().getImageURLByCoroutines(GET_URL).await()
+            val url = requestBody.charStream().readText()
+            if (url != todayURL) {
+                todayURL = url
+                GlideApp.with(context).load(todayURL).dontAnimate().into(imageView)
+                val edit = sharedPreferences.edit()
+                edit.putString(KEY_URL, todayURL)
+                edit.apply()
+            }
+        }
 
 }
