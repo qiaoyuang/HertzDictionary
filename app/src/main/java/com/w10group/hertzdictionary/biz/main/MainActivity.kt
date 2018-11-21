@@ -34,8 +34,9 @@ import com.w10group.hertzdictionary.biz.bean.InquireResult
 import com.w10group.hertzdictionary.biz.features.FeaturesActivity
 import com.w10group.hertzdictionary.biz.licence.LicenceActivity
 import com.w10group.hertzdictionary.biz.manager.ImageManagerService
-import com.w10group.hertzdictionary.biz.manager.WordManagerService
+import com.w10group.hertzdictionary.biz.manager.WordManagerServiceV2
 import com.w10group.hertzdictionary.core.*
+import kotlinx.coroutines.CoroutineScope
 import org.jetbrains.anko.*
 import org.jetbrains.anko.appcompat.v7.toolbar
 import org.jetbrains.anko.cardview.v7.cardView
@@ -50,7 +51,7 @@ import org.jetbrains.anko.support.v4.nestedScrollView
  * 主界面Activity
  */
 
-class MainActivity : CoroutinesScopeActivity(), WordManagerService.WordDisplayView {
+class MainActivity : CoroutinesScopeActivity(), WordManagerServiceV2.WordDisplayView {
 
     private lateinit var mDrawerLayout: DrawerLayout
     private lateinit var mAppBarLayout: AppBarLayout
@@ -81,7 +82,7 @@ class MainActivity : CoroutinesScopeActivity(), WordManagerService.WordDisplayVi
     }
 
     private var status = STATUS_INQUIRED_NOT
-    private val mWordManagerService by lazy { WordManagerService(this) }
+    private val mWordManagerService by lazy { WordManagerServiceV2(this) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -409,6 +410,7 @@ class MainActivity : CoroutinesScopeActivity(), WordManagerService.WordDisplayVi
     override fun getEditText(): EditText = mETInput
     override fun getRecyclerView(): RecyclerView = mRecyclerView
     override fun getContext(): Context = this
+    override fun getCoroutineScope(): CoroutineScope = this
 
     override fun displayInquireResult(inquireResult: InquireResult, word: String) {
         //改变控件状态
