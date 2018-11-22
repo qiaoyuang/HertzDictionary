@@ -40,7 +40,7 @@ import java.util.*
  * 关于开发者Activity
  */
 
-class AboutDeveloperActivity : CoroutinesScopeActivity() {
+class AboutDeveloperActivity : CoroutineScopeActivity() {
 
     private companion object {
         const val DEVELOPER_NAME = "Raidriar"

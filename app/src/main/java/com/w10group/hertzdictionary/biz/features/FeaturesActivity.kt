@@ -30,7 +30,7 @@ import java.util.*
  * 未来新功能Activity
  */
 
-class FeaturesActivity : CoroutinesScopeActivity() {
+class FeaturesActivity : CoroutineScopeActivity() {
 
     private companion object {
         const val FEATURE_FILE_NAME = "feature.txt"

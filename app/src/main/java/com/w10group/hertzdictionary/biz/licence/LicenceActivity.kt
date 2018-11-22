@@ -12,7 +12,7 @@ import android.support.v7.widget.Toolbar
 import android.view.MenuItem
 import com.w10group.hertzdictionary.biz.licence.OSLAdapter.OSL
 import com.w10group.hertzdictionary.R
-import com.w10group.hertzdictionary.core.CoroutinesScopeActivity
+import com.w10group.hertzdictionary.core.CoroutineScopeActivity
 import com.w10group.hertzdictionary.core.getActionBarSize
 import io.reactivex.Observable
 import io.reactivex.rxkotlin.subscribeBy
@@ -35,7 +35,7 @@ import java.util.*
  * 开源许可证Activity
  */
 
-class LicenceActivity : CoroutinesScopeActivity() {
+class LicenceActivity : CoroutineScopeActivity() {
 
     private companion object {
         const val OPEN_SOURCE_FILE_NAME = "open_source.txt"

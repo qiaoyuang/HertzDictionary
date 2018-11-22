@@ -51,7 +51,7 @@ import org.jetbrains.anko.support.v4.nestedScrollView
  * 主界面Activity
  */
 
-class MainActivity : CoroutinesScopeActivity(), WordManagerServiceV2.WordDisplayView {
+class MainActivity : CoroutineScopeActivity(), WordManagerServiceV2.WordDisplayView {
 
     private lateinit var mDrawerLayout: DrawerLayout
     private lateinit var mAppBarLayout: AppBarLayout
