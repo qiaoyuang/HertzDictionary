@@ -15,12 +15,14 @@ import retrofit2.http.Url
 
 interface NetworkService {
 
+    @Deprecated("这个函数已经过时了，请使用协程的版本。")
     @GET
     fun getImageURL(@Url url: String): Observable<ResponseBody>
 
     @GET
     fun getImageURLByCoroutines(@Url url: String): Deferred<ResponseBody>
 
+    @Deprecated("这个函数已经过时了，请使用协程的版本。")
     @GET("translate_a/single")
     fun inquireWord(@Query("q") word: String,
                     @Query("dj") dj: Int = 1,

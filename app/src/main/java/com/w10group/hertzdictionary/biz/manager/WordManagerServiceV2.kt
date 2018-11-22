@@ -33,11 +33,12 @@ class WordManagerServiceV2(private val mView: WordDisplayView) {
     private val mRecyclerView = mView.getRecyclerView()
     private val mCoroutineScope = mView.getCoroutineScope()
 
-    private val mData = CopyOnWriteArrayList<LocalWord>()
-    private val mAdapter: WordListAdapter = WordListAdapter(mContext, mData) {
-        mETInput.setText(it)
-        inquire(it)
-    }
+    private val mData by lazy { CopyOnWriteArrayList<LocalWord>() }
+    private val mAdapter: WordListAdapter by lazy {
+        WordListAdapter(mContext, mData) {
+            mETInput.setText(it)
+            inquire(it)
+        }}
 
     @Suppress("DEPRECATION")
     private val mProgressDialog by lazy {
