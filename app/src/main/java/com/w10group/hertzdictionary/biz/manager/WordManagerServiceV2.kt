@@ -72,7 +72,7 @@ class WordManagerServiceV2(private val mView: WordDisplayView) {
         mProgressDialog.show()
         val deferred = NetworkUtil.create<NetworkService>().inquireWordByCoroutines(word)
         val inquireResult = deferred.await()
-        refreshRecyclerViewData(inquireResult)
+        refreshRecyclerViewData(inquireResult).join()
         mView.displayInquireResult(inquireResult, word)
         val (otherTranslation, relatedWords) = withContext(Dispatchers.Default) {
             //拼接其它义项
