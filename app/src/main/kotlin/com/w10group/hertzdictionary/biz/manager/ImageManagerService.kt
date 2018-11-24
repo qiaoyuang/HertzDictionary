@@ -8,10 +8,8 @@ import com.w10group.hertzdictionary.core.NetworkUtil
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.rxkotlin.subscribeBy
 import io.reactivex.schedulers.Schedulers
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
 import org.jetbrains.anko.design.snackbar
+import java.io.IOException
 import java.util.*
 
 /**
@@ -41,11 +39,11 @@ object ImageManagerService {
         GlideApp.with(context).load(AVATAR_URL).dontAnimate().into(imageView)
     }
 
-    fun loadBackground(context: Context, imageView: ImageView) {
+    suspend fun loadBackground(context: Context, imageView: ImageView) {
         getURL(context, imageView)
     }
 
-    private fun getURL(context: Context, imageView: ImageView) {
+    private suspend fun getURL(context: Context, imageView: ImageView) {
         val sharedPreferences = context.getSharedPreferences(FILE_NAME, Context.MODE_PRIVATE)
         if (ImageManagerService::todayURL.isLateinit) {
             todayURL = sharedPreferences.getString(KEY_URL, DEFAULT_VALUE)!!
@@ -54,6 +52,7 @@ object ImageManagerService {
         getURLOnInternetByCoroutines(context, imageView, sharedPreferences)
     }
 
+    @Deprecated("这个函数已经过时了，请使用协程重构的版本。")
     @Suppress("CheckResult")
     private fun getURLOnInternet(context: Context, imageView: ImageView, sharedPreferences: SharedPreferences) {
         if (!NetworkUtil.checkNetwork(context)) {
@@ -76,17 +75,21 @@ object ImageManagerService {
                 }, onError = { it.printStackTrace() })
     }
 
-    private fun getURLOnInternetByCoroutines(context: Context, imageView: ImageView, sharedPreferences: SharedPreferences) =
-        GlobalScope.launch(Dispatchers.Main) {
-            val requestBody =  NetworkUtil.create<NetworkService>().getImageURLByCoroutines(GET_URL).await()
-            val url = requestBody.charStream().readText()
-            if (url != todayURL) {
-                todayURL = url
-                GlideApp.with(context).load(todayURL).dontAnimate().into(imageView)
-                val edit = sharedPreferences.edit()
-                edit.putString(KEY_URL, todayURL)
-                edit.apply()
-            }
+    private suspend fun getURLOnInternetByCoroutines(context: Context, imageView: ImageView, sharedPreferences: SharedPreferences) {
+        val requestBody = try {
+            NetworkUtil.create<NetworkService>().getImageURLByCoroutines(GET_URL).await()
+        } catch (e: IOException) {
+            e.printStackTrace()
+            return
         }
+        val url = requestBody.charStream().readText()
+        if (url != todayURL) {
+            todayURL = url
+            GlideApp.with(context).load(todayURL).dontAnimate().into(imageView)
+            val edit = sharedPreferences.edit()
+            edit.putString(KEY_URL, todayURL)
+            edit.apply()
+        }
+    }
 
 }

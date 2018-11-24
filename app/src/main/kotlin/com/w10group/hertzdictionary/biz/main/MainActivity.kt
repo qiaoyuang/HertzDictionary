@@ -34,9 +34,12 @@ import com.w10group.hertzdictionary.biz.bean.InquireResult
 import com.w10group.hertzdictionary.biz.features.FeaturesActivity
 import com.w10group.hertzdictionary.biz.licence.LicenceActivity
 import com.w10group.hertzdictionary.biz.manager.ImageManagerService
-import com.w10group.hertzdictionary.biz.manager.WordManagerServiceV2
+import com.w10group.hertzdictionary.biz.manager.WordDisplayView
+import com.w10group.hertzdictionary.biz.manager.WordManagerServiceV3
 import com.w10group.hertzdictionary.core.*
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import org.jetbrains.anko.*
 import org.jetbrains.anko.appcompat.v7.toolbar
 import org.jetbrains.anko.cardview.v7.cardView
@@ -51,7 +54,7 @@ import org.jetbrains.anko.support.v4.nestedScrollView
  * 主界面Activity
  */
 
-class MainActivity : CoroutineScopeActivity(), WordManagerServiceV2.WordDisplayView {
+class MainActivity : CoroutineScopeActivity(), WordDisplayView {
 
     private lateinit var mDrawerLayout: DrawerLayout
     private lateinit var mAppBarLayout: AppBarLayout
@@ -82,7 +85,7 @@ class MainActivity : CoroutineScopeActivity(), WordManagerServiceV2.WordDisplayV
     }
 
     private var status = STATUS_INQUIRED_NOT
-    private val mWordManagerService by lazy { WordManagerServiceV2(this) }
+    private val mWordManagerService by lazy { WordManagerServiceV3(this) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -321,8 +324,8 @@ class MainActivity : CoroutineScopeActivity(), WordManagerServiceV2.WordDisplayV
         val toggle = ActionBarDrawerToggle(this@MainActivity, mDrawerLayout, mToolBar, R.string.navigation_drawer_open, R.string.navigation_drawer_close)
         mDrawerLayout.addDrawerListener(toggle)
         toggle.syncState()
-        ImageManagerService.loadBackground(this, mBackgroundImageView)
-        mWordManagerService.getAllWord()
+        launch { ImageManagerService.loadBackground(this@MainActivity, mBackgroundImageView) }
+        launch(Dispatchers.IO) { mWordManagerService.getAllWord() }
     }
 
     private fun createHeaderView() =

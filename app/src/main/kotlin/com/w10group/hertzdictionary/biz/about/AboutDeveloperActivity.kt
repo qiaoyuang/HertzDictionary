@@ -25,6 +25,7 @@ import com.w10group.hertzdictionary.biz.manager.FileReadManagerService
 import com.w10group.hertzdictionary.biz.manager.ImageManagerService
 import com.w10group.hertzdictionary.core.*
 import com.w10group.hertzdictionary.core.image.CompleteScaleImageView
+import kotlinx.coroutines.launch
 import org.jetbrains.anko.*
 import org.jetbrains.anko.appcompat.v7.toolbar
 import org.jetbrains.anko.cardview.v7.cardView
@@ -300,7 +301,7 @@ class AboutDeveloperActivity : CoroutineScopeActivity() {
         setSupportActionBar(mToolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
-        ImageManagerService.loadBackground(this, mIMBackground)
+        launch { ImageManagerService.loadBackground(this@AboutDeveloperActivity, mIMBackground) }
         ImageManagerService.loadAvatar(this, mIMAvatar)
         FileReadManagerService.processByCoroutines(this, this, ABOUT_ME_FILE_NAME, mTVContent1, mTVContent2, mTVContent3)
     }

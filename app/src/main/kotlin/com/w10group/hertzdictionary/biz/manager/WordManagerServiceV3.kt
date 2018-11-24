@@ -4,7 +4,9 @@ import com.w10group.hertzdictionary.biz.bean.InquireResult
 import com.w10group.hertzdictionary.biz.bean.LocalWord
 import com.w10group.hertzdictionary.biz.main.WordListAdapter
 import com.w10group.hertzdictionary.core.NetworkUtil
-import kotlinx.coroutines.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import org.jetbrains.anko.design.snackbar
 import org.jetbrains.anko.progressDialog
 import org.litepal.LitePal
@@ -12,10 +14,10 @@ import java.io.IOException
 
 /**
  * Created by Qiao Yuang on 2018/11/20.
- * 单词查询存储计算等管理服务，协程重构版
+ * 单词查询存储计算等管理服务，协程重构第二版
  */
 
-class WordManagerServiceV2(private val mView: WordDisplayView) {
+class WordManagerServiceV3(private val mView: WordDisplayView) {
 
     private val mContext = mView.getContext()
     private val mETInput = mView.getEditText()
@@ -27,7 +29,8 @@ class WordManagerServiceV2(private val mView: WordDisplayView) {
         WordListAdapter(mContext, mData) {
             mETInput.setText(it)
             inquire(it)
-        }}
+        }
+    }
 
     @Suppress("DEPRECATION")
     private val mProgressDialog by lazy {
@@ -48,19 +51,17 @@ class WordManagerServiceV2(private val mView: WordDisplayView) {
     }
 
     //获取所有单词
-    fun getAllWord() = mCoroutineScope.launch(Dispatchers.IO) {
+    suspend fun getAllWord() {
         val list = LitePal.order("count desc").find(LocalWord::class.java)
         list?.let { mData.addAll(it) }
-        withContext(Dispatchers.Main) {
-            mRecyclerView.adapter = mAdapter
-        }
+        withContext(Dispatchers.Main) { mRecyclerView.adapter = mAdapter }
     }
 
     //查询单词
     fun inquire(word: String) = mCoroutineScope.launch {
         if (!NetworkUtil.checkNetwork(mContext)) {
             mRecyclerView.snackbar("当前无网络连接")
-            return@launch
+            throw IOException("当前无网络连接")
         }
         mProgressDialog.show()
         val inquireResult = try {
@@ -72,47 +73,59 @@ class WordManagerServiceV2(private val mView: WordDisplayView) {
             return@launch
         }
         mView.displayInquireResult(inquireResult, word)
-        refreshRecyclerViewData(inquireResult).join()
-        val (otherTranslation, relatedWords) = withContext(Dispatchers.Default) {
-            //拼接其它义项
-            val builder1 = StringBuilder()
-            inquireResult.alternativeTranslations?.let { list ->
-                list[0].words?.let { _list ->
-                    val last = _list.size - 1
-                    _list.forEachIndexed { index, alternative ->
-                        if (index != 0) {
-                            if (index == last) {
-                                builder1.append(alternative.word)
-                            } else {
-                                builder1.append("${alternative.word}，")
-                            }
-                        }
-                    }
-                }
-            }
-            //拼接相关词组
-            val builder2 = StringBuilder()
-            inquireResult.relatedWords?.let { relatedWords ->
-                relatedWords.words?.let { list ->
-                    val last = list.size - 1
-                    list.forEachIndexed { index, word ->
-                        if (index == last) {
-                            builder2.append(word)
-                        } else {
-                            builder2.append("$word, ")
-                        }
-                    }
-                }
-            }
-            Pair(builder1.toString(), builder2.toString())
+        launch(Dispatchers.Default) {
+            refreshRecyclerViewData(inquireResult)
         }
-        mView displayOtherTranslation otherTranslation
-        mView displayRelatedWords relatedWords
+        this@WordManagerServiceV3 showOtherTranslationAndRelateWords withContext(Dispatchers.Default) {
+            getOtherTranslationAndRelateWords(inquireResult)
+        }
         mProgressDialog.dismiss()
     }
 
+    //拼接其它义项以及相关词组并返回
+    private fun getOtherTranslationAndRelateWords(inquireResult: InquireResult): Pair<String, String> {
+        //拼接其它义项
+        val builder1 = StringBuilder()
+        inquireResult.alternativeTranslations?.let { list ->
+            list[0].words?.let { _list ->
+                val last = _list.size - 1
+                _list.forEachIndexed { index, alternative ->
+                    if (index != 0) {
+                        if (index == last) {
+                            builder1.append(alternative.word)
+                        } else {
+                            builder1.append("${alternative.word}，")
+                        }
+                    }
+                }
+            }
+        }
+        //拼接相关词组
+        val builder2 = StringBuilder()
+        inquireResult.relatedWords?.let { relatedWords ->
+            relatedWords.words?.let { list ->
+                val last = list.size - 1
+                list.forEachIndexed { index, word ->
+                    if (index == last) {
+                        builder2.append(word)
+                    } else {
+                        builder2.append("$word, ")
+                    }
+                }
+            }
+        }
+        return Pair(builder1.toString(), builder2.toString())
+    }
+
+    //展示其它义项以及相关词组
+    private suspend infix fun showOtherTranslationAndRelateWords(pair: Pair<String, String>) {
+        val (otherTranslation, relatedWords) = pair
+        mView displayOtherTranslation otherTranslation
+        mView displayRelatedWords relatedWords
+    }
+
     //刷新RecyclerView的词序
-    private fun refreshRecyclerViewData(inquireResult: InquireResult) = mCoroutineScope.launch(Dispatchers.Default) {
+    private suspend fun refreshRecyclerViewData(inquireResult: InquireResult) {
         val orig = inquireResult.word!![0]
         var word: LocalWord? = null
         //在mData中查找word是否存在，如果存在则找到它并记录其index
