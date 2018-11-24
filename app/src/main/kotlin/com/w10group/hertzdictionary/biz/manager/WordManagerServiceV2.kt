@@ -7,14 +7,10 @@ import com.w10group.hertzdictionary.biz.bean.InquireResult
 import com.w10group.hertzdictionary.biz.bean.LocalWord
 import com.w10group.hertzdictionary.biz.main.WordListAdapter
 import com.w10group.hertzdictionary.core.NetworkUtil
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.*
 import org.jetbrains.anko.design.snackbar
 import org.jetbrains.anko.progressDialog
 import org.litepal.LitePal
-import java.util.concurrent.CopyOnWriteArrayList
 
 class WordManagerServiceV2(private val mView: WordDisplayView) {
 
@@ -22,10 +18,10 @@ class WordManagerServiceV2(private val mView: WordDisplayView) {
         fun getEditText(): EditText
         fun getRecyclerView(): RecyclerView
         fun getContext(): Context
-        fun displayInquireResult(inquireResult: InquireResult, word: String)
-        fun displayOtherTranslation(words: String)
-        fun displayRelatedWords(words: String)
         fun getCoroutineScope(): CoroutineScope
+        suspend fun displayInquireResult(inquireResult: InquireResult, word: String)
+        suspend infix fun displayOtherTranslation(words: String)
+        suspend infix fun displayRelatedWords(words: String)
     }
 
     private val mContext = mView.getContext()
@@ -33,7 +29,7 @@ class WordManagerServiceV2(private val mView: WordDisplayView) {
     private val mRecyclerView = mView.getRecyclerView()
     private val mCoroutineScope = mView.getCoroutineScope()
 
-    private val mData by lazy { CopyOnWriteArrayList<LocalWord>() }
+    private val mData by lazy { ArrayList<LocalWord>() }
     private val mAdapter: WordListAdapter by lazy {
         WordListAdapter(mContext, mData) {
             mETInput.setText(it)
@@ -72,8 +68,8 @@ class WordManagerServiceV2(private val mView: WordDisplayView) {
         mProgressDialog.show()
         val deferred = NetworkUtil.create<NetworkService>().inquireWordByCoroutines(word)
         val inquireResult = deferred.await()
-        refreshRecyclerViewData(inquireResult).join()
         mView.displayInquireResult(inquireResult, word)
+        refreshRecyclerViewData(inquireResult).join()
         val (otherTranslation, relatedWords) = withContext(Dispatchers.Default) {
             //拼接其它义项
             val builder1 = StringBuilder()
@@ -107,11 +103,12 @@ class WordManagerServiceV2(private val mView: WordDisplayView) {
             }
             Pair(builder1.toString(), builder2.toString())
         }
-        mView.displayOtherTranslation(otherTranslation)
-        mView.displayRelatedWords(relatedWords)
+        mView displayOtherTranslation otherTranslation
+        mView displayRelatedWords relatedWords
         mProgressDialog.dismiss()
     }
 
+    //刷新RecyclerView的词序
     private fun refreshRecyclerViewData(inquireResult: InquireResult) = mCoroutineScope.launch(Dispatchers.Default) {
         val orig = inquireResult.word!![0]
         var word: LocalWord? = null

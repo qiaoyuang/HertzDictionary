@@ -16,6 +16,9 @@ android {
         renderscriptTargetApi 28
         renderscriptSupportModeEnabled true
     }
+    sourceSets {
+        main.java.srcDirs += 'src/main/kotlin'
+    }
     packagingOptions {
         exclude 'META-INF/LGPL2.1'
         exclude 'META-INF/LICENSE'

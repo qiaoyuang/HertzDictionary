@@ -412,7 +412,7 @@ class MainActivity : CoroutineScopeActivity(), WordManagerServiceV2.WordDisplayV
     override fun getContext(): Context = this
     override fun getCoroutineScope(): CoroutineScope = this
 
-    override fun displayInquireResult(inquireResult: InquireResult, word: String) {
+    override suspend fun displayInquireResult(inquireResult: InquireResult, word: String) {
         //改变控件状态
         if (status == STATUS_INQUIRED_NOT) {
             mRecyclerView.visibility = View.GONE
@@ -479,11 +479,11 @@ class MainActivity : CoroutineScopeActivity(), WordManagerServiceV2.WordDisplayV
         }
     }
 
-    override fun displayOtherTranslation(words: String) {
+    override suspend infix fun displayOtherTranslation(words: String) {
         mTVOtherTranslation.setWords("其它义项：", words)
     }
 
-    override fun displayRelatedWords(words: String) {
+    override suspend infix fun displayRelatedWords(words: String) {
         mTVRelatedWords.setWords("相关词组：", words)
     }
 
