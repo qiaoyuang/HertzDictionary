@@ -1,5 +1,7 @@
 package com.w10group.hertzdictionary.biz.bean
 
-import com.google.gson.annotations.SerializedName
+import com.squareup.moshi.Json
+import com.squareup.moshi.JsonClass
 
-data class AlternativeTranslations(@SerializedName("alternative") val words: List<Alternative>? = null)
+@JsonClass(generateAdapter = true)
+data class AlternativeTranslations(@Json(name = "alternative") val words: List<Alternative>? = null)

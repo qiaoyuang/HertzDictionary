@@ -1,6 +1,7 @@
 package com.w10group.hertzdictionary.biz.bean
 
-import com.google.gson.annotations.SerializedName
+import com.squareup.moshi.Json
+import com.squareup.moshi.JsonClass
 
 /**
  * Created by Administrator on 2018/6/15.
@@ -8,4 +9,5 @@ import com.google.gson.annotations.SerializedName
  */
 
 
-data class RelatedWords(@SerializedName("word") val words: List<String>? = null)
+@JsonClass(generateAdapter = true)
+data class RelatedWords(@Json(name = "word") val words: List<String>? = null)

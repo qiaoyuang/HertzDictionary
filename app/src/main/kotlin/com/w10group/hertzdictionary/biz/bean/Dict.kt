@@ -1,6 +1,8 @@
 package com.w10group.hertzdictionary.biz.bean
 
-import com.google.gson.annotations.SerializedName
+import com.squareup.moshi.Json
+import com.squareup.moshi.JsonClass
 
-data class Dict(@SerializedName("pos") val posType: String = "",
-                @SerializedName("entry") val dictInfo: List<DictInfo>? = null)
+@JsonClass(generateAdapter = true)
+data class Dict(@Json(name = "pos") val posType: String = "",
+                @Json(name = "entry") val dictInfo: List<DictInfo>? = null)

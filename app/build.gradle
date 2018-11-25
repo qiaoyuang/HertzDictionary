@@ -59,10 +59,12 @@ dependencies {
 
     //Retrofit
     implementation 'com.squareup.retrofit2:retrofit:2.5.0'
-    implementation 'com.squareup.retrofit2:converter-gson:2.5.0'
-    implementation 'com.squareup.retrofit2:converter-moshi:2.5.0'
-    implementation 'com.jakewharton.retrofit:retrofit2-rxjava2-adapter:1.0.0'
     implementation 'com.jakewharton.retrofit:retrofit2-kotlin-coroutines-adapter:0.9.2'
+    implementation 'com.squareup.retrofit2:converter-moshi:2.5.0'
+
+    //Moshi
+    implementation("com.squareup.moshi:moshi:1.8.0")
+    kapt 'com.squareup.moshi:moshi-kotlin-codegen:1.8.0'
 
     //大图查看器&圆形ImageView
     implementation 'com.davemorrissey.labs:subsampling-scale-image-view:3.10.0'

@@ -1,5 +1,7 @@
 package com.w10group.hertzdictionary.biz.bean
 
-import com.google.gson.annotations.SerializedName
+import com.squareup.moshi.Json
+import com.squareup.moshi.JsonClass
 
-data class Alternative(@SerializedName("word_postproc") val word: String = "")
+@JsonClass(generateAdapter = true)
+data class Alternative(@Json(name = "word_postproc") val word: String = "")
