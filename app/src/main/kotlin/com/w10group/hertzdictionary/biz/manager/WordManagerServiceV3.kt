@@ -5,6 +5,7 @@ import com.w10group.hertzdictionary.biz.bean.LocalWord
 import com.w10group.hertzdictionary.biz.main.WordListAdapter
 import com.w10group.hertzdictionary.core.NetworkUtil
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.jetbrains.anko.design.snackbar
@@ -58,10 +59,10 @@ class WordManagerServiceV3(private val mView: WordDisplayView) {
     }
 
     //查询单词
-    fun inquire(word: String) = mCoroutineScope.launch {
+    fun inquire(word: String): Job = mCoroutineScope.launch {
         if (!NetworkUtil.checkNetwork(mContext)) {
             mRecyclerView.snackbar("当前无网络连接")
-            throw IOException("当前无网络连接")
+            return@launch
         }
         mProgressDialog.show()
         val inquireResult = try {
@@ -147,10 +148,8 @@ class WordManagerServiceV3(private val mView: WordDisplayView) {
                 if (mIsMoved[0] >= 0) {
                     mAdapter.notifyItemRemoved(mIsMoved[0])
                     mAdapter.notifyItemInserted(mIsMoved[1])
-                    mAdapter.notifyItemRangeChanged(0, mData.size)
-                } else {
-                    mAdapter.notifyItemRangeChanged(0, mData.size)
                 }
+                mAdapter.notifyItemRangeChanged(0, mData.size)
             } else {
                 val index = mData.size - 1
                 mAdapter.notifyItemRangeChanged(0, index)
