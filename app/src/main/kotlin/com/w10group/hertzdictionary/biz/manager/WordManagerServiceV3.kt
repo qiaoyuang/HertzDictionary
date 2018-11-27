@@ -86,36 +86,23 @@ class WordManagerServiceV3(private val mView: WordDisplayView) {
     //拼接其它义项以及相关词组并返回
     private fun getOtherTranslationAndRelateWords(inquireResult: InquireResult): Pair<String, String> {
         //拼接其它义项
-        val builder1 = StringBuilder()
-        inquireResult.alternativeTranslations?.let { list ->
-            list[0].words?.let { _list ->
-                val last = _list.size - 1
-                _list.forEachIndexed { index, alternative ->
-                    if (index != 0) {
-                        if (index == last) {
-                            builder1.append(alternative.word)
-                        } else {
-                            builder1.append("${alternative.word}，")
-                        }
-                    }
+        val otherTranslation = inquireResult.alternativeTranslations?.get(0)?.words?.let {
+            StringBuilder().apply {
+                val last = it.size - 1
+                it.forEachIndexed { index, alternative ->
+                    if (index != 0)
+                        append(if (index == last) alternative.word else "${alternative.word}，")
                 }
-            }
-        }
+            }.toString()
+        } ?: ""
         //拼接相关词组
-        val builder2 = StringBuilder()
-        inquireResult.relatedWords?.let { relatedWords ->
-            relatedWords.words?.let { list ->
-                val last = list.size - 1
-                list.forEachIndexed { index, word ->
-                    if (index == last) {
-                        builder2.append(word)
-                    } else {
-                        builder2.append("$word, ")
-                    }
-                }
-            }
-        }
-        return Pair(builder1.toString(), builder2.toString())
+        val relatedWords = inquireResult.relatedWords?.words?.let {
+            StringBuilder().apply {
+                val last = it.size - 1
+                it.forEachIndexed { index, word -> append(if (index == last) word else "$word, ") }
+            }.toString()
+        } ?: ""
+        return Pair(otherTranslation, relatedWords)
     }
 
     //展示其它义项以及相关词组
