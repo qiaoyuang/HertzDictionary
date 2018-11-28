@@ -16,11 +16,12 @@ import org.jetbrains.anko.*
 import org.jetbrains.anko.cardview.v7.cardView
 import com.w10group.hertzdictionary.biz.main.WordListAdapter.WordListViewHolder
 import com.w10group.hertzdictionary.core.createTouchFeedbackBorderless
-import io.reactivex.Observable
-import io.reactivex.rxkotlin.subscribeBy
-import io.reactivex.schedulers.Schedulers
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import org.jetbrains.anko.constraint.layout.constraintLayout
 import org.litepal.LitePal
+import org.litepal.extension.deleteAll
 import java.text.NumberFormat
 
 /**
@@ -29,6 +30,7 @@ import java.text.NumberFormat
  */
 class WordListAdapter(private val mContext: Context,
                       private val mData: MutableList<LocalWord>,
+                      private val mCoroutineScope: CoroutineScope,
                       private val itemOnClickListener: (String) -> Unit) : Adapter<WordListViewHolder>() {
 
     private companion object {
@@ -132,10 +134,7 @@ class WordListAdapter(private val mContext: Context,
                         sumCount -= localWord.count
                         notifyItemRemoved(index)
                         notifyItemRangeChanged(0, mData.size)
-                        Observable.just(localWord)
-                                .subscribeOn(Schedulers.io())
-                                .observeOn(Schedulers.io())
-                                .subscribeBy { it.delete() }
+                        mCoroutineScope.launch(Dispatchers.IO) { localWord.delete() }
                         alertDialog.dismiss()
                     }
                     cancelButton { it.dismiss() }
@@ -148,10 +147,7 @@ class WordListAdapter(private val mContext: Context,
                         mData.clear()
                         sumCount = 0
                         notifyDataSetChanged()
-                        Observable.just(LocalWord::class.java)
-                                .subscribeOn(Schedulers.io())
-                                .observeOn(Schedulers.io())
-                                .subscribeBy { LitePal.deleteAll(it) }
+                        mCoroutineScope.launch(Dispatchers.IO) { LitePal.deleteAll<LocalWord>() }
                         alertDialog.dismiss()
                     }
                     cancelButton { it.dismiss() }

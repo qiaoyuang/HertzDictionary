@@ -11,6 +11,7 @@ import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.rxkotlin.subscribeBy
 import io.reactivex.schedulers.Schedulers
+import kotlinx.coroutines.GlobalScope
 import org.jetbrains.anko.*
 import org.jetbrains.anko.design.snackbar
 import org.litepal.LitePal
@@ -24,7 +25,7 @@ import java.util.concurrent.CopyOnWriteArrayList
 @Deprecated("这个类已经过时了，请使用协程重构的V2版本。")
 class WordManagerService(private val mView: WordDisplayView) {
 
-    interface WordDisplayView {
+    /*interface WordDisplayView {
         fun getEditText(): EditText
         fun getRecyclerView(): RecyclerView
         fun getContext(): Context
@@ -216,6 +217,6 @@ class WordManagerService(private val mView: WordDisplayView) {
                 }
             }
         }
-    }
+    }*/
 
 }
