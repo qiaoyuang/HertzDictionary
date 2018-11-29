@@ -11,6 +11,7 @@ import kotlinx.coroutines.withContext
 import org.jetbrains.anko.design.snackbar
 import org.jetbrains.anko.progressDialog
 import org.litepal.LitePal
+import org.litepal.extension.find
 import java.io.IOException
 
 /**
@@ -27,7 +28,7 @@ class WordManagerServiceV3(private val mView: WordDisplayView) {
 
     private val mData by lazy { ArrayList<LocalWord>() }
     private val mAdapter: WordListAdapter by lazy {
-        WordListAdapter(mContext, mData) {
+        WordListAdapter(mContext, mData, mCoroutineScope) {
             mETInput.setText(it)
             inquire(it)
         }
@@ -53,8 +54,8 @@ class WordManagerServiceV3(private val mView: WordDisplayView) {
 
     //获取所有单词
     suspend fun getAllWord() {
-        val list = LitePal.order("count desc").find(LocalWord::class.java)
-        list?.let { mData.addAll(it) }
+        val list = LitePal.order("count desc").find<LocalWord>()
+        mData.addAll(list)
         withContext(Dispatchers.Main) { mRecyclerView.adapter = mAdapter }
     }
 

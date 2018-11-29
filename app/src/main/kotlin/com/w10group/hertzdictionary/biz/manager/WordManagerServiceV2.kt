@@ -24,7 +24,7 @@ class WordManagerServiceV2(private val mView: WordDisplayView) {
 
     private val mData by lazy { ArrayList<LocalWord>() }
     private val mAdapter: WordListAdapter by lazy {
-        WordListAdapter(mContext, mData) {
+        WordListAdapter(mContext, mData, mCoroutineScope) {
             mETInput.setText(it)
             inquire(it)
         }}
