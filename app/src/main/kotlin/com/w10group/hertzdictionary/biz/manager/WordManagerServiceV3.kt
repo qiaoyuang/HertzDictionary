@@ -13,6 +13,7 @@ import org.jetbrains.anko.progressDialog
 import org.litepal.LitePal
 import org.litepal.extension.find
 import java.io.IOException
+import java.util.concurrent.CopyOnWriteArrayList
 
 /**
  * Created by Qiao Yuang on 2018/11/20.
@@ -26,7 +27,7 @@ class WordManagerServiceV3(private val mView: WordDisplayView) {
     private val mRecyclerView = mView.getRecyclerView()
     private val mCoroutineScope = mView.getCoroutineScope()
 
-    private val mData by lazy { ArrayList<LocalWord>() }
+    private val mData by lazy { CopyOnWriteArrayList<LocalWord>() }
     private val mAdapter: WordListAdapter by lazy {
         WordListAdapter(mContext, mData, mCoroutineScope) {
             mETInput.setText(it)
@@ -75,9 +76,7 @@ class WordManagerServiceV3(private val mView: WordDisplayView) {
             return@launch
         }
         mView.displayInquireResult(inquireResult, word)
-        launch(Dispatchers.Default) {
-            refreshRecyclerViewData(inquireResult)
-        }
+        launch(Dispatchers.Default) { refreshRecyclerViewData(inquireResult) }
         this@WordManagerServiceV3 showOtherTranslationAndRelateWords withContext(Dispatchers.Default) {
             getOtherTranslationAndRelateWords(inquireResult)
         }
@@ -122,7 +121,7 @@ class WordManagerServiceV3(private val mView: WordDisplayView) {
             if (localWord.en == orig.en) {
                 word = localWord
                 localWord.count++
-                localWord.reSort(index)
+                localWord reSort index
             }
         }
         //如果word没有初始化表示word不存在与mData中，所以创建新word
@@ -151,7 +150,7 @@ class WordManagerServiceV3(private val mView: WordDisplayView) {
     private val mIsMoved by lazy { intArrayOf(-1, -1) }
 
     //调整LocalWord在mData中的位置，并返回链表是否被调整过
-    private fun LocalWord.reSort(index: Int) {
+    private infix fun LocalWord.reSort(index: Int) {
         mIsMoved[0] = -1
         when {
             index == 0 -> return
