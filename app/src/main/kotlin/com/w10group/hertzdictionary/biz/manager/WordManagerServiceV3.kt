@@ -1,11 +1,12 @@
 package com.w10group.hertzdictionary.biz.manager
 
+import android.util.Log
 import com.w10group.hertzdictionary.biz.bean.InquireResult
 import com.w10group.hertzdictionary.biz.bean.LocalWord
 import com.w10group.hertzdictionary.biz.main.WordListAdapter
+import com.w10group.hertzdictionary.core.CoroutineBus
 import com.w10group.hertzdictionary.core.NetworkUtil
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.jetbrains.anko.design.snackbar
@@ -61,7 +62,7 @@ class WordManagerServiceV3(private val mView: WordDisplayView) {
     }
 
     //查询单词
-    fun inquire(word: String): Job = mCoroutineScope.launch {
+    fun inquire(word: String) = mCoroutineScope.launch {
         if (!NetworkUtil.checkNetwork(mContext)) {
             mRecyclerView.snackbar("当前无网络连接")
             return@launch
