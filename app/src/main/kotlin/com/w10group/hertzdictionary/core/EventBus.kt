@@ -1,10 +1,9 @@
 package com.w10group.hertzdictionary.core
 
-import kotlinx.coroutines.channels.Channel
 import java.util.LinkedList
 import kotlin.reflect.KClass
 
-object CoroutineBus {
+object EventBus {
 
     val map = HashMap<KClass<*>, LinkedList<out OnWorkListener<*>>>()
 
@@ -44,16 +43,8 @@ object CoroutineBus {
         }
     }
 
-    suspend inline fun <reified T : Any> post(event: T) {
-       get(T::class)?.let { linkedList ->
-           Channel<T>().apply {
-               send(event)
-               linkedList.forEach {
-                   it.onWork(receive())
-               }
-               close()
-           }
-       }
+    inline fun <reified T : Any> post(event: T) {
+       get(T::class)?.forEach { it.onWork(event) }
     }
 
 }

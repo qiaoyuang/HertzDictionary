@@ -1,12 +1,11 @@
 package com.w10group.hertzdictionary.biz.manager
 
-import android.util.Log
 import com.w10group.hertzdictionary.biz.bean.InquireResult
 import com.w10group.hertzdictionary.biz.bean.LocalWord
 import com.w10group.hertzdictionary.biz.main.WordListAdapter
-import com.w10group.hertzdictionary.core.CoroutineBus
 import com.w10group.hertzdictionary.core.NetworkUtil
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.channels.produce
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.jetbrains.anko.design.snackbar
