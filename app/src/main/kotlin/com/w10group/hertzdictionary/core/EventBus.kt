@@ -3,6 +3,12 @@ package com.w10group.hertzdictionary.core
 import java.util.LinkedList
 import kotlin.reflect.KClass
 
+/**
+ * 事件总线
+ * 还不完善，缺少缓冲机制以及多线程调度能力
+ * 后续计划使用协程实现上述功能
+ */
+
 object EventBus {
 
     val map = HashMap<KClass<*>, LinkedList<out OnWorkListener<*>>>()
@@ -12,8 +18,7 @@ object EventBus {
     }
 
     @Suppress("UNCHECKED_CAST")
-    fun <T : Any> get(key: KClass<T>): LinkedList<OnWorkListener<T>>?
-            = map[key] as LinkedList<OnWorkListener<T>>?
+    fun <T : Any> get(key: KClass<T>) = map[key] as LinkedList<OnWorkListener<T>>?
 
     interface OnWorkListener<in T> {
         fun onWork(event: T)
@@ -43,8 +48,6 @@ object EventBus {
         }
     }
 
-    inline fun <reified T : Any> post(event: T) {
-       get(T::class)?.forEach { it.onWork(event) }
-    }
+    inline fun <reified T : Any> post(event: T) = get(T::class)?.forEach { it.onWork(event) }
 
 }
