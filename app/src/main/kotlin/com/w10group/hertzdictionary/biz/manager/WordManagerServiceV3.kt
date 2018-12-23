@@ -81,14 +81,14 @@ class WordManagerServiceV3(private val mView: WordDisplayView) {
         val pairDeferred = async(Dispatchers.Default) { getOtherTranslationAndRelateWords(inquireResult) }
         mView.displayInquireResult(inquireResult, word)
         this@WordManagerServiceV3 showOtherTranslationAndRelateWords pairDeferred.await()
-        launch(Dispatchers.Default) { updateRecyclerViewData(inquireResult) }
         mProgressDialog.dismiss()
+        launch(Dispatchers.Default) { updateRecyclerViewData(inquireResult) }
     }
 
     //拼接其它义项以及相关词组并返回
     private suspend fun getOtherTranslationAndRelateWords(inquireResult: InquireResult): Pair<String, String> {
         //拼接其它义项
-        val otherTranslation = inquireResult.alternativeTranslations?.get(0)?.words?.let {
+        val otherTranslationDeferred = inquireResult.alternativeTranslations?.get(0)?.words?.let {
             mCoroutineScope.async(Dispatchers.Default) {
                 StringBuilder().apply {
                     val last = it.size - 1
@@ -97,17 +97,19 @@ class WordManagerServiceV3(private val mView: WordDisplayView) {
                             append(if (index == last) alternative.word else "${alternative.word}，")
                     }
                 }.toString()
-            }.await()
-        } ?: ""
+            }
+        }
         //拼接相关词组
-        val relatedWords = inquireResult.relatedWords?.words?.let {
+        val relatedWordsDeferred = inquireResult.relatedWords?.words?.let {
             mCoroutineScope.async(Dispatchers.Default) {
                 StringBuilder().apply {
                     val last = it.size - 1
                     it.forEachIndexed { index, word -> append(if (index == last) word else "$word, ") }
                 }.toString()
-            }.await()
-        } ?: ""
+            }
+        }
+        val otherTranslation = otherTranslationDeferred?.await() ?: ""
+        val relatedWords = relatedWordsDeferred?.await() ?: ""
         return Pair(otherTranslation, relatedWords)
     }
 

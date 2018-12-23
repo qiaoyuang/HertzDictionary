@@ -72,7 +72,7 @@ class WordManagerServiceV2(private val mView: WordDisplayView) {
             return@launch
         }
         mView.displayInquireResult(inquireResult, word)
-        refreshRecyclerViewData(inquireResult).join()
+        refreshRecyclerViewData(inquireResult)
         val (otherTranslation, relatedWords) = withContext(Dispatchers.Default) {
             //拼接其它义项
             val builder1 = StringBuilder()
