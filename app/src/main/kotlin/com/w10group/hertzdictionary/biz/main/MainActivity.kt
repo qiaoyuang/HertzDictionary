@@ -401,13 +401,14 @@ class MainActivity : CoroutineScopeActivity(), WordDisplayView {
     }
 
     //将界面恢复到未查询的状态
-    private fun restore() {
+    private fun restore() = launch {
         status = STATUS_INQUIRED_NOT
         mRecyclerView.visibility = View.VISIBLE
         mNestedScrollView.visibility = View.GONE
         mTVSrcPronunciation.visibility = View.GONE
         mCollapsingToolbarLayout.title = mTitleText
         mETInput.setText("")
+        mWordManagerService.refreshRecyclerView()
     }
 
     override fun getEditText(): EditText = mETInput
