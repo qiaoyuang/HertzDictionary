@@ -167,7 +167,7 @@ class MainActivity : CoroutineScopeActivity(), WordDisplayView {
                 }.lparams(matchParent, wrapContent)
 
                 mNestedScrollView = nestedScrollView {
-                    visibility = View.GONE
+                    post { visibility = View.GONE }
                     verticalLayout {
                         cardView {
                             elevation = dip(4).toFloat()
