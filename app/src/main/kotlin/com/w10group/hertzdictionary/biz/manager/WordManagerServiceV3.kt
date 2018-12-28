@@ -5,7 +5,8 @@ import com.w10group.hertzdictionary.biz.bean.LocalWord
 import com.w10group.hertzdictionary.biz.main.WordListAdapter
 import com.w10group.hertzdictionary.core.NetworkUtil
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.channels.produce
+import kotlinx.coroutines.async
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.jetbrains.anko.design.snackbar
@@ -34,6 +35,8 @@ class WordManagerServiceV3(private val mView: WordDisplayView) {
             inquire(it)
         }
     }
+
+    private val mUpdateChannel = Channel<LocalWord>()
 
     @Suppress("DEPRECATION")
     private val mProgressDialog by lazy {
@@ -75,33 +78,38 @@ class WordManagerServiceV3(private val mView: WordDisplayView) {
             mRecyclerView.snackbar("网络出现问题，请稍后再试。")
             return@launch
         }
+        val pairDeferred = async(Dispatchers.Default) { getOtherTranslationAndRelateWords(inquireResult) }
         mView.displayInquireResult(inquireResult, word)
-        launch(Dispatchers.Default) { refreshRecyclerViewData(inquireResult) }
-        this@WordManagerServiceV3 showOtherTranslationAndRelateWords withContext(Dispatchers.Default) {
-            getOtherTranslationAndRelateWords(inquireResult)
-        }
+        this@WordManagerServiceV3 showOtherTranslationAndRelateWords pairDeferred.await()
         mProgressDialog.dismiss()
+        launch(Dispatchers.Default) { updateRecyclerViewData(inquireResult) }
     }
 
     //拼接其它义项以及相关词组并返回
-    private fun getOtherTranslationAndRelateWords(inquireResult: InquireResult): Pair<String, String> {
+    private suspend fun getOtherTranslationAndRelateWords(inquireResult: InquireResult): Pair<String, String> {
         //拼接其它义项
-        val otherTranslation = inquireResult.alternativeTranslations?.get(0)?.words?.let {
-            StringBuilder().apply {
-                val last = it.size - 1
-                it.forEachIndexed { index, alternative ->
-                    if (index != 0)
-                        append(if (index == last) alternative.word else "${alternative.word}，")
-                }
-            }.toString()
-        } ?: ""
+        val otherTranslationDeferred = inquireResult.alternativeTranslations?.get(0)?.words?.let {
+            mCoroutineScope.async(Dispatchers.Default) {
+                StringBuilder().apply {
+                    val last = it.size - 1
+                    it.forEachIndexed { index, alternative ->
+                        if (index != 0)
+                            append(if (index == last) alternative.word else "${alternative.word}，")
+                    }
+                }.toString()
+            }
+        }
         //拼接相关词组
-        val relatedWords = inquireResult.relatedWords?.words?.let {
-            StringBuilder().apply {
-                val last = it.size - 1
-                it.forEachIndexed { index, word -> append(if (index == last) word else "$word, ") }
-            }.toString()
-        } ?: ""
+        val relatedWordsDeferred = inquireResult.relatedWords?.words?.let {
+            mCoroutineScope.async(Dispatchers.Default) {
+                StringBuilder().apply {
+                    val last = it.size - 1
+                    it.forEachIndexed { index, word -> append(if (index == last) word else "$word, ") }
+                }.toString()
+            }
+        }
+        val otherTranslation = otherTranslationDeferred?.await() ?: ""
+        val relatedWords = relatedWordsDeferred?.await() ?: ""
         return Pair(otherTranslation, relatedWords)
     }
 
@@ -113,7 +121,7 @@ class WordManagerServiceV3(private val mView: WordDisplayView) {
     }
 
     //刷新RecyclerView的词序
-    private suspend fun refreshRecyclerViewData(inquireResult: InquireResult) {
+    private suspend fun updateRecyclerViewData(inquireResult: InquireResult) {
         val orig = inquireResult.word!![0]
         var word: LocalWord? = null
         //在mData中查找word是否存在，如果存在则找到它并记录其index
@@ -124,26 +132,29 @@ class WordManagerServiceV3(private val mView: WordDisplayView) {
                 localWord reSort index
             }
         }
-        //如果word没有初始化表示word不存在与mData中，所以创建新word
+        //如果word没有初始化表示word不存在于mData中，所以创建新word
         if (word == null) {
             word = LocalWord(ch = orig.ch, en = orig.en)
             mData.add(word!!)
         }
         mAdapter.sumCount++
-        withContext(Dispatchers.Main) {
-            if (word!!.isSaved) {
-                if (mIsMoved[0] >= 0) {
-                    mAdapter.notifyItemRemoved(mIsMoved[0])
-                    mAdapter.notifyItemInserted(mIsMoved[1])
-                }
-                mAdapter.notifyItemRangeChanged(0, mData.size)
-            } else {
-                val index = mData.size - 1
-                mAdapter.notifyItemRangeChanged(0, index)
-                mAdapter.notifyItemInserted(index)
+        mUpdateChannel.send(word!!)
+    }
+
+    suspend fun refreshRecyclerView() {
+        val word = mUpdateChannel.receive()
+        if (word.isSaved) {
+            if (mIsMoved[0] >= 0) {
+                mAdapter.notifyItemRemoved(mIsMoved[0])
+                mAdapter.notifyItemInserted(mIsMoved[1])
             }
+            mAdapter.notifyItemRangeChanged(0, mData.size)
+        } else {
+            val index = mData.size - 1
+            mAdapter.notifyItemRangeChanged(0, index)
+            mAdapter.notifyItemInserted(index)
         }
-        withContext(Dispatchers.IO) { word!!.save() }
+        withContext(Dispatchers.IO) { word.save() }
     }
 
     //第一个数字为负的时候表示未移动过，非负时表示移动前的位置，第二个数表示移动后的位置
