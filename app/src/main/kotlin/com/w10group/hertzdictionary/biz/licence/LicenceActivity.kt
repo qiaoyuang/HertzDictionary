@@ -81,7 +81,7 @@ class LicenceActivity : CoroutineScopeActivity() {
     }
 
     /**
-     * 使用RxJava多线程异步读取数据
+     * 使用RxJava异步读取数据
      */
     @Suppress("CheckResult")
     private fun loadData() {
@@ -121,9 +121,9 @@ class LicenceActivity : CoroutineScopeActivity() {
     }
 
     /**
-     * 使用协程非阻塞单线程读取数据
+     * 使用协程非阻塞读取数据
      */
-    private fun loadDataByCoroutines(): Job = launch(Dispatchers.IO) {
+    private fun loadDataByCoroutines() = launch(Dispatchers.IO) {
         BufferedReader(InputStreamReader(assets.open(OPEN_SOURCE_FILE_NAME), "UTF-8")).use {
             val builder = StringBuilder()
             var line = it.readLine()

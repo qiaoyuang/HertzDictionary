@@ -18,7 +18,7 @@ import java.io.InputStreamReader
 object FileReadManagerService {
 
     /**
-     * 使用RxJava来进行异步流读取
+     * 使用RxJava异步流读取
      */
     @Suppress("CheckResult")
     fun process(fileName: String, context: Context, vararg list: TextView) {
@@ -49,12 +49,12 @@ object FileReadManagerService {
     }
 
     /**
-     * 使用协程来进行非阻塞异步读取
+     * 使用协程非阻塞异步读取
      */
     fun processByCoroutines(coroutineScope: CoroutineScope,
                             context: Context,
                             fileName: String,
-                            vararg list: TextView): Job = coroutineScope.launch(Dispatchers.IO) {
+                            vararg list: TextView) = coroutineScope.launch(Dispatchers.IO) {
         BufferedReader(InputStreamReader(context.assets.open(fileName), "UTF-8")).use {
             var i = 0
             val builder = StringBuilder()
