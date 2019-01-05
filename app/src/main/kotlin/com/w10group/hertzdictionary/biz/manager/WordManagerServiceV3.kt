@@ -111,7 +111,7 @@ class WordManagerServiceV3(private val mView: WordDisplayView) {
         }
         val otherTranslation = otherTranslationDeferred?.await() ?: ""
         val relatedWords = relatedWordsDeferred?.await() ?: ""
-        return Pair(otherTranslation, relatedWords)
+        return otherTranslation to relatedWords
     }
 
     //展示其它义项以及相关词组

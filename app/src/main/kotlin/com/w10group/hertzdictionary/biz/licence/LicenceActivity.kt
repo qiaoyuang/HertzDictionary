@@ -14,11 +14,7 @@ import com.w10group.hertzdictionary.biz.licence.OSLAdapter.OSL
 import com.w10group.hertzdictionary.R
 import com.w10group.hertzdictionary.core.CoroutineScopeActivity
 import com.w10group.hertzdictionary.core.getActionBarSize
-import io.reactivex.Observable
-import io.reactivex.rxkotlin.subscribeBy
-import io.reactivex.schedulers.Schedulers
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.jetbrains.anko.*
@@ -80,49 +76,6 @@ class LicenceActivity : CoroutineScopeActivity() {
         return super.onOptionsItemSelected(item)
     }
 
-    /**
-     * 使用RxJava异步读取数据
-     */
-    @Suppress("CheckResult")
-    private fun loadData() {
-        Observable.create<OSLAdapter> {
-            BufferedReader(InputStreamReader(assets.open(OPEN_SOURCE_FILE_NAME), "UTF-8")).use { bufferedReader ->
-                val builder = StringBuilder()
-                var line = bufferedReader.readLine()
-                var isFirst = true
-                while (line != null) {
-                    when (line) {
-                        "&" -> {
-                            val osl = OSL(builder.toString())
-                            builder.delete(0, builder.length)
-                            mData.add(osl)
-                            isFirst = true
-                        }
-                        "*" -> {
-                            mData.last.content = builder.toString()
-                            builder.delete(0, builder.length)
-                            isFirst = true
-                        }
-                        else -> {
-                            if (isFirst) isFirst = false
-                            else builder.append("\n")
-                            builder.append(line)
-                        }
-                    }
-                    line = bufferedReader.readLine()
-                }
-                it.onNext(OSLAdapter(this, mData))
-                it.onComplete()
-            }
-        }
-                .subscribeOn(Schedulers.io())
-                .observeOn(Schedulers.computation())
-                .subscribeBy { mRecyclerView.adapter = it }
-    }
-
-    /**
-     * 使用协程非阻塞读取数据
-     */
     private fun loadDataByCoroutines() = launch(Dispatchers.IO) {
         BufferedReader(InputStreamReader(assets.open(OPEN_SOURCE_FILE_NAME), "UTF-8")).use {
             val builder = StringBuilder()

@@ -24,10 +24,6 @@ import com.davemorrissey.labs.subscaleview.ImageSource
 import com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView
 import com.w10group.hertzdictionary.R
 import com.w10group.hertzdictionary.core.subsamplingImageView
-import io.reactivex.Observable
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.rxkotlin.subscribeBy
-import io.reactivex.schedulers.Schedulers
 import kotlinx.coroutines.*
 import org.jetbrains.anko.*
 import org.jetbrains.anko.design.longSnackbar
@@ -217,46 +213,6 @@ class CompleteScaleImageView(private val mActivity: Activity,
         mIVDownload.visibility = if (isEnable) {
             View.VISIBLE
         } else View.INVISIBLE
-    }
-
-    fun show(startPosition: Int = 0) {
-        if (mViews.isEmpty()) {
-            if (mStatus == URL) {
-                mUrls?.let { urls ->
-                    Observable.create<Int> {
-                        for (i in 0 until urls.size) {
-                            mViews.add(createItemView())
-                            it.onNext(i)
-                        }
-                        initShow(startPosition)
-                        it.onComplete()
-                    }
-                            .subscribeOn(AndroidSchedulers.mainThread())
-                            .observeOn(Schedulers.io())
-                            .map {
-                                val downLoadFile = mImageDownloader.download(urls[it], mActivity)
-                                mDownloadFiles.add(downLoadFile)
-                                Pair(it, downLoadFile)
-                            }
-                            .observeOn(AndroidSchedulers.mainThread())
-                            .subscribeBy {
-                                val (index, downloadFile) = it
-                                mViews[index].find<SubsamplingScaleImageView>(SUBSAMPLING_ID).setImage(ImageSource.uri(Uri.fromFile(downloadFile)))
-                                mViews[index].find<ProgressBar>(PROGRESS_BAR_ID).visibility = View.INVISIBLE
-                            }
-                }
-            } else if (mStatus == FILE) {
-                mFiles?.let {
-                    for (file in it) {
-                        val view = createItemView()
-                        val subsamplingScaleImageView = view.find<SubsamplingScaleImageView>(SUBSAMPLING_ID)
-                        mViews.add(view)
-                        subsamplingScaleImageView.setImage(ImageSource.uri(Uri.fromFile(file)))
-                    }
-                }
-                initShow(startPosition)
-            }
-        } else showAgain(startPosition)
     }
 
    fun showByCoroutines(coroutineScope: CoroutineScope, startPosition: Int = 0): Job = coroutineScope.launch {
