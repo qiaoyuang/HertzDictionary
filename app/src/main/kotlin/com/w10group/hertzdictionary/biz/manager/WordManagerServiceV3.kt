@@ -10,7 +10,6 @@ import org.jetbrains.anko.design.snackbar
 import org.jetbrains.anko.progressDialog
 import org.litepal.LitePal
 import org.litepal.extension.find
-import java.io.IOException
 import java.util.concurrent.CopyOnWriteArrayList
 
 /**
@@ -72,7 +71,7 @@ class WordManagerServiceV3(private val mView: WordDisplayView) {
             mProgressDialog.show()
             val inquireResult = try {
                 NetworkUtil.create<NetworkService>().inquireWordByCoroutines(word).await()
-            } catch (e: IOException) {
+            } catch (e: Exception) {
                 e.printStackTrace()
                 mProgressDialog.dismiss()
                 mRecyclerView.snackbar("网络出现问题，请稍后再试。")

@@ -228,7 +228,6 @@ class MainActivity : CoroutineScopeActivity(), WordDisplayView {
                                     textSize = 14f
                                 }.lparams(wrapContent, wrapContent) {
                                     topToBottom = otherTranslationsId
-                                    bottomToBottom = PARENT_ID
                                     startToStart = otherTranslationsId
                                     topMargin = dip(16)
                                 }
