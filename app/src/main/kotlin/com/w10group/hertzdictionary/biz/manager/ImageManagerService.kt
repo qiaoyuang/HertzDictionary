@@ -5,10 +5,6 @@ import android.content.SharedPreferences
 import android.widget.ImageView
 import com.w10group.hertzdictionary.core.GlideApp
 import com.w10group.hertzdictionary.core.NetworkUtil
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.rxkotlin.subscribeBy
-import io.reactivex.schedulers.Schedulers
-import org.jetbrains.anko.design.snackbar
 import java.io.IOException
 import java.util.*
 
@@ -50,29 +46,6 @@ object ImageManagerService {
         }
         GlideApp.with(context).load(todayURL).dontAnimate().into(imageView)
         getURLOnInternetByCoroutines(context, imageView, sharedPreferences)
-    }
-
-    @Deprecated("这个函数已经过时了，请使用协程重构的版本。")
-    @Suppress("CheckResult")
-    private fun getURLOnInternet(context: Context, imageView: ImageView, sharedPreferences: SharedPreferences) {
-        if (!NetworkUtil.checkNetwork(context)) {
-            imageView.snackbar("当前无网络连接")
-            return
-        }
-        NetworkUtil.create<NetworkService>()
-                .getImageURL(GET_URL)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeBy(onNext = {
-                    val url = it.charStream().readText()
-                    if (url != todayURL) {
-                        todayURL = url
-                        GlideApp.with(context).load(todayURL).dontAnimate().into(imageView)
-                        val edit = sharedPreferences.edit()
-                        edit.putString(KEY_URL, todayURL)
-                        edit.apply()
-                    }
-                }, onError = { it.printStackTrace() })
     }
 
     private suspend fun getURLOnInternetByCoroutines(context: Context, imageView: ImageView, sharedPreferences: SharedPreferences) {
