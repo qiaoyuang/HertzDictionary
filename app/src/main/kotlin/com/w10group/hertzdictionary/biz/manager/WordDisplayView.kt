@@ -16,7 +16,7 @@ interface WordDisplayView {
     fun getRecyclerView(): RecyclerView
     fun getContext(): Context
     fun getCoroutineScope(): CoroutineScope
-    suspend fun displayInquireResult(inquireResult: InquireResult, word: String)
-    suspend infix fun displayOtherTranslation(words: String)
-    suspend infix fun displayRelatedWords(words: String)
+    fun displayInquireResult(inquireResult: InquireResult, word: String)
+    infix fun displayOtherTranslation(words: String)
+    infix fun displayRelatedWords(words: String)
 }

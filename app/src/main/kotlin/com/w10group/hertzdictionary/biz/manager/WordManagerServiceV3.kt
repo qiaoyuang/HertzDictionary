@@ -114,7 +114,7 @@ class WordManagerServiceV3(private val mView: WordDisplayView) {
     }
 
     //展示其它义项以及相关词组
-    private suspend infix fun showOtherTranslationAndRelateWords(pair: Pair<String, String>) {
+    private infix fun showOtherTranslationAndRelateWords(pair: Pair<String, String>) {
         val (otherTranslation, relatedWords) = pair
         mView displayOtherTranslation otherTranslation
         mView displayRelatedWords relatedWords

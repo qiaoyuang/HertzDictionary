@@ -49,13 +49,13 @@ class LicenceActivity : CoroutineScopeActivity() {
                 toolbar = toolbar {
                     title = "开源许可证"
                     backgroundColorResource = R.color.blue1
-                }.lparams(matchParent, getActionBarSize(this@LicenceActivity)) {
+                }.lparams(matchParent, getActionBarSize(context)) {
                     scrollFlags = SCROLL_FLAG_SCROLL or SCROLL_FLAG_ENTER_ALWAYS or SCROLL_FLAG_SNAP
                 }
             }.lparams(matchParent, wrapContent)
 
             mRecyclerView = recyclerView {
-                layoutManager = LinearLayoutManager(this@LicenceActivity, LinearLayoutManager.VERTICAL, false)
+                layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
                 itemAnimator = DefaultItemAnimator()
             }.lparams(matchParent, wrapContent) {
                 marginStart = dip(16)

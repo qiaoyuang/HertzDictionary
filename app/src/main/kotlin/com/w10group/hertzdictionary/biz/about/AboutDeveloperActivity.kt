@@ -106,7 +106,7 @@ class AboutDeveloperActivity : CoroutineScopeActivity() {
                         fitsSystemWindows = true
                         scaleType = ImageView.ScaleType.CENTER_CROP
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
-                            foreground = createTouchFeedbackBorderless(this@AboutDeveloperActivity)
+                            foreground = createTouchFeedbackBorderless(context)
                         setOnClickListener {  mCompleteScaleImageView.showByCoroutines(this@AboutDeveloperActivity, 1) }
                     }.lparams(matchParent, matchParent) {
                         collapseMode = COLLAPSE_MODE_PARALLAX
@@ -117,7 +117,7 @@ class AboutDeveloperActivity : CoroutineScopeActivity() {
                         borderWidth = dip(2)
                         borderColor = Color.WHITE
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
-                            foreground = createTouchFeedbackBorderless(this@AboutDeveloperActivity)
+                            foreground = createTouchFeedbackBorderless(context)
                         setOnClickListener { mCompleteScaleImageView.showByCoroutines(this@AboutDeveloperActivity) }
                     }.lparams(dip(80), dip(80)) {
                         gravity = Gravity.CENTER_HORIZONTAL or Gravity.TOP
@@ -135,7 +135,7 @@ class AboutDeveloperActivity : CoroutineScopeActivity() {
                         collapseMode = COLLAPSE_MODE_PARALLAX
                     }
 
-                    mToolbar = toolbar().lparams(matchParent, getActionBarSize(this@AboutDeveloperActivity)) {
+                    mToolbar = toolbar().lparams(matchParent, getActionBarSize(context)) {
                         collapseMode = COLLAPSE_MODE_PIN
                     }
 
@@ -149,7 +149,7 @@ class AboutDeveloperActivity : CoroutineScopeActivity() {
                 cardView {
                     elevation = dip(4).toFloat()
                     isClickable = true
-                    foreground = createTouchFeedbackBorderless(this@AboutDeveloperActivity)
+                    foreground = createTouchFeedbackBorderless(context)
 
                     verticalLayout {
 
@@ -177,7 +177,7 @@ class AboutDeveloperActivity : CoroutineScopeActivity() {
 
                         frameLayout {
                             backgroundColor = blueGray
-                            foreground = createTouchFeedbackBorderless(this@AboutDeveloperActivity)
+                            foreground = createTouchFeedbackBorderless(context)
                             setOnClickListener { mReceiptCompleteScaleImageView.showByCoroutines(this@AboutDeveloperActivity) }
                             GlideApp.with(this@AboutDeveloperActivity).load(R.drawable.wechatpay).dontAnimate().into(
                                     imageView().lparams(dip(24), dip(24)) {
@@ -201,7 +201,7 @@ class AboutDeveloperActivity : CoroutineScopeActivity() {
 
                         frameLayout {
                             backgroundColor = blueGray
-                            foreground = createTouchFeedbackBorderless(this@AboutDeveloperActivity)
+                            foreground = createTouchFeedbackBorderless(context)
                             setOnClickListener { mReceiptCompleteScaleImageView.showByCoroutines(this@AboutDeveloperActivity,1) }
                             GlideApp.with(this@AboutDeveloperActivity).load(R.drawable.alipay).dontAnimate().into(
                                     imageView().lparams(dip(24), dip(24)) {
@@ -233,7 +233,7 @@ class AboutDeveloperActivity : CoroutineScopeActivity() {
 
                         frameLayout {
                             backgroundColor = blueGray
-                            foreground = createTouchFeedbackBorderless(this@AboutDeveloperActivity)
+                            foreground = createTouchFeedbackBorderless(context)
                             val content = "BTC钱包地址"
                             setOnClickListener { copyToClipBoard(it, content, BTC_ADDRESS) }
                             GlideApp.with(this@AboutDeveloperActivity).load(R.drawable.btc).dontAnimate().into(
@@ -258,7 +258,7 @@ class AboutDeveloperActivity : CoroutineScopeActivity() {
 
                         frameLayout {
                             backgroundColor = blueGray
-                            foreground = createTouchFeedbackBorderless(this@AboutDeveloperActivity)
+                            foreground = createTouchFeedbackBorderless(context)
                             val content = "ETH钱包地址"
                             setOnClickListener { copyToClipBoard(it, content, ETH_ADDRESS) }
                             GlideApp.with(this@AboutDeveloperActivity).load(R.drawable.eth).dontAnimate().into(
