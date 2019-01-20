@@ -5,7 +5,6 @@ import android.content.Context
 import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
-import android.support.constraint.ConstraintLayout
 import android.support.constraint.ConstraintLayout.LayoutParams.PARENT_ID
 import android.support.design.widget.AppBarLayout
 import android.support.design.widget.AppBarLayout.LayoutParams.SCROLL_FLAG_EXIT_UNTIL_COLLAPSED
@@ -44,7 +43,6 @@ import kotlinx.coroutines.launch
 import org.jetbrains.anko.*
 import org.jetbrains.anko.appcompat.v7.toolbar
 import org.jetbrains.anko.cardview.v7.cardView
-import org.jetbrains.anko.constraint.layout._ConstraintLayout
 import org.jetbrains.anko.constraint.layout.constraintLayout
 import org.jetbrains.anko.design.*
 import org.jetbrains.anko.recyclerview.v7.recyclerView
@@ -69,29 +67,22 @@ class MainActivity : CoroutineScopeActivity(), WordDisplayView {
     private lateinit var mOtherMeanLayout: LinearLayout
     private lateinit var mETInput: EditText
 
-    private lateinit var mCLBlueCard: ConstraintLayout
     private lateinit var mTVSrcPronunciation: TextView
     private lateinit var mTVResult: TextView
     private lateinit var mTVPronunciation: TextView
     private lateinit var mTVOtherTranslation: TextView
     private lateinit var mTVRelatedWords: TextView
 
-    private val gray600 by lazy { ContextCompat.getColor(this, R.color.gray600) }
-    private val deepWhite by lazy { ContextCompat.getColor(this, R.color.deepWhite) }
-    private val blue1 by lazy { ContextCompat.getColor(this, R.color.blue1) }
-    private val blue2 by lazy { ContextCompat.getColor(this, R.color.blue2) }
-    private val mTitleText by lazy { getString(R.string.app_name) }
+    private val gray600 = ContextCompat.getColor(this, R.color.gray600)
+    private val deepWhite = ContextCompat.getColor(this, R.color.deepWhite)
+    private val blue1 = ContextCompat.getColor(this, R.color.blue1)
+    private val blue2 = ContextCompat.getColor(this, R.color.blue2)
+    private val mTitleText = getString(R.string.app_name)
 
     private companion object {
         // 标记当前词典的状态是否是查询状态
         const val STATUS_INQUIRED_NOT = 0
         const val STATUS_INQUIRED = 1
-
-        // 查询结果卡片页 UI 的 ID
-        const val SOURCE_LANGUAGE_ID = 1
-        const val RESULT_ID = 2
-        const val PRONUNCIATION_ID = 3
-        const val OTHER_TRANSLATIONS_ID = 4
     }
 
     private var status = STATUS_INQUIRED_NOT
@@ -184,7 +175,11 @@ class MainActivity : CoroutineScopeActivity(), WordDisplayView {
                             isClickable = true
                             backgroundColor = blue1
                             foreground = createTouchFeedbackBorderless(context)
-                            mCLBlueCard = constraintLayout {
+                            constraintLayout {
+                                val sourceLanguageId = 1
+                                val resultId = 2
+                                val pronunciationId = 3
+                                val otherTranslationId = 4
                                 imageView {
                                     setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_close_white_24dp))
                                     setOnClickListener { if (status == STATUS_INQUIRED) restore() }
@@ -193,7 +188,7 @@ class MainActivity : CoroutineScopeActivity(), WordDisplayView {
                                     endToEnd = PARENT_ID
                                 }
                                 textView {
-                                    id = SOURCE_LANGUAGE_ID
+                                    id = sourceLanguageId
                                     textColor = Color.WHITE
                                     textSize = 16f
                                     text = "简体中文"
@@ -202,39 +197,39 @@ class MainActivity : CoroutineScopeActivity(), WordDisplayView {
                                     startToStart = PARENT_ID
                                 }
                                 mTVResult = textView {
-                                    id = RESULT_ID
+                                    id = resultId
                                     textColor = Color.WHITE
                                     textSize = 22f
                                 }.lparams(wrapContent, wrapContent) {
-                                    topToBottom = SOURCE_LANGUAGE_ID
+                                    topToBottom = sourceLanguageId
                                     startToStart = PARENT_ID
                                     topMargin = dip(16)
                                     marginStart = dip(8)
                                 }
                                 mTVPronunciation = textView {
-                                    id = PRONUNCIATION_ID
+                                    id = pronunciationId
                                     textColor = Color.WHITE
                                     textSize = 14f
                                 }.lparams(wrapContent, wrapContent) {
-                                    topToBottom = RESULT_ID
-                                    startToStart = RESULT_ID
+                                    topToBottom = resultId
+                                    startToStart = resultId
                                     topMargin = dip(4)
                                 }
                                 mTVOtherTranslation = textView {
-                                    id = OTHER_TRANSLATIONS_ID
+                                    id = otherTranslationId
                                     textColor = Color.WHITE
                                     textSize = 14f
                                 }.lparams(wrapContent, wrapContent) {
-                                    topToBottom = PRONUNCIATION_ID
-                                    startToStart = PRONUNCIATION_ID
+                                    topToBottom = pronunciationId
+                                    startToStart = pronunciationId
                                     topMargin = dip(16)
                                 }
                                 mTVRelatedWords = textView {
                                     textColor = Color.WHITE
                                     textSize = 14f
                                 }.lparams(wrapContent, wrapContent) {
-                                    topToBottom = OTHER_TRANSLATIONS_ID
-                                    startToStart = OTHER_TRANSLATIONS_ID
+                                    topToBottom = otherTranslationId
+                                    startToStart = otherTranslationId
                                     topMargin = dip(16)
                                 }
                             }.lparams(matchParent, wrapContent) {
