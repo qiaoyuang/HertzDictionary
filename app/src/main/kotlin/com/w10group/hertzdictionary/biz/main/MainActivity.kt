@@ -234,7 +234,6 @@ class MainActivity : CoroutineScopeActivity(), WordDisplayView {
                                     textSize = 14f
                                 }.lparams(wrapContent, wrapContent) {
                                     topToBottom = OTHER_TRANSLATIONS_ID
-                                    bottomToBottom = PARENT_ID
                                     startToStart = OTHER_TRANSLATIONS_ID
                                     topMargin = dip(16)
                                 }
@@ -487,87 +486,26 @@ class MainActivity : CoroutineScopeActivity(), WordDisplayView {
         }
     }
 
-    /*override infix fun displayOtherTranslation(words: String) {
-        mTVOtherTranslation.setWords("其它义项：", words)
-    }
-
-    override infix fun displayRelatedWords(words: String) {
-        mTVRelatedWords.setWords("相关词组：", words)
-    }*/
-
     override fun displayOtherTranslationAndRelatedWords(otherTranslation: String, relatedWords: String) {
-
-        fun _ConstraintLayout.pronunciation() {
-            mTVPronunciation.lparams(wrapContent, wrapContent) {
-                topToBottom = RESULT_ID
-                startToStart = RESULT_ID
-                topMargin = dip(4)
+        if (otherTranslation.isBlank()) {
+            if (relatedWords.isBlank()) { // 两者都没有
+                mTVOtherTranslation.visibility = View.GONE
+                mTVRelatedWords.visibility = View.GONE
+            } else { // 没有其它义项有相关词组
+                mTVOtherTranslation.visibility = View.VISIBLE
+                mTVRelatedWords.visibility = View.GONE
+                mTVOtherTranslation.text = setWords("相关词组：", relatedWords)
             }
-        }
-
-        fun _ConstraintLayout.pronunciationBottom() {
-            mTVPronunciation.lparams(wrapContent, wrapContent) {
-                topToBottom = RESULT_ID
-                bottomToBottom = PARENT_ID
-                startToStart = RESULT_ID
-                topMargin = dip(4)
-            }
-        }
-
-        fun _ConstraintLayout.otherTranslation() {
-            mTVOtherTranslation.lparams(wrapContent, wrapContent) {
-                topToBottom = PRONUNCIATION_ID
-                startToStart = PRONUNCIATION_ID
-                topMargin = dip(16)
-            }
-        }
-
-        fun _ConstraintLayout.otherTranslationBottom() {
-            mTVOtherTranslation.lparams(wrapContent, wrapContent) {
-                topToBottom = PRONUNCIATION_ID
-                bottomToBottom = PARENT_ID
-                startToStart = PRONUNCIATION_ID
-                topMargin = dip(16)
-            }
-        }
-
-        fun _ConstraintLayout.relatedWords() {
-            mTVRelatedWords.lparams(wrapContent, wrapContent) {
-                topToBottom = OTHER_TRANSLATIONS_ID
-                startToStart = OTHER_TRANSLATIONS_ID
-                topMargin = dip(16)
-            }
-        }
-
-        with(mCLBlueCard as _ConstraintLayout) {
-            if (otherTranslation.isBlank()) {
-                if (relatedWords.isBlank()) { // 两者都没有
-                    mTVOtherTranslation.visibility = View.GONE
-                    mTVRelatedWords.visibility = View.GONE
-                    pronunciationBottom()
-                } else { // 没有其它义项有相关词组
-                    mTVOtherTranslation.visibility = View.GONE
-                    mTVRelatedWords.visibility = View.VISIBLE
-                    mTVRelatedWords.text = setWords("相关词组：", relatedWords)
-                    pronunciation()
-                    relatedWords()
-                }
-            } else {
-                if (relatedWords.isBlank()) { // 有其它义项没有相关词组
-                    mTVOtherTranslation.visibility = View.VISIBLE
-                    mTVRelatedWords.visibility = View.GONE
-                    mTVOtherTranslation.text = setWords("其它义项：", otherTranslation)
-                    pronunciation()
-                    otherTranslationBottom()
-                } else { // 两者都有
-                    mTVOtherTranslation.visibility = View.VISIBLE
-                    mTVRelatedWords.visibility = View.VISIBLE
-                    mTVOtherTranslation.text = setWords("其它义项：", otherTranslation)
-                    mTVRelatedWords.text = setWords("相关词组：", relatedWords)
-                    pronunciation()
-                    otherTranslation()
-                    otherTranslationBottom()
-                }
+        } else {
+            if (relatedWords.isBlank()) { // 有其它义项没有相关词组
+                mTVOtherTranslation.visibility = View.VISIBLE
+                mTVRelatedWords.visibility = View.GONE
+                mTVOtherTranslation.text = setWords("其它义项：", otherTranslation)
+            } else { // 两者都有
+                mTVOtherTranslation.visibility = View.VISIBLE
+                mTVRelatedWords.visibility = View.VISIBLE
+                mTVOtherTranslation.text = setWords("其它义项：", otherTranslation)
+                mTVRelatedWords.text = setWords("相关词组：", relatedWords)
             }
         }
     }
