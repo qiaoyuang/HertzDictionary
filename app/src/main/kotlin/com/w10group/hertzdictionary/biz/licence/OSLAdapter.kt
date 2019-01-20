@@ -38,7 +38,7 @@ class OSLAdapter(private val mContext: Context, private val mData: List<OSL>) : 
             verticalLayout {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                     isClickable = true
-                    foreground = createTouchFeedbackBorderless(mContext)
+                    foreground = createTouchFeedbackBorderless(context)
                 }
                 textView {
                     id = TITLE_ID

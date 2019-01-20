@@ -5,6 +5,7 @@ import android.content.Context
 import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
+import android.support.constraint.ConstraintLayout
 import android.support.constraint.ConstraintLayout.LayoutParams.PARENT_ID
 import android.support.design.widget.AppBarLayout
 import android.support.design.widget.AppBarLayout.LayoutParams.SCROLL_FLAG_EXIT_UNTIL_COLLAPSED
@@ -43,6 +44,7 @@ import kotlinx.coroutines.launch
 import org.jetbrains.anko.*
 import org.jetbrains.anko.appcompat.v7.toolbar
 import org.jetbrains.anko.cardview.v7.cardView
+import org.jetbrains.anko.constraint.layout._ConstraintLayout
 import org.jetbrains.anko.constraint.layout.constraintLayout
 import org.jetbrains.anko.design.*
 import org.jetbrains.anko.recyclerview.v7.recyclerView
@@ -67,6 +69,7 @@ class MainActivity : CoroutineScopeActivity(), WordDisplayView {
     private lateinit var mOtherMeanLayout: LinearLayout
     private lateinit var mETInput: EditText
 
+    private lateinit var mCLBlueCard: ConstraintLayout
     private lateinit var mTVSrcPronunciation: TextView
     private lateinit var mTVResult: TextView
     private lateinit var mTVPronunciation: TextView
@@ -80,8 +83,15 @@ class MainActivity : CoroutineScopeActivity(), WordDisplayView {
     private val mTitleText by lazy { getString(R.string.app_name) }
 
     private companion object {
+        // 标记当前词典的状态是否是查询状态
         const val STATUS_INQUIRED_NOT = 0
         const val STATUS_INQUIRED = 1
+
+        // 查询结果卡片页 UI 的 ID
+        const val SOURCE_LANGUAGE_ID = 1
+        const val RESULT_ID = 2
+        const val PRONUNCIATION_ID = 3
+        const val OTHER_TRANSLATIONS_ID = 4
     }
 
     private var status = STATUS_INQUIRED_NOT
@@ -174,11 +184,7 @@ class MainActivity : CoroutineScopeActivity(), WordDisplayView {
                             isClickable = true
                             backgroundColor = blue1
                             foreground = createTouchFeedbackBorderless(context)
-                            val sourceLanguageId = 1
-                            val resultId = 2
-                            val pronunciationId = 3
-                            val otherTranslationsId = 4
-                            constraintLayout {
+                            mCLBlueCard = constraintLayout {
                                 imageView {
                                     setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_close_white_24dp))
                                     setOnClickListener { if (status == STATUS_INQUIRED) restore() }
@@ -187,7 +193,7 @@ class MainActivity : CoroutineScopeActivity(), WordDisplayView {
                                     endToEnd = PARENT_ID
                                 }
                                 textView {
-                                    id = sourceLanguageId
+                                    id = SOURCE_LANGUAGE_ID
                                     textColor = Color.WHITE
                                     textSize = 16f
                                     text = "简体中文"
@@ -196,39 +202,40 @@ class MainActivity : CoroutineScopeActivity(), WordDisplayView {
                                     startToStart = PARENT_ID
                                 }
                                 mTVResult = textView {
-                                    id = resultId
+                                    id = RESULT_ID
                                     textColor = Color.WHITE
                                     textSize = 22f
                                 }.lparams(wrapContent, wrapContent) {
-                                    topToBottom = sourceLanguageId
+                                    topToBottom = SOURCE_LANGUAGE_ID
                                     startToStart = PARENT_ID
                                     topMargin = dip(16)
                                     marginStart = dip(8)
                                 }
                                 mTVPronunciation = textView {
-                                    id = pronunciationId
+                                    id = PRONUNCIATION_ID
                                     textColor = Color.WHITE
                                     textSize = 14f
                                 }.lparams(wrapContent, wrapContent) {
-                                    topToBottom = resultId
-                                    startToStart = resultId
+                                    topToBottom = RESULT_ID
+                                    startToStart = RESULT_ID
                                     topMargin = dip(4)
                                 }
                                 mTVOtherTranslation = textView {
-                                    id = otherTranslationsId
+                                    id = OTHER_TRANSLATIONS_ID
                                     textColor = Color.WHITE
                                     textSize = 14f
                                 }.lparams(wrapContent, wrapContent) {
-                                    topToBottom = pronunciationId
-                                    startToStart = pronunciationId
+                                    topToBottom = PRONUNCIATION_ID
+                                    startToStart = PRONUNCIATION_ID
                                     topMargin = dip(16)
                                 }
                                 mTVRelatedWords = textView {
                                     textColor = Color.WHITE
                                     textSize = 14f
                                 }.lparams(wrapContent, wrapContent) {
-                                    topToBottom = otherTranslationsId
-                                    startToStart = otherTranslationsId
+                                    topToBottom = OTHER_TRANSLATIONS_ID
+                                    bottomToBottom = PARENT_ID
+                                    startToStart = OTHER_TRANSLATIONS_ID
                                     topMargin = dip(16)
                                 }
                             }.lparams(matchParent, wrapContent) {
@@ -480,22 +487,91 @@ class MainActivity : CoroutineScopeActivity(), WordDisplayView {
         }
     }
 
-    override infix fun displayOtherTranslation(words: String) {
+    /*override infix fun displayOtherTranslation(words: String) {
         mTVOtherTranslation.setWords("其它义项：", words)
     }
 
     override infix fun displayRelatedWords(words: String) {
         mTVRelatedWords.setWords("相关词组：", words)
-    }
+    }*/
 
-    private fun TextView.setWords(tips: String, words: String) {
-        visibility = if (words.isBlank()) {
-            View.GONE
-        } else {
-            val wordText = "$tips\n$words"
-            text = wordText
-            View.VISIBLE
+    override fun displayOtherTranslationAndRelatedWords(otherTranslation: String, relatedWords: String) {
+
+        fun _ConstraintLayout.pronunciation() {
+            mTVPronunciation.lparams(wrapContent, wrapContent) {
+                topToBottom = RESULT_ID
+                startToStart = RESULT_ID
+                topMargin = dip(4)
+            }
+        }
+
+        fun _ConstraintLayout.pronunciationBottom() {
+            mTVPronunciation.lparams(wrapContent, wrapContent) {
+                topToBottom = RESULT_ID
+                bottomToBottom = PARENT_ID
+                startToStart = RESULT_ID
+                topMargin = dip(4)
+            }
+        }
+
+        fun _ConstraintLayout.otherTranslation() {
+            mTVOtherTranslation.lparams(wrapContent, wrapContent) {
+                topToBottom = PRONUNCIATION_ID
+                startToStart = PRONUNCIATION_ID
+                topMargin = dip(16)
+            }
+        }
+
+        fun _ConstraintLayout.otherTranslationBottom() {
+            mTVOtherTranslation.lparams(wrapContent, wrapContent) {
+                topToBottom = PRONUNCIATION_ID
+                bottomToBottom = PARENT_ID
+                startToStart = PRONUNCIATION_ID
+                topMargin = dip(16)
+            }
+        }
+
+        fun _ConstraintLayout.relatedWords() {
+            mTVRelatedWords.lparams(wrapContent, wrapContent) {
+                topToBottom = OTHER_TRANSLATIONS_ID
+                startToStart = OTHER_TRANSLATIONS_ID
+                topMargin = dip(16)
+            }
+        }
+
+        with(mCLBlueCard as _ConstraintLayout) {
+            if (otherTranslation.isBlank()) {
+                if (relatedWords.isBlank()) { // 两者都没有
+                    mTVOtherTranslation.visibility = View.GONE
+                    mTVRelatedWords.visibility = View.GONE
+                    pronunciationBottom()
+                } else { // 没有其它义项有相关词组
+                    mTVOtherTranslation.visibility = View.GONE
+                    mTVRelatedWords.visibility = View.VISIBLE
+                    mTVRelatedWords.text = setWords("相关词组：", relatedWords)
+                    pronunciation()
+                    relatedWords()
+                }
+            } else {
+                if (relatedWords.isBlank()) { // 有其它义项没有相关词组
+                    mTVOtherTranslation.visibility = View.VISIBLE
+                    mTVRelatedWords.visibility = View.GONE
+                    mTVOtherTranslation.text = setWords("其它义项：", otherTranslation)
+                    pronunciation()
+                    otherTranslationBottom()
+                } else { // 两者都有
+                    mTVOtherTranslation.visibility = View.VISIBLE
+                    mTVRelatedWords.visibility = View.VISIBLE
+                    mTVOtherTranslation.text = setWords("其它义项：", otherTranslation)
+                    mTVRelatedWords.text = setWords("相关词组：", relatedWords)
+                    pronunciation()
+                    otherTranslation()
+                    otherTranslationBottom()
+                }
+            }
         }
     }
+
+    private fun setWords(tips: String, words: String) = "$tips\n$words"
 
 }

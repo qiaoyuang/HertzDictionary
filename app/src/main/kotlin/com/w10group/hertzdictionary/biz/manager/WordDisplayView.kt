@@ -17,6 +17,5 @@ interface WordDisplayView {
     fun getContext(): Context
     fun getCoroutineScope(): CoroutineScope
     fun displayInquireResult(inquireResult: InquireResult, word: String)
-    infix fun displayOtherTranslation(words: String)
-    infix fun displayRelatedWords(words: String)
+    fun displayOtherTranslationAndRelatedWords(otherTranslation: String, relatedWords: String)
 }

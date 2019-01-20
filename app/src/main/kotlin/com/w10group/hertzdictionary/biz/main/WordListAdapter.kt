@@ -65,7 +65,7 @@ class WordListAdapter(private val mContext: Context,
                 elevation = dip(4).toFloat()
                 isClickable = true
                 backgroundColor = Color.WHITE
-                foreground = createTouchFeedbackBorderless(mContext)
+                foreground = createTouchFeedbackBorderless(context)
                 constraintLayout {
                     textView {
                         id = TV_ENGLISH_ID
