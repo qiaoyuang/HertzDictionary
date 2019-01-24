@@ -22,11 +22,13 @@ object ImageManagerService {
     private const val AVATAR_URL = "http://q.qlogo.cn/headimg_dl?dst_uin=1205173348&spec=100"
     private const val AVATAR_HD_URL = "https://upload-images.jianshu.io/upload_images/12354730-135b08eece7d74e3.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"
 
-    val urlList by lazy {
+    val urlList = initUrlList()
+
+    private fun initUrlList(): LinkedList<String> {
         val list = LinkedList<String>()
         list.add(AVATAR_HD_URL)
         list.add(todayURL)
-        list
+        return list
     }
 
     private lateinit var todayURL: String

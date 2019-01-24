@@ -5,7 +5,6 @@ import android.content.Context
 import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
-import android.support.constraint.ConstraintLayout.LayoutParams.PARENT_ID
 import android.support.design.widget.AppBarLayout
 import android.support.design.widget.AppBarLayout.LayoutParams.SCROLL_FLAG_EXIT_UNTIL_COLLAPSED
 import android.support.design.widget.AppBarLayout.LayoutParams.SCROLL_FLAG_SCROLL
@@ -43,7 +42,6 @@ import kotlinx.coroutines.launch
 import org.jetbrains.anko.*
 import org.jetbrains.anko.appcompat.v7.toolbar
 import org.jetbrains.anko.cardview.v7.cardView
-import org.jetbrains.anko.constraint.layout.constraintLayout
 import org.jetbrains.anko.design.*
 import org.jetbrains.anko.recyclerview.v7.recyclerView
 import org.jetbrains.anko.support.v4.drawerLayout
@@ -73,11 +71,11 @@ class MainActivity : CoroutineScopeActivity(), WordDisplayView {
     private lateinit var mTVOtherTranslation: TextView
     private lateinit var mTVRelatedWords: TextView
 
-    private val gray600 = ContextCompat.getColor(this, R.color.gray600)
-    private val deepWhite = ContextCompat.getColor(this, R.color.deepWhite)
-    private val blue1 = ContextCompat.getColor(this, R.color.blue1)
-    private val blue2 = ContextCompat.getColor(this, R.color.blue2)
-    private val mTitleText = getString(R.string.app_name)
+    private val gray600 by lazy { ContextCompat.getColor(this, R.color.gray600) }
+    private val deepWhite by lazy { ContextCompat.getColor(this, R.color.deepWhite) }
+    private val blue1 by lazy { ContextCompat.getColor(this, R.color.blue1) }
+    private val blue2 by lazy { ContextCompat.getColor(this, R.color.blue2) }
+    private val mTitleText by lazy { getString(R.string.app_name) }
 
     private companion object {
         // 标记当前词典的状态是否是查询状态
@@ -175,7 +173,7 @@ class MainActivity : CoroutineScopeActivity(), WordDisplayView {
                             isClickable = true
                             backgroundColor = blue1
                             foreground = createTouchFeedbackBorderless(context)
-                            constraintLayout {
+                            relativeLayout {
                                 val sourceLanguageId = 1
                                 val resultId = 2
                                 val pronunciationId = 3
@@ -184,8 +182,8 @@ class MainActivity : CoroutineScopeActivity(), WordDisplayView {
                                     setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_close_white_24dp))
                                     setOnClickListener { if (status == STATUS_INQUIRED) restore() }
                                 }.lparams(wrapContent, wrapContent) {
-                                    topToTop = PARENT_ID
-                                    endToEnd = PARENT_ID
+                                    alignParentTop()
+                                    alignParentEnd()
                                 }
                                 textView {
                                     id = sourceLanguageId
@@ -193,16 +191,16 @@ class MainActivity : CoroutineScopeActivity(), WordDisplayView {
                                     textSize = 16f
                                     text = "简体中文"
                                 }.lparams(wrapContent, wrapContent) {
-                                    topToTop = PARENT_ID
-                                    startToStart = PARENT_ID
+                                    alignParentTop()
+                                    alignParentStart()
                                 }
                                 mTVResult = textView {
                                     id = resultId
                                     textColor = Color.WHITE
                                     textSize = 22f
                                 }.lparams(wrapContent, wrapContent) {
-                                    topToBottom = sourceLanguageId
-                                    startToStart = PARENT_ID
+                                    alignStart(sourceLanguageId)
+                                    bottomOf(sourceLanguageId)
                                     topMargin = dip(16)
                                     marginStart = dip(8)
                                 }
@@ -211,8 +209,8 @@ class MainActivity : CoroutineScopeActivity(), WordDisplayView {
                                     textColor = Color.WHITE
                                     textSize = 14f
                                 }.lparams(wrapContent, wrapContent) {
-                                    topToBottom = resultId
-                                    startToStart = resultId
+                                    alignStart(resultId)
+                                    bottomOf(resultId)
                                     topMargin = dip(4)
                                 }
                                 mTVOtherTranslation = textView {
@@ -220,16 +218,16 @@ class MainActivity : CoroutineScopeActivity(), WordDisplayView {
                                     textColor = Color.WHITE
                                     textSize = 14f
                                 }.lparams(wrapContent, wrapContent) {
-                                    topToBottom = pronunciationId
-                                    startToStart = pronunciationId
+                                    alignStart(pronunciationId)
+                                    bottomOf(pronunciationId)
                                     topMargin = dip(16)
                                 }
                                 mTVRelatedWords = textView {
                                     textColor = Color.WHITE
                                     textSize = 14f
                                 }.lparams(wrapContent, wrapContent) {
-                                    topToBottom = otherTranslationId
-                                    startToStart = otherTranslationId
+                                    alignStart(otherTranslationId)
+                                    bottomOf(otherTranslationId)
                                     topMargin = dip(16)
                                 }
                             }.lparams(matchParent, wrapContent) {
@@ -481,30 +479,22 @@ class MainActivity : CoroutineScopeActivity(), WordDisplayView {
         }
     }
 
-    override fun displayOtherTranslationAndRelatedWords(otherTranslation: String, relatedWords: String) {
-        if (otherTranslation.isBlank()) {
-            if (relatedWords.isBlank()) { // 两者都没有
-                mTVOtherTranslation.visibility = View.GONE
-                mTVRelatedWords.visibility = View.GONE
-            } else { // 没有其它义项有相关词组
-                mTVOtherTranslation.visibility = View.VISIBLE
-                mTVRelatedWords.visibility = View.GONE
-                mTVOtherTranslation.text = setWords("相关词组：", relatedWords)
-            }
-        } else {
-            if (relatedWords.isBlank()) { // 有其它义项没有相关词组
-                mTVOtherTranslation.visibility = View.VISIBLE
-                mTVRelatedWords.visibility = View.GONE
-                mTVOtherTranslation.text = setWords("其它义项：", otherTranslation)
-            } else { // 两者都有
-                mTVOtherTranslation.visibility = View.VISIBLE
-                mTVRelatedWords.visibility = View.VISIBLE
-                mTVOtherTranslation.text = setWords("其它义项：", otherTranslation)
-                mTVRelatedWords.text = setWords("相关词组：", relatedWords)
-            }
-        }
+    override infix fun displayOtherTranslation(words: String) {
+        mTVOtherTranslation.setWords("其它义项：", words)
     }
 
-    private fun setWords(tips: String, words: String) = "$tips\n$words"
+    override infix fun displayRelatedWords(words: String) {
+        mTVRelatedWords.setWords("相关词组：", words)
+    }
+
+    private fun TextView.setWords(tips: String, words: String) {
+        visibility = if (words.isBlank()) {
+            View.GONE
+        } else {
+            val wordText = "$tips\n$words"
+            text = wordText
+            View.VISIBLE
+        }
+    }
 
 }
