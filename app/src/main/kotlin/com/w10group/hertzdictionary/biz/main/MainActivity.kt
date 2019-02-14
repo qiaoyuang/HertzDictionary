@@ -343,7 +343,7 @@ class MainActivity : CoroutineScopeActivity(), WordDisplayView {
         return super.onCreateOptionsMenu(menu)
     }
 
-    //标记位，当值为true时，RecyclerView滑动到顶部或底部才会有弹窗。
+    // 标记位，当值为true时，RecyclerView滑动到顶部或底部才会有弹窗。
     private var mScrollFlag = false
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         when (item?.itemId) {
