@@ -5,7 +5,6 @@ import android.content.Context
 import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
-import android.support.constraint.ConstraintLayout.LayoutParams.PARENT_ID
 import android.support.design.widget.AppBarLayout
 import android.support.design.widget.AppBarLayout.LayoutParams.SCROLL_FLAG_EXIT_UNTIL_COLLAPSED
 import android.support.design.widget.AppBarLayout.LayoutParams.SCROLL_FLAG_SCROLL
@@ -43,7 +42,6 @@ import kotlinx.coroutines.launch
 import org.jetbrains.anko.*
 import org.jetbrains.anko.appcompat.v7.toolbar
 import org.jetbrains.anko.cardview.v7.cardView
-import org.jetbrains.anko.constraint.layout.constraintLayout
 import org.jetbrains.anko.design.*
 import org.jetbrains.anko.recyclerview.v7.recyclerView
 import org.jetbrains.anko.support.v4.drawerLayout
@@ -80,6 +78,7 @@ class MainActivity : CoroutineScopeActivity(), WordDisplayView {
     private val mTitleText by lazy { getString(R.string.app_name) }
 
     private companion object {
+        // 标记当前词典的状态是否是查询状态
         const val STATUS_INQUIRED_NOT = 0
         const val STATUS_INQUIRED = 1
     }
@@ -111,7 +110,7 @@ class MainActivity : CoroutineScopeActivity(), WordDisplayView {
                         view {
                             fitsSystemWindows = true
                             backgroundColor = blue2
-                        }.lparams(matchParent, getStatusBarSize(this@MainActivity)) {
+                        }.lparams(matchParent, getStatusBarSize(context)) {
                             collapseMode = COLLAPSE_MODE_PIN
                         }
 
@@ -156,7 +155,7 @@ class MainActivity : CoroutineScopeActivity(), WordDisplayView {
 
                         mToolBar = toolbar {
                             backgroundColor = blue1
-                        }.lparams(matchParent, getActionBarSize(this@MainActivity)) {
+                        }.lparams(matchParent, getActionBarSize(context)) {
                             collapseMode = COLLAPSE_MODE_PIN
                         }
 
@@ -173,18 +172,18 @@ class MainActivity : CoroutineScopeActivity(), WordDisplayView {
                             elevation = dip(4).toFloat()
                             isClickable = true
                             backgroundColor = blue1
-                            foreground = createTouchFeedbackBorderless(this@MainActivity)
-                            val sourceLanguageId = 1
-                            val resultId = 2
-                            val pronunciationId = 3
-                            val otherTranslationsId = 4
-                            constraintLayout {
+                            foreground = createTouchFeedbackBorderless(context)
+                            relativeLayout {
+                                val sourceLanguageId = 1
+                                val resultId = 2
+                                val pronunciationId = 3
+                                val otherTranslationId = 4
                                 imageView {
-                                    setImageDrawable(ContextCompat.getDrawable(this@MainActivity, R.drawable.ic_close_white_24dp))
+                                    setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_close_white_24dp))
                                     setOnClickListener { if (status == STATUS_INQUIRED) restore() }
                                 }.lparams(wrapContent, wrapContent) {
-                                    topToTop = PARENT_ID
-                                    endToEnd = PARENT_ID
+                                    alignParentTop()
+                                    alignParentEnd()
                                 }
                                 textView {
                                     id = sourceLanguageId
@@ -192,16 +191,16 @@ class MainActivity : CoroutineScopeActivity(), WordDisplayView {
                                     textSize = 16f
                                     text = "简体中文"
                                 }.lparams(wrapContent, wrapContent) {
-                                    topToTop = PARENT_ID
-                                    startToStart = PARENT_ID
+                                    alignParentTop()
+                                    alignParentStart()
                                 }
                                 mTVResult = textView {
                                     id = resultId
                                     textColor = Color.WHITE
                                     textSize = 22f
                                 }.lparams(wrapContent, wrapContent) {
-                                    topToBottom = sourceLanguageId
-                                    startToStart = PARENT_ID
+                                    alignStart(sourceLanguageId)
+                                    bottomOf(sourceLanguageId)
                                     topMargin = dip(16)
                                     marginStart = dip(8)
                                 }
@@ -210,25 +209,25 @@ class MainActivity : CoroutineScopeActivity(), WordDisplayView {
                                     textColor = Color.WHITE
                                     textSize = 14f
                                 }.lparams(wrapContent, wrapContent) {
-                                    topToBottom = resultId
-                                    startToStart = resultId
+                                    alignStart(resultId)
+                                    bottomOf(resultId)
                                     topMargin = dip(4)
                                 }
                                 mTVOtherTranslation = textView {
-                                    id = otherTranslationsId
+                                    id = otherTranslationId
                                     textColor = Color.WHITE
                                     textSize = 14f
                                 }.lparams(wrapContent, wrapContent) {
-                                    topToBottom = pronunciationId
-                                    startToStart = pronunciationId
+                                    alignStart(pronunciationId)
+                                    bottomOf(pronunciationId)
                                     topMargin = dip(16)
                                 }
                                 mTVRelatedWords = textView {
                                     textColor = Color.WHITE
                                     textSize = 14f
                                 }.lparams(wrapContent, wrapContent) {
-                                    topToBottom = otherTranslationsId
-                                    startToStart = otherTranslationsId
+                                    alignStart(otherTranslationId)
+                                    bottomOf(otherTranslationId)
                                     topMargin = dip(16)
                                 }
                             }.lparams(matchParent, wrapContent) {
@@ -242,7 +241,7 @@ class MainActivity : CoroutineScopeActivity(), WordDisplayView {
                             elevation = dip(4).toFloat()
                             isClickable = true
                             backgroundColor = Color.WHITE
-                            foreground = createTouchFeedbackBorderless(this@MainActivity)
+                            foreground = createTouchFeedbackBorderless(context)
                             verticalLayout {
                                 textView {
                                     textColor = Color.BLACK
@@ -266,7 +265,7 @@ class MainActivity : CoroutineScopeActivity(), WordDisplayView {
                 }
 
                 mRecyclerView = recyclerView {
-                    val linearLayoutManager = LinearLayoutManager(this@MainActivity, LinearLayoutManager.VERTICAL, false)
+                    val linearLayoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
                     layoutManager = linearLayoutManager
                     itemAnimator = DefaultItemAnimator()
                     var firstPosition = 0
@@ -303,7 +302,7 @@ class MainActivity : CoroutineScopeActivity(), WordDisplayView {
                 fitsSystemWindows = true
                 isClickable = true
                 backgroundColor = deepWhite
-                itemTextColor = ContextCompat.getColorStateList(this@MainActivity, R.color.gray600)
+                itemTextColor = ContextCompat.getColorStateList(context, R.color.gray600)
                 addHeaderView(createHeaderView())
                 setNavigationItemSelectedListener {
                     it.isCheckable = false
@@ -320,7 +319,7 @@ class MainActivity : CoroutineScopeActivity(), WordDisplayView {
         }
 
         setSupportActionBar(mToolBar)
-        val toggle = ActionBarDrawerToggle(this@MainActivity, mDrawerLayout, mToolBar, R.string.navigation_drawer_open, R.string.navigation_drawer_close)
+        val toggle = ActionBarDrawerToggle(this, mDrawerLayout, mToolBar, R.string.navigation_drawer_open, R.string.navigation_drawer_close)
         mDrawerLayout.addDrawerListener(toggle)
         toggle.syncState()
         launch { ImageManagerService.loadBackground(this@MainActivity, mBackgroundImageView) }
@@ -335,7 +334,7 @@ class MainActivity : CoroutineScopeActivity(), WordDisplayView {
                     backgroundColor = blue1
                     isClickable = true
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
-                        foreground = createTouchFeedbackBorderless(this@MainActivity)
+                        foreground = createTouchFeedbackBorderless(context)
                 }
             }.view
 
@@ -344,7 +343,7 @@ class MainActivity : CoroutineScopeActivity(), WordDisplayView {
         return super.onCreateOptionsMenu(menu)
     }
 
-    //标记位，当值为true时，RecyclerView滑动到顶部或底部才会有弹窗。
+    // 标记位，当值为true时，RecyclerView滑动到顶部或底部才会有弹窗。
     private var mScrollFlag = false
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         when (item?.itemId) {
@@ -415,7 +414,7 @@ class MainActivity : CoroutineScopeActivity(), WordDisplayView {
     override fun getContext(): Context = this
     override fun getCoroutineScope(): CoroutineScope = this
 
-    override suspend fun displayInquireResult(inquireResult: InquireResult, word: String) {
+    override fun displayInquireResult(inquireResult: InquireResult, word: String) {
         //改变控件状态
         if (status == STATUS_INQUIRED_NOT) {
             mRecyclerView.visibility = View.GONE
@@ -452,41 +451,39 @@ class MainActivity : CoroutineScopeActivity(), WordDisplayView {
         } else {
             mOtherMeanCard.visibility = View.VISIBLE
             inquireResult.dict.forEach { dict ->
-                val layoutParams1 = LinearLayout.LayoutParams(wrapContent, wrapContent)
-                layoutParams1.marginStart = dip(16)
-                val headView = TextView(this)
-                headView.textSize = 16f
-                headView.textColor = gray600
-                headView.text = dict.posType
-                headView.layoutParams = layoutParams1
-
-                val layoutParams2 = LinearLayout.LayoutParams(matchParent, wrapContent)
-                layoutParams2.marginStart = dip(32)
-                layoutParams2.marginEnd = dip(8)
-                layoutParams2.topMargin = dip(16)
-                layoutParams2.bottomMargin = dip(24)
-                val recyclerView = RecyclerView(this)
-                recyclerView.layoutManager = object : LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false) {
-                    override fun canScrollVertically(): Boolean {
-                        return false
+                with<_LinearLayout, Unit>(mOtherMeanLayout as _LinearLayout) {
+                    textView {
+                        textSize = 16f
+                        textColor = gray600
+                        text = dict.posType
+                    }.lparams(wrapContent, wrapContent) {
+                        marginStart = dip(16)
+                    }
+                    recyclerView {
+                        layoutManager = object : LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false) {
+                            override fun canScrollVertically(): Boolean {
+                                return false
+                            }
+                        }
+                        dict.dictInfo?.let {
+                            adapter = OtherMeanAdapter(context, it)
+                        }
+                    }.lparams(matchParent, wrapContent) {
+                        marginStart = dip(32)
+                        marginEnd = dip(8)
+                        topMargin = dip(16)
+                        bottomMargin = dip(24)
                     }
                 }
-                dict.dictInfo?.let {
-                    recyclerView.adapter = OtherMeanAdapter(this, it)
-                }
-                recyclerView.layoutParams = layoutParams2
-
-                mOtherMeanLayout.addView(headView)
-                mOtherMeanLayout.addView(recyclerView)
             }
         }
     }
 
-    override suspend infix fun displayOtherTranslation(words: String) {
+    override infix fun displayOtherTranslation(words: String) {
         mTVOtherTranslation.setWords("其它义项：", words)
     }
 
-    override suspend infix fun displayRelatedWords(words: String) {
+    override infix fun displayRelatedWords(words: String) {
         mTVRelatedWords.setWords("相关词组：", words)
     }
 

@@ -55,7 +55,7 @@ class OtherMeanAdapter(private val mContext: Context,
                 lparams(matchParent, wrapContent)
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                     isClickable = true
-                    foreground = createTouchFeedback(mContext)
+                    foreground = createTouchFeedback(context)
                 }
                 textView {
                     id = WORD

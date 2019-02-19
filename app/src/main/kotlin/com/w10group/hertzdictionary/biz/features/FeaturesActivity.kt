@@ -72,7 +72,7 @@ class FeaturesActivity : CoroutineScopeActivity() {
                 toolbar = toolbar {
                     title = "未来新功能"
                     backgroundColorResource = R.color.blue1
-                }.lparams(matchParent, getActionBarSize(this@FeaturesActivity)) {
+                }.lparams(matchParent, getActionBarSize(context)) {
                     scrollFlags = SCROLL_FLAG_SCROLL or SCROLL_FLAG_ENTER_ALWAYS or SCROLL_FLAG_SNAP
                 }
             }.lparams(matchParent, wrapContent)
@@ -82,7 +82,7 @@ class FeaturesActivity : CoroutineScopeActivity() {
                     cardView {
                         elevation = dip(4).toFloat()
                         isClickable = true
-                        foreground = createTouchFeedbackBorderless(this@FeaturesActivity)
+                        foreground = createTouchFeedbackBorderless(context)
                         verticalLayout {
                             textView {
                                 val title = "当前版本：V${packageManager.getPackageInfo(packageName, 0).versionName}"
@@ -112,7 +112,7 @@ class FeaturesActivity : CoroutineScopeActivity() {
                     cardView {
                         elevation = dip(4).toFloat()
                         isClickable = true
-                        foreground = createTouchFeedbackBorderless(this@FeaturesActivity)
+                        foreground = createTouchFeedbackBorderless(context)
 
                         verticalLayout {
                             textView {
@@ -143,7 +143,7 @@ class FeaturesActivity : CoroutineScopeActivity() {
                     cardView {
                         elevation = dip(4).toFloat()
                         isClickable = true
-                        foreground = createTouchFeedbackBorderless(this@FeaturesActivity)
+                        foreground = createTouchFeedbackBorderless(context)
 
                         verticalLayout {
                             textView {
@@ -184,7 +184,7 @@ class FeaturesActivity : CoroutineScopeActivity() {
 
                             frameLayout {
                                 backgroundColorResource = R.color.blueGray
-                                foreground = createTouchFeedbackBorderless(this@FeaturesActivity)
+                                foreground = createTouchFeedbackBorderless(context)
                                 setOnClickListener { mCompleteScaleImageView.showByCoroutines(this@FeaturesActivity) }
                                 GlideApp.with(this@FeaturesActivity).load(R.drawable.wechat).dontAnimate().into(
                                         imageView().lparams(dip(24), dip(24)) {
@@ -218,7 +218,7 @@ class FeaturesActivity : CoroutineScopeActivity() {
                     cardView {
                         elevation = dip(4).toFloat()
                         isClickable = true
-                        foreground = createTouchFeedbackBorderless(this@FeaturesActivity)
+                        foreground = createTouchFeedbackBorderless(context)
 
                         verticalLayout {
                             textView {
