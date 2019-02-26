@@ -139,6 +139,7 @@ class WordManagerServiceV3(private val mView: WordDisplayView) {
         }
         mAdapter.sumCount++
         mUpdateChannel.send(word!!)
+        withContext(Dispatchers.IO) { word!!.save() }
     }
 
     suspend fun refreshRecyclerView() {
@@ -154,7 +155,6 @@ class WordManagerServiceV3(private val mView: WordDisplayView) {
             mAdapter.notifyItemRangeChanged(0, index)
             mAdapter.notifyItemInserted(index)
         }
-        withContext(Dispatchers.IO) { word.save() }
     }
 
     // 第一个数字为负的时候表示未移动过，非负时表示移动前的位置，第二个数表示移动后的位置
