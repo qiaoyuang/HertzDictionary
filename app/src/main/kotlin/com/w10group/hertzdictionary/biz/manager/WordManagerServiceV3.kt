@@ -32,7 +32,7 @@ class WordManagerServiceV3(private val mView: WordDisplayView) {
         }
     }
 
-    private val mUpdateChannel = Channel<LocalWord>()
+    private val mUpdateChannel = Channel<LocalWord>(1)
 
     private lateinit var mNetworkJob: Job
 
