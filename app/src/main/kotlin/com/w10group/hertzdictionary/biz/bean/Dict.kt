@@ -1,8 +1,11 @@
 package com.w10group.hertzdictionary.biz.bean
 
-import com.squareup.moshi.Json
-import com.squareup.moshi.JsonClass
+import kotlinx.serialization.Optional
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
-@JsonClass(generateAdapter = true)
-data class Dict(@Json(name = "pos") val posType: String = "",
-                @Json(name = "entry") val dictInfo: List<DictInfo>? = null)
+@Serializable
+data class Dict(@SerialName("pos")
+                @Optional val posType: String = "",
+                @SerialName("entry")
+                @Optional val dictInfo: List<DictInfo>? = null)
