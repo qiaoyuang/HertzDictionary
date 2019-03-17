@@ -22,7 +22,7 @@ object NetworkUtil {
 
     private val mRetrofit: Retrofit = Retrofit.Builder()
             .baseUrl(BASE_URL)
-            .addConverterFactory(Json.asConverterFactory(MediaType.get(JSON)))
+            .addConverterFactory(Json.nonstrict.asConverterFactory(MediaType.get(JSON)))
             .addCallAdapterFactory(CoroutineCallAdapterFactory())
             .build()
 
