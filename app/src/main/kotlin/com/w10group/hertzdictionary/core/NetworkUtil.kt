@@ -18,11 +18,11 @@ import java.lang.ref.SoftReference
 object NetworkUtil {
 
     private const val BASE_URL = "http://translate.google.cn/"
-    private const val JSON = "application/json"
+    private const val MEDIA_TYPE_JSON = "application/json"
 
     private val mRetrofit: Retrofit = Retrofit.Builder()
             .baseUrl(BASE_URL)
-            .addConverterFactory(Json.nonstrict.asConverterFactory(MediaType.get(JSON)))
+            .addConverterFactory(Json.nonstrict.asConverterFactory(MediaType.get(MEDIA_TYPE_JSON)))
             .addCallAdapterFactory(CoroutineCallAdapterFactory())
             .build()
 
