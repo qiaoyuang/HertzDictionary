@@ -7,6 +7,11 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlin.coroutines.CoroutineContext
 
+/**
+ * 包含协程上下文的 Activity
+ * @author Qiao
+ */
+
 abstract class CoroutineScopeActivity : AppCompatActivity(), CoroutineScope {
 
     private lateinit var job: Job

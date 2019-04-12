@@ -50,7 +50,7 @@ object ImageManagerService {
 
     private suspend fun getURLOnInternetByCoroutines(context: Context, imageView: ImageView, sharedPreferences: SharedPreferences) {
         val requestBody = try {
-            NetworkUtil.getInstance().getImageURLByCoroutines(GET_URL).await()
+            NetworkUtil.instance.getImageURLByCoroutines(GET_URL).await()
         } catch (e: IOException) {
             e.printStackTrace()
             return

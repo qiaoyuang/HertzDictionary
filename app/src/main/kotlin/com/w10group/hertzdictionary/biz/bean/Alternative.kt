@@ -1,7 +1,9 @@
 package com.w10group.hertzdictionary.biz.bean
 
-import com.squareup.moshi.Json
-import com.squareup.moshi.JsonClass
+import kotlinx.serialization.Optional
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
-@JsonClass(generateAdapter = true)
-data class Alternative(@Json(name = "word_postproc") val word: String = "")
+@Serializable
+data class Alternative(@SerialName("word_postproc")
+                       @Optional val word: String = "")
