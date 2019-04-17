@@ -1,6 +1,5 @@
 package com.w10group.hertzdictionary.biz.bean
 
-import kotlinx.serialization.Optional
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -10,5 +9,4 @@ import kotlinx.serialization.Serializable
  */
 
 @Serializable
-data class RelatedWords(@SerialName("word")
-                        @Optional val words: List<String>? = null)
+data class RelatedWords(@SerialName("word") val words: List<String>? = null)

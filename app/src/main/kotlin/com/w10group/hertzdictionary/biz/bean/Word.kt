@@ -1,6 +1,5 @@
 package com.w10group.hertzdictionary.biz.bean
 
-import kotlinx.serialization.Optional
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -10,11 +9,7 @@ import kotlinx.serialization.Serializable
  */
 
 @Serializable
-data class Word(@SerialName("trans")
-                @Optional val ch: String = "",
-                @SerialName("orig")
-                @Optional val en: String = "",
-                @SerialName("translit")
-                @Optional val pronunciation: String = "",
-                @SerialName("src_translit")
-                @Optional val srcPronunciation: String = "")
+data class Word(@SerialName("trans") val ch: String = "",
+                @SerialName("orig") val en: String = "",
+                @SerialName("translit") val pronunciation: String = "",
+                @SerialName("src_translit") val srcPronunciation: String = "")

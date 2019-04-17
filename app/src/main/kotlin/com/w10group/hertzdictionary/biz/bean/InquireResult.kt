@@ -1,6 +1,5 @@
 package com.w10group.hertzdictionary.biz.bean
 
-import kotlinx.serialization.Optional
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -10,11 +9,7 @@ import kotlinx.serialization.Serializable
  */
 
 @Serializable
-data class InquireResult(@SerialName("sentences")
-                         @Optional val word: List<Word>? = null,
-                         @SerialName("dict")
-                         @Optional val dict: List<Dict>? = null,
-                         @SerialName("alternative_translations")
-                         @Optional val alternativeTranslations: List<AlternativeTranslations>? = null,
-                         @SerialName("related_words")
-                         @Optional val relatedWords: RelatedWords? = null)
+data class InquireResult(@SerialName("sentences") val word: List<Word>? = null,
+                         @SerialName("dict") val dict: List<Dict>? = null,
+                         @SerialName("alternative_translations") val alternativeTranslations: List<AlternativeTranslations>? = null,
+                         @SerialName("related_words") val relatedWords: RelatedWords? = null)
