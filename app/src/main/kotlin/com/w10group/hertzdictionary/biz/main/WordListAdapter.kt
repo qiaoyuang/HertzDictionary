@@ -113,14 +113,16 @@ class WordListAdapter(private val mContext: Context,
 
     override fun onBindViewHolder(holder: WordListViewHolder, position: Int) {
         val word = mData[position]
-        holder.tvEnglish.text = word.en
-        holder.tvChinese.text = word.ch
-        val countStr = "已查询次数：${word.count}"
-        holder.tvCount.text = countStr
-        val rateStr = "查询比例：${mFormat.format(word.count.toDouble() / sumCount.toDouble())}"
-        holder.tvInquireRate.text = rateStr
-        holder.cardView.setOnClickListener { itemOnClickListener(word.en) }
-        holder.cardView.setOnLongClickListener { onLongClick(word, position) }
+        holder.apply {
+            tvEnglish.text = word.en
+            tvChinese.text = word.ch
+            val countStr = "已查询次数：${word.count}"
+            tvCount.text = countStr
+            val rateStr = "查询比例：${mFormat.format(word.count.toDouble() / sumCount.toDouble())}"
+            tvInquireRate.text = rateStr
+            cardView.setOnClickListener { itemOnClickListener(word.en) }
+            cardView.setOnLongClickListener { onLongClick(word, position) }
+        }
     }
 
     private fun onLongClick(localWord: LocalWord, index: Int): Boolean {

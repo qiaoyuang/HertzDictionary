@@ -29,8 +29,10 @@ class OSLAdapter(private val mContext: Context, private val mData: List<OSL>) : 
 
     override fun onBindViewHolder(holder: OSLViewHolder, position: Int) {
         val data = mData[position]
-        holder.tvTitle.text = data.title
-        holder.tvContent.text = data.content
+        holder.apply {
+            tvTitle.text = data.title
+            tvContent.text = data.content
+        }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): OSLViewHolder {
