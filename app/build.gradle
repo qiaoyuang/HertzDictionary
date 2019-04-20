@@ -23,6 +23,7 @@ android {
         exclude 'META-INF/LGPL2.1'
         exclude 'META-INF/LICENSE'
         exclude 'META-INF/NOTICE'
+        exclude 'META-INF/atomicfu.kotlin_module'
     }
     buildTypes {
         release {
@@ -62,7 +63,7 @@ dependencies {
     //Retrofit
     implementation 'com.squareup.retrofit2:retrofit:2.5.0'
     implementation 'com.jakewharton.retrofit:retrofit2-kotlin-coroutines-adapter:0.9.2'
-    implementation 'com.jakewharton.retrofit:retrofit2-kotlinx-serialization-converter:0.3.0'
+    implementation 'com.jakewharton.retrofit:retrofit2-kotlinx-serialization-converter:0.4.0'
 
     //大图查看器&圆形ImageView
     implementation 'com.davemorrissey.labs:subsampling-scale-image-view:3.10.0'
