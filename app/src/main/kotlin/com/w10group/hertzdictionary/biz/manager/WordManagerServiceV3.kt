@@ -70,7 +70,7 @@ class WordManagerServiceV3(private val mView: WordDisplayView) {
             }
             mProgressDialog.show()
             val inquireResult = try {
-                NetworkUtil.instance.inquireWordByCoroutines(word).await()
+                NetworkUtil.instance.inquireWordByCoroutinesAsync(word).await()
             } catch (e: Exception) {
                 e.printStackTrace()
                 mProgressDialog.dismiss()
