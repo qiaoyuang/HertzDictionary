@@ -13,7 +13,7 @@ import android.view.MenuItem
 import com.w10group.hertzdictionary.biz.licence.OSLAdapter.OSL
 import com.w10group.hertzdictionary.R
 import com.w10group.hertzdictionary.core.CoroutineScopeActivity
-import com.w10group.hertzdictionary.core.getActionBarSize
+import com.w10group.hertzdictionary.core.view.getActionBarSize
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext

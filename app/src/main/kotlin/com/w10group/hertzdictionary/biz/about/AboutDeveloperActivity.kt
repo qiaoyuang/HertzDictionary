@@ -25,6 +25,9 @@ import com.w10group.hertzdictionary.biz.manager.FileReadManagerService
 import com.w10group.hertzdictionary.biz.manager.ImageManagerService
 import com.w10group.hertzdictionary.core.*
 import com.w10group.hertzdictionary.core.image.CompleteScaleImageView
+import com.w10group.hertzdictionary.core.view.circleImageView
+import com.w10group.hertzdictionary.core.view.createTouchFeedbackBorderless
+import com.w10group.hertzdictionary.core.view.getActionBarSize
 import kotlinx.coroutines.launch
 import org.jetbrains.anko.*
 import org.jetbrains.anko.appcompat.v7.toolbar

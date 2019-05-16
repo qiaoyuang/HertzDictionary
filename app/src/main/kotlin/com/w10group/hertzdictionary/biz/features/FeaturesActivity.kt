@@ -17,6 +17,8 @@ import com.w10group.hertzdictionary.R
 import com.w10group.hertzdictionary.biz.manager.FileReadManagerService
 import com.w10group.hertzdictionary.core.*
 import com.w10group.hertzdictionary.core.image.CompleteScaleImageView
+import com.w10group.hertzdictionary.core.view.createTouchFeedbackBorderless
+import com.w10group.hertzdictionary.core.view.getActionBarSize
 import org.jetbrains.anko.*
 import org.jetbrains.anko.appcompat.v7.toolbar
 import org.jetbrains.anko.cardview.v7.cardView

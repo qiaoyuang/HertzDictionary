@@ -1,4 +1,4 @@
-package com.w10group.hertzdictionary.core
+package com.w10group.hertzdictionary.core.view
 
 import android.content.Context
 import android.graphics.drawable.Drawable
@@ -27,6 +27,10 @@ inline fun ViewManager.circleImageView(init: CircleImageView.() -> Unit): Circle
 // SubsamplingImageView
 inline fun ViewManager.subsamplingImageView(init: SubsamplingScaleImageView.() -> Unit): SubsamplingScaleImageView =
         ankoView({ SubsamplingScaleImageView(it) }, theme = 0, init = init)
+
+// CurveView
+inline fun ViewManager.curveView(init: CurveView.() -> Unit): CurveView =
+        ankoView({ CurveView(it) }, theme = 0, init = init)
 
 // 创建触摸反馈效果Drawable
 fun createTouchFeedback(context: Context): Drawable? {

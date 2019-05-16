@@ -45,14 +45,10 @@ class WordManagerServiceV3(private val mView: WordDisplayView) {
     }
 
     // 滑动到RecyclerView顶部
-    fun scrollToTop() {
-        mRecyclerView.smoothScrollToPosition(0)
-    }
+    fun scrollToTop() = mRecyclerView.smoothScrollToPosition(0)
 
     // 滑动到RecyclerView底部
-    fun scrollToBottom() {
-        mRecyclerView.smoothScrollToPosition(mData.size - 1)
-    }
+    fun scrollToBottom() = mRecyclerView.smoothScrollToPosition(mData.size - 1)
 
     // 获取所有单词
     suspend fun getAllWord() {

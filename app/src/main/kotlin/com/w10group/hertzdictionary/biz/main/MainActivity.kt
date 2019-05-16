@@ -36,6 +36,9 @@ import com.w10group.hertzdictionary.biz.manager.ImageManagerService
 import com.w10group.hertzdictionary.biz.manager.WordDisplayView
 import com.w10group.hertzdictionary.biz.manager.WordManagerServiceV3
 import com.w10group.hertzdictionary.core.*
+import com.w10group.hertzdictionary.core.view.createTouchFeedbackBorderless
+import com.w10group.hertzdictionary.core.view.getActionBarSize
+import com.w10group.hertzdictionary.core.view.getStatusBarSize
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch

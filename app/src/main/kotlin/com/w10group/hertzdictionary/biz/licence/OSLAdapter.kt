@@ -8,7 +8,7 @@ import android.support.v7.widget.RecyclerView.ViewHolder
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import com.w10group.hertzdictionary.core.createTouchFeedbackBorderless
+import com.w10group.hertzdictionary.core.view.createTouchFeedbackBorderless
 import org.jetbrains.anko.*
 
 /**

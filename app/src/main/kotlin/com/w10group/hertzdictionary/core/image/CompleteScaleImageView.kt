@@ -23,7 +23,7 @@ import android.widget.TextView
 import com.davemorrissey.labs.subscaleview.ImageSource
 import com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView
 import com.w10group.hertzdictionary.R
-import com.w10group.hertzdictionary.core.subsamplingImageView
+import com.w10group.hertzdictionary.core.view.subsamplingImageView
 import kotlinx.coroutines.*
 import org.jetbrains.anko.*
 import org.jetbrains.anko.design.longSnackbar

@@ -15,7 +15,7 @@ import com.w10group.hertzdictionary.biz.bean.LocalWord
 import org.jetbrains.anko.*
 import org.jetbrains.anko.cardview.v7.cardView
 import com.w10group.hertzdictionary.biz.main.WordListAdapter.WordListViewHolder
-import com.w10group.hertzdictionary.core.createTouchFeedbackBorderless
+import com.w10group.hertzdictionary.core.view.createTouchFeedbackBorderless
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
