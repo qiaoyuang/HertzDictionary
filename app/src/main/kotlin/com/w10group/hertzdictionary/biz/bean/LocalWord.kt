@@ -10,4 +10,5 @@ import org.litepal.crud.LitePalSupport
 data class LocalWord(val id: Int = 0,
                      val ch: String = "",
                      val en: String = "",
-                     var count: Int = 1) : LitePalSupport()
+                     var count: Int = 1,
+                     var timeList: ArrayList<Long>? = null) : LitePalSupport()

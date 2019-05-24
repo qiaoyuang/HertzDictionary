@@ -6,7 +6,6 @@ import com.w10group.hertzdictionary.biz.main.WordListAdapter
 import com.w10group.hertzdictionary.core.NetworkUtil
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.Channel
-import org.jetbrains.anko.design.snackbar
 import org.jetbrains.anko.progressDialog
 import org.litepal.LitePal
 import org.litepal.extension.find
@@ -20,14 +19,12 @@ import java.util.concurrent.CopyOnWriteArrayList
 class WordManagerServiceV3(private val mView: WordDisplayView) {
 
     private val mContext = mView.getContext()
-    private val mETInput = mView.getEditText()
-    private val mRecyclerView = mView.getRecyclerView()
     private val mCoroutineScope = mView.getCoroutineScope()
 
     private val mData by lazy { CopyOnWriteArrayList<LocalWord>() }
     private val mAdapter: WordListAdapter by lazy {
         WordListAdapter(mContext, mData, mCoroutineScope) {
-            mETInput.setText(it)
+            mView.setWordText(it)
             inquire(it)
         }
     }
@@ -35,6 +32,9 @@ class WordManagerServiceV3(private val mView: WordDisplayView) {
     private val mUpdateChannel = Channel<LocalWord>(1)
 
     private lateinit var mNetworkJob: Job
+
+    var currentLocalWord: LocalWord? = null
+        private set
 
     @Suppress("DEPRECATION")
     private val mProgressDialog by lazy {
@@ -44,24 +44,18 @@ class WordManagerServiceV3(private val mView: WordDisplayView) {
         }
     }
 
-    // 滑动到RecyclerView顶部
-    fun scrollToTop() = mRecyclerView.smoothScrollToPosition(0)
-
-    // 滑动到RecyclerView底部
-    fun scrollToBottom() = mRecyclerView.smoothScrollToPosition(mData.size - 1)
-
     // 获取所有单词
     suspend fun getAllWord() {
         val list = LitePal.order("count desc").find<LocalWord>()
         mData.addAll(list)
-        withContext(Dispatchers.Main) { mRecyclerView.adapter = mAdapter }
+        withContext(Dispatchers.Main) { mView.setAdapter(mAdapter) }
     }
 
     // 查询单词
     fun inquire(word: String) {
         mNetworkJob = mCoroutineScope.launch {
             if (!NetworkUtil.checkNetwork(mContext)) {
-                mRecyclerView.snackbar("当前无网络连接")
+                mView.snackBar("当前无网络连接")
                 return@launch
             }
             mProgressDialog.show()
@@ -70,7 +64,7 @@ class WordManagerServiceV3(private val mView: WordDisplayView) {
             } catch (e: Exception) {
                 e.printStackTrace()
                 mProgressDialog.dismiss()
-                mRecyclerView.snackbar("网络出现问题，请稍后再试。")
+                mView.snackBar("网络出现问题，请稍后再试。")
                 return@launch
             }
             val pairDeferred = async(Dispatchers.Default) { getOtherTranslationAndRelateWords(inquireResult) }
@@ -134,6 +128,12 @@ class WordManagerServiceV3(private val mView: WordDisplayView) {
             mData.add(word!!)
         }
         mAdapter.sumCount++
+        if (word!!.timeList == null) {
+            word!!.timeList = ArrayList()
+        }
+        word!!.timeList!!.add(System.currentTimeMillis())
+        currentLocalWord = word
+        mCoroutineScope.launch(Dispatchers.Main) { mView.updateCurveView() }
         mUpdateChannel.send(word!!)
         withContext(Dispatchers.IO) { word!!.save() }
     }

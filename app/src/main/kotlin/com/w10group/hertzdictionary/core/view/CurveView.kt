@@ -8,8 +8,6 @@ import android.view.MotionEvent
 import android.view.View
 import com.w10group.hertzdictionary.R
 import com.w10group.hertzdictionary.core.fmtDateNormal
-import com.w10group.hertzdictionary.core.fmtDateTitle
-import com.w10group.hertzdictionary.core.fmtHourMinutes
 import com.w10group.hertzdictionary.core.fmtMonthDay
 import kotlinx.coroutines.*
 import kotlin.coroutines.CoroutineContext
@@ -26,6 +24,8 @@ class CurveView : View, CoroutineScope {
     companion object {
         const val STATUS_24H = 1
         const val STATUS_30D = 2
+
+        private const val DEFAULT_UNIT = "次/天"
     }
 
     constructor(context: Context) : super(context)
@@ -131,13 +131,10 @@ class CurveView : View, CoroutineScope {
      */
 
     // 图标的时间（X 轴参数）
-    private var time = ArrayList<Long>()
+    private val time = ArrayList<Long>()
 
     // 图表的算力值（Y 轴参数）
-    private var value = ArrayList<Double>()
-
-    // 算力单位
-    private var unit = ""
+    private val value = ArrayList<Int>()
 
     // 当前模式
     private var status = STATUS_24H
@@ -147,7 +144,7 @@ class CurveView : View, CoroutineScope {
     private var touchY = 0f
 
     // 设置数据
-    fun setData(xList: List<Long>, yList: List<Double>, unit: String = "", status: Int = STATUS_24H) {
+    fun setData(xList: List<Long>, yList: List<Int>, status: Int = STATUS_24H) {
         time.clear()
         time.addAll(xList)
         value.clear()
@@ -156,7 +153,6 @@ class CurveView : View, CoroutineScope {
             throw IllegalArgumentException("xList and yList must be equal in size.")
         if (time.size < 2)
             throw IllegalArgumentException("The size of xList and yList must be greater than 1.")
-        this.unit = unit
         this.status = status
         touchX = 0f
         touchY = 0f
@@ -164,7 +160,7 @@ class CurveView : View, CoroutineScope {
     }
 
     override fun onDraw(canvas: Canvas) {
-        launch {
+        if (time.isNotEmpty() && value.isNotEmpty())
             with(canvas) {
                 drawXText()
                 drawYText()
@@ -173,16 +169,14 @@ class CurveView : View, CoroutineScope {
                 val job2 = drawCurve(job1)
                 drawWindow(job2)
             }
-        }
     }
 
     // 第一步：绘制 X 轴坐标参数（时间）
     private fun Canvas.drawXText(): Job = launch {
-        val timeFormat = if (status == STATUS_24H) Long::fmtHourMinutes else Long::fmtMonthDay
-        val time1 = timeFormat(time[0])
-        val time4 = timeFormat(time.last())
-        val time2 = timeFormat(time[time.size / 3])
-        val time3 = timeFormat(time[time.size / 3 * 2])
+        val time1 = time[0].fmtMonthDay()
+        val time4 = time.last().fmtMonthDay()
+        val time2 = time[time.size / 3].fmtMonthDay()
+        val time3 = time[time.size / 3 * 2].fmtMonthDay()
         val y = (height * 9 / 10).toFloat()
         val fWidth = width.toFloat()
         val x1 = fWidth / 10
@@ -201,7 +195,7 @@ class CurveView : View, CoroutineScope {
     private fun Canvas.drawYText(): Job = launch {
         val maxValue = value.max()!!
         val value1 = "0"
-        val n = maxValue.toInt() / 30 + 1
+        val n = maxValue / 30 + 1
         val value4 = "${30 * n}"
         val value3 = "${20 * n}"
         val value2 = "${10 * n}"
@@ -219,7 +213,7 @@ class CurveView : View, CoroutineScope {
     }
 
     // 第三步：绘制横向虚线
-    private fun Canvas.drawDottedLine(): Job = launch {
+    private fun Canvas.drawDottedLine(): Job = launch(Dispatchers.Main) {
         val startX = (width / 10).toFloat()
         val stopX = width.toFloat()
         fun drawLine(y: Float) = drawLine(startX, y, stopX, y, mDashLinePaint)
@@ -237,7 +231,7 @@ class CurveView : View, CoroutineScope {
     private fun Canvas.drawCurve(job: Job): Job = launch {
         val x0 = (width / 10).toFloat()
         val y0 = (height / 5 * 4).toFloat()
-        if (value.all { it == 0.0 }) {
+        if (value.all { it == 0 }) {
             mCurvePath.moveTo(x0, y0)
             mCurvePath.lineTo(width.toFloat(), y0)
             job.join()
@@ -268,17 +262,17 @@ class CurveView : View, CoroutineScope {
     }
 
     // 第五步：绘制右上角算力单位
-    private fun Canvas.drawUnit(): Job = launch {
+    private fun Canvas.drawUnit(): Job = launch(Dispatchers.Main) {
         val x = width.toFloat() - dp32
         val y = dp24
         mUnitPaint.color = darkBlue
-        drawText(unit, x, y, mUnitPaint)
+        drawText(DEFAULT_UNIT, x, y, mUnitPaint)
         mUnitPaint.color = lightBlue
         drawRoundRect(x - dp4, y - dp12, x + dp28, y + dp4, 10f, 10f, mUnitPaint)
     }
 
     // 第六步：绘制触摸点以及弹窗
-    private fun Canvas.drawWindow(job: Job): Job = launch(Dispatchers.Default) {
+    private fun Canvas.drawWindow(job: Job): Job = launch {
         if (touchX > 0 && touchY > 0) {
             // 获取与触摸点最近的有值的点在 time 和 value 中的 index
             val index = getTimeTemp()
@@ -290,8 +284,8 @@ class CurveView : View, CoroutineScope {
                 val endY = height.toFloat() / 5 * 4
 
                 // 绘制弹窗
-                val touchDiaPowerText = "算力 ${value[index]}$unit"
-                val (touchTimeText, windowWidth) = if (status == STATUS_24H) time[index].fmtDateTitle() to dp124 else time[index].fmtDateNormal() to (touchDiaPowerText.length * dp8 + dp8)
+                val touchDiaPowerText = "次数：${value[index]}$DEFAULT_UNIT"
+                val (touchTimeText, windowWidth) = if (status == STATUS_24H) time[index].fmtDateNormal() to dp124 else time[index].fmtDateNormal() to (touchDiaPowerText.length * dp8 + dp8)
                 val offset = dp16
                 val windowHeight = dp48
                 val windowX = if (x < width / 2) x + offset / 2 else x - windowWidth - offset
@@ -331,8 +325,8 @@ class CurveView : View, CoroutineScope {
         val x = diffScale * maxWidth + offset
         // 计算算力
         val max = value.max()!!
-        val chartMax = (max.toInt() / 30 + 1) * 30
-        val y = if (max == 0.0) height.toFloat() / 5 * 4 else ((chartMax - value[index]) / chartMax * (height.toFloat() * 3 / 5) + height.toFloat() / 5).toFloat()
+        val chartMax = (max / 30 + 1) * 30
+        val y = if (max == 0) height.toFloat() / 5 * 4 else (chartMax - value[index]) / chartMax * (height.toFloat() * 3 / 5) + height.toFloat() / 5
         return x to y
     }
 

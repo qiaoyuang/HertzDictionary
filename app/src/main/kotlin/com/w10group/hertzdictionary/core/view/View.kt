@@ -29,7 +29,7 @@ inline fun ViewManager.subsamplingImageView(init: SubsamplingScaleImageView.() -
         ankoView({ SubsamplingScaleImageView(it) }, theme = 0, init = init)
 
 // CurveView
-inline fun ViewManager.curveView(init: CurveView.() -> Unit): CurveView =
+inline fun ViewManager.curveView(init: CurveView.() -> Unit = {}): CurveView =
         ankoView({ CurveView(it) }, theme = 0, init = init)
 
 // 创建触摸反馈效果Drawable
