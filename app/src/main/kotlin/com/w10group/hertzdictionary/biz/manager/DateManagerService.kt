@@ -13,7 +13,7 @@ typealias CurveValue = Pair<List<Long>, List<Int>>
 
 object DateManagerService {
 
-    private const val ONE_DAY = 86400
+    private const val ONE_DAY = 86400000
 
     // 生成某单词的周曲线数据
     fun createWeekValue(localWord: LocalWord): CurveValue = createXYValue(weekTimestampList, localWord)
@@ -50,18 +50,18 @@ object DateManagerService {
 
     // 获取时间戳列表
     private fun getTimestampList(count: Int): List<Long> = ArrayList<Long>().apply {
-        var currentTimestamp = Calendar.getInstance().apply {
+        var timestamp = Calendar.getInstance().apply {
             timeInMillis = currentTimestamp
             set(Calendar.HOUR_OF_DAY, 0)
             set(Calendar.MINUTE, 0)
             set(Calendar.SECOND, 0)
             set(Calendar.MILLISECOND, 0)
         }.timeInMillis
-        add(currentTimestamp)
+        add(timestamp)
         repeat(count - 1) {
-            val frontTimestamp = currentTimestamp - ONE_DAY
+            val frontTimestamp = timestamp - ONE_DAY
             add(frontTimestamp)
-            currentTimestamp = frontTimestamp
+            timestamp = frontTimestamp
         }
     }.reversed()
 

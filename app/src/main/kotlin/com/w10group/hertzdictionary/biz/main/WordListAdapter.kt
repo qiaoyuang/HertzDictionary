@@ -43,13 +43,11 @@ class WordListAdapter(private val mContext: Context,
 
     private val gray by lazy { ContextCompat.getColor(mContext, R.color.gray600) }
 
-    private val mFormat = NumberFormat.getPercentInstance()
+    private val mFormat = NumberFormat.getPercentInstance().apply {
+        maximumFractionDigits = 2
+    }
 
     var sumCount = mData.sumBy { it.count }
-
-    init {
-        mFormat.maximumFractionDigits = 2
-    }
 
     override fun getItemCount(): Int = mData.size
 

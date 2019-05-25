@@ -7,6 +7,7 @@ import android.support.v7.widget.AppCompatSpinner
 import android.util.TypedValue
 import android.view.ViewManager
 import com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView
+import com.w10group.hertzdictionary.R
 import de.hdodenhof.circleimageview.CircleImageView
 import org.jetbrains.anko.attr
 import org.jetbrains.anko.custom.ankoView
@@ -18,7 +19,7 @@ import org.jetbrains.anko.custom.ankoView
 
 // AppCompatSpinner
 inline fun ViewManager.appCompatSpinner(init: AppCompatSpinner.() -> Unit): AppCompatSpinner =
-        ankoView({ AppCompatSpinner(it) }, theme = 0, init = init)
+        ankoView({ AppCompatSpinner(it) }, theme = R.style.SpinnerStyle, init = init)
 
 // CircleImageView
 inline fun ViewManager.circleImageView(init: CircleImageView.() -> Unit): CircleImageView =

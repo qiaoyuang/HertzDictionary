@@ -10,3 +10,7 @@ import java.util.*
 fun Long.fmtMonthDay(): String = SimpleDateFormat("MM-dd", Locale.getDefault()).format(Date(this))
 
 fun Long.fmtDateNormal(): String = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(Date(this))
+
+fun Long.fmtDateAll(): String = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).format(Date(this))
+
+fun Long.fmtHourMinutes(): String = SimpleDateFormat("HH:mm", Locale.getDefault()).format(Date(this))

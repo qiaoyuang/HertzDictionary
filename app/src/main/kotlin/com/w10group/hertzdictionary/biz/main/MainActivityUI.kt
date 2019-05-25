@@ -11,6 +11,7 @@ import android.support.v4.widget.DrawerLayout
 import android.support.v4.widget.NestedScrollView
 import android.support.v7.app.ActionBarDrawerToggle
 import android.support.v7.widget.*
+import android.support.v7.widget.Toolbar
 import android.text.Editable
 import android.text.InputType
 import android.text.TextWatcher
@@ -19,10 +20,7 @@ import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
-import android.widget.EditText
-import android.widget.ImageView
-import android.widget.LinearLayout
-import android.widget.TextView
+import android.widget.*
 import com.w10group.hertzdictionary.R
 import com.w10group.hertzdictionary.biz.about.AboutDeveloperActivity
 import com.w10group.hertzdictionary.biz.bean.InquireResult
@@ -65,8 +63,7 @@ class MainActivityUI(private val mMainActivity: MainActivity) : AnkoComponent<Ma
     private lateinit var mTVOtherTranslation: TextView
     private lateinit var mTVRelatedWords: TextView
 
-    private lateinit var mTVWeek: TextView
-    private lateinit var mTVMouth: TextView
+    private lateinit var mDateSpinner: AppCompatSpinner
     private lateinit var mCurveView: CurveView
 
     private val gray600 by lazy { ContextCompat.getColor(mMainActivity, R.color.gray600) }
@@ -75,11 +72,12 @@ class MainActivityUI(private val mMainActivity: MainActivity) : AnkoComponent<Ma
     private val blue2 by lazy { ContextCompat.getColor(mMainActivity, R.color.blue2) }
     private val mTitleText by lazy { mMainActivity.getString(R.string.app_name) }
 
-    private var mCurveStatus = CurveView.STATUS_24H
-
     private companion object {
-        const val TV_WEEK_ID = 99
+        const val STATUS_WEEK = 0
+        const val STATUS_MONTH = 1
     }
+
+    private var status = STATUS_WEEK
 
     override fun createView(ui: AnkoContext<MainActivity>): View = ui.apply {
         mDrawerLayout = drawerLayout {
@@ -258,52 +256,38 @@ class MainActivityUI(private val mMainActivity: MainActivity) : AnkoComponent<Ma
                             backgroundColor = Color.WHITE
                             foreground = createTouchFeedbackBorderless(context)
                             verticalLayout {
-                                mTVWeek = textView {
-                                    id = TV_WEEK_ID
-                                    text = "周频率"
-                                    textColor = blue2
-                                    textSize = 14f
-                                    setOnClickListener {
-                                        if (mCurveStatus != CurveView.STATUS_24H) {
-                                            mCurveStatus = CurveView.STATUS_24H
-                                            textColor = blue2
-                                            mTVMouth.textColor = gray600
-                                            mMainActivity.currentLocalWord?.let {
-                                                val (timeList, valueList) = DateManagerService.createWeekValue(it)
-                                                mCurveView.setData(timeList, valueList, CurveView.STATUS_24H)
+
+                                mDateSpinner = appCompatSpinner {
+                                    adapter = DateSpinnerAdapter(context)
+                                    onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+                                        override fun onNothingSelected(parent: AdapterView<*>?) = Unit
+                                        override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+                                            when (position) {
+                                                STATUS_WEEK -> {
+                                                    status = STATUS_WEEK
+                                                    mMainActivity.currentLocalWord?.let {
+                                                        val (timeList, valueList) = DateManagerService.createWeekValue(it)
+                                                        mCurveView.setData(timeList, valueList)
+                                                    }
+                                                }
+                                                STATUS_MONTH -> {
+                                                    status = STATUS_MONTH
+                                                    mMainActivity.currentLocalWord?.let {
+                                                        val (timeList, valueList) = DateManagerService.createMonthValue(it)
+                                                        mCurveView.setData(timeList, valueList)
+                                                    }
+                                                }
                                             }
                                         }
                                     }
                                 }.lparams(wrapContent, wrapContent) {
-
+                                    topMargin = dip(16)
                                 }
 
-                                mTVMouth = textView {
-                                    text = "月频率"
-                                    textColor = gray600
-                                    textSize = 14f
-                                    setOnClickListener {
-                                        if (mCurveStatus != CurveView.STATUS_30D) {
-                                            mCurveStatus = CurveView.STATUS_30D
-                                            textColor = blue2
-                                            mTVWeek.textColor = gray600
-                                            mMainActivity.currentLocalWord?.let {
-                                                val (timeList, valueList) = DateManagerService.createMonthValue(it)
-                                                mCurveView.setData(timeList, valueList, CurveView.STATUS_30D)
-                                            }
-                                        }
-                                    }
-                                }.lparams(wrapContent, wrapContent) {
-
-                                }
-
-                                mCurveView = curveView {
-                                    isClickable = true
-                                }.lparams(matchParent, dip(256)) {
-
-                                }
+                                mCurveView = curveView().lparams(matchParent, dip(256))
                             }.lparams(matchParent, wrapContent) {
-                                margin = dip(16)
+                                marginStart = dip(16)
+                                marginEnd = dip(16)
                             }
                         }.lparams(matchParent, wrapContent) {
                             marginStart = dip(8)
@@ -526,14 +510,14 @@ class MainActivityUI(private val mMainActivity: MainActivity) : AnkoComponent<Ma
 
     override fun updateCurveView() {
         mMainActivity.currentLocalWord?.let {
-            when (mCurveStatus) {
-                CurveView.STATUS_24H -> {
+            when (status) {
+                STATUS_WEEK -> {
                     val (timeList, valueList) = DateManagerService.createWeekValue(it)
-                    mCurveView.setData(timeList, valueList, CurveView.STATUS_24H)
+                    mCurveView.setData(timeList, valueList)
                 }
-                CurveView.STATUS_30D -> {
+                STATUS_MONTH -> {
                     val (timeList, valueList) = DateManagerService.createMonthValue(it)
-                    mCurveView.setData(timeList, valueList, CurveView.STATUS_30D)
+                    mCurveView.setData(timeList, valueList)
                 }
             }
         }

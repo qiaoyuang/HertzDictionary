@@ -9,21 +9,18 @@ import android.view.View
 import com.w10group.hertzdictionary.R
 import com.w10group.hertzdictionary.core.fmtDateNormal
 import com.w10group.hertzdictionary.core.fmtMonthDay
-import kotlinx.coroutines.*
-import kotlin.coroutines.CoroutineContext
 import kotlin.math.abs
 import org.jetbrains.anko.dip
 import org.jetbrains.anko.sp
+import java.text.NumberFormat
 
 /**
  * 算力曲线自定义 View
  * @author Qiao
  */
-class CurveView : View, CoroutineScope {
+class CurveView : View {
 
     companion object {
-        const val STATUS_24H = 1
-        const val STATUS_30D = 2
 
         private const val DEFAULT_UNIT = "次/天"
     }
@@ -31,11 +28,6 @@ class CurveView : View, CoroutineScope {
     constructor(context: Context) : super(context)
     constructor(context: Context, attributeSet: AttributeSet) : super(context, attributeSet)
     constructor(context: Context, attributeSet: AttributeSet, defStyleAttr: Int) : super(context, attributeSet, defStyleAttr)
-
-    private val mTotalJob = Job()
-
-    override val coroutineContext: CoroutineContext
-        get() = Dispatchers.Default + mTotalJob
 
     /**
      * 颜色
@@ -51,14 +43,13 @@ class CurveView : View, CoroutineScope {
     private val dp2 = 2.initDPValue()
     private val dp4 = 4.initDPValue()
     private val dp6 = 6.initDPValue()
-    private val dp8 = 8.initDPValue()
     private val dp12 = 12.initDPValue()
     private val dp16 = 16.initDPValue()
     private val dp24 = 24.initDPValue()
     private val dp28 = 28.initDPValue()
     private val dp32 = 32.initDPValue()
     private val dp48 = 48.initDPValue()
-    private val dp124 = 124.initDPValue()
+    private val dp96 = 96.initDPValue()
     private val sp10 = 10.initSPValue()
     private val sp12 = 12.initSPValue()
 
@@ -136,15 +127,16 @@ class CurveView : View, CoroutineScope {
     // 图表的算力值（Y 轴参数）
     private val value = ArrayList<Int>()
 
-    // 当前模式
-    private var status = STATUS_24H
-
     // 触摸点的横纵坐标
     private var touchX = 0f
     private var touchY = 0f
 
+    private val mFormat = NumberFormat.getInstance().apply {
+        maximumFractionDigits = 1
+    }
+
     // 设置数据
-    fun setData(xList: List<Long>, yList: List<Int>, status: Int = STATUS_24H) {
+    fun setData(xList: List<Long>, yList: List<Int>) {
         time.clear()
         time.addAll(xList)
         value.clear()
@@ -153,7 +145,6 @@ class CurveView : View, CoroutineScope {
             throw IllegalArgumentException("xList and yList must be equal in size.")
         if (time.size < 2)
             throw IllegalArgumentException("The size of xList and yList must be greater than 1.")
-        this.status = status
         touchX = 0f
         touchY = 0f
         invalidate()
@@ -165,14 +156,14 @@ class CurveView : View, CoroutineScope {
                 drawXText()
                 drawYText()
                 drawUnit()
-                val job1 = drawDottedLine()
-                val job2 = drawCurve(job1)
-                drawWindow(job2)
+                drawDottedLine()
+                drawCurve()
+                drawWindow()
             }
     }
 
     // 第一步：绘制 X 轴坐标参数（时间）
-    private fun Canvas.drawXText(): Job = launch {
+    private fun Canvas.drawXText() {
         val time1 = time[0].fmtMonthDay()
         val time4 = time.last().fmtMonthDay()
         val time2 = time[time.size / 3].fmtMonthDay()
@@ -183,37 +174,32 @@ class CurveView : View, CoroutineScope {
         val x2 = fWidth / 10 * 4 - dp16
         val x3 = fWidth / 10 * 7 - dp24
         val x4 = fWidth - dp32
-        withContext(Dispatchers.Main) {
-            drawText(time1, x1, y, mTextPaint)
-            drawText(time2, x2, y, mTextPaint)
-            drawText(time3, x3, y, mTextPaint)
-            drawText(time4, x4, y, mTextPaint)
-        }
+        drawText(time1, x1, y, mTextPaint)
+        drawText(time2, x2, y, mTextPaint)
+        drawText(time3, x3, y, mTextPaint)
+        drawText(time4, x4, y, mTextPaint)
     }
 
     // 第二步：绘制 Y 轴坐标参数（算力）
-    private fun Canvas.drawYText(): Job = launch {
+    private fun Canvas.drawYText() {
         val maxValue = value.max()!!
         val value1 = "0"
-        val n = maxValue / 30 + 1
-        val value4 = "${30 * n}"
-        val value3 = "${20 * n}"
-        val value2 = "${10 * n}"
+        val value4 = "$maxValue"
+        val value3 = mFormat.format(maxValue.toFloat() / 3 * 2)
+        val value2 = mFormat.format(maxValue.toFloat() / 3)
         val x = 0f
         val y1 = (height / 5).toFloat()
         val y2 = (height / 5 * 2).toFloat()
         val y3 = (height / 5 * 3).toFloat()
         val y4 = (height / 5 * 4).toFloat()
-        withContext(Dispatchers.Main) {
-            drawText(value4, x, y1, mTextPaint)
-            drawText(value3, x, y2, mTextPaint)
-            drawText(value2, x, y3, mTextPaint)
-            drawText(value1, x, y4, mTextPaint)
-        }
+        drawText(value4, x, y1, mTextPaint)
+        drawText(value3, x, y2, mTextPaint)
+        drawText(value2, x, y3, mTextPaint)
+        drawText(value1, x, y4, mTextPaint)
     }
 
     // 第三步：绘制横向虚线
-    private fun Canvas.drawDottedLine(): Job = launch(Dispatchers.Main) {
+    private fun Canvas.drawDottedLine() {
         val startX = (width / 10).toFloat()
         val stopX = width.toFloat()
         fun drawLine(y: Float) = drawLine(startX, y, stopX, y, mDashLinePaint)
@@ -228,18 +214,15 @@ class CurveView : View, CoroutineScope {
     }
 
     // 第四步：绘制算力曲线以及下方浅蓝色区域
-    private fun Canvas.drawCurve(job: Job): Job = launch {
+    private fun Canvas.drawCurve() {
         val x0 = (width / 10).toFloat()
         val y0 = (height / 5 * 4).toFloat()
         if (value.all { it == 0 }) {
             mCurvePath.moveTo(x0, y0)
             mCurvePath.lineTo(width.toFloat(), y0)
-            job.join()
-            withContext(Dispatchers.Main) {
-                drawPath(mCurvePath, mCurvePaint)
-                mCurvePath.reset()
-            }
-            return@launch
+            drawPath(mCurvePath, mCurvePaint)
+            mCurvePath.reset()
+            return
         }
         mGraphicsPath.moveTo(x0, y0)
         val (x1, y1) = valueToCoordinate(0)
@@ -252,17 +235,14 @@ class CurveView : View, CoroutineScope {
         }
         mGraphicsPath.lineTo(width.toFloat(), y0)
         mGraphicsPath.close()
-        job.join()
-        withContext(Dispatchers.Main) {
-            drawPath(mGraphicsPath, mGraphicsPaint)
-            drawPath(mCurvePath, mCurvePaint)
-            mGraphicsPath.reset()
-            mCurvePath.reset()
-        }
+        drawPath(mGraphicsPath, mGraphicsPaint)
+        drawPath(mCurvePath, mCurvePaint)
+        mGraphicsPath.reset()
+        mCurvePath.reset()
     }
 
     // 第五步：绘制右上角算力单位
-    private fun Canvas.drawUnit(): Job = launch(Dispatchers.Main) {
+    private fun Canvas.drawUnit() {
         val x = width.toFloat() - dp32
         val y = dp24
         mUnitPaint.color = darkBlue
@@ -272,7 +252,7 @@ class CurveView : View, CoroutineScope {
     }
 
     // 第六步：绘制触摸点以及弹窗
-    private fun Canvas.drawWindow(job: Job): Job = launch {
+    private fun Canvas.drawWindow() {
         if (touchX > 0 && touchY > 0) {
             // 获取与触摸点最近的有值的点在 time 和 value 中的 index
             val index = getTimeTemp()
@@ -285,31 +265,29 @@ class CurveView : View, CoroutineScope {
 
                 // 绘制弹窗
                 val touchDiaPowerText = "次数：${value[index]}$DEFAULT_UNIT"
-                val (touchTimeText, windowWidth) = if (status == STATUS_24H) time[index].fmtDateNormal() to dp124 else time[index].fmtDateNormal() to (touchDiaPowerText.length * dp8 + dp8)
+                val touchTimeText = time[index].fmtDateNormal()
+                val windowWidth = dp96
                 val offset = dp16
                 val windowHeight = dp48
                 val windowX = if (x < width / 2) x + offset / 2 else x - windowWidth - offset
                 val windowY = if (y < height / 2) y + offset / 2 else y - windowHeight - offset
 
-                job.join()
-                withContext(Dispatchers.Main) {
-                    // 画竖线
-                    drawLine(x, startY, x, endY, mVerticalLinePaint)
-                    // 绘制白边蓝心圆
-                    mTouchPaint.color = white
-                    drawCircle(x, y, radius * 1.5f, mTouchPaint)
-                    mTouchPaint.color = darkBlue
-                    drawCircle(x, y, radius, mTouchPaint)
+                // 画竖线
+                drawLine(x, startY, x, endY, mVerticalLinePaint)
+                // 绘制白边蓝心圆
+                mTouchPaint.color = white
+                drawCircle(x, y, radius * 1.5f, mTouchPaint)
+                mTouchPaint.color = darkBlue
+                drawCircle(x, y, radius, mTouchPaint)
 
-                    // 绘制深色背景
-                    mTouchPaint.color = windowBackground
-                    drawRoundRect(windowX, windowY, windowX + windowWidth, windowY + windowHeight, dp4, dp4, mTouchPaint)
-                    // 绘制时间文字
-                    mTouchPaint.color = white
-                    drawText(touchTimeText, windowX + offset / 2, windowY + offset, mTouchPaint)
-                    // 绘制算力值文字
-                    drawText(touchDiaPowerText, windowX + offset / 2, windowY + offset + windowHeight / 2, mTouchPaint)
-                }
+                // 绘制深色背景
+                mTouchPaint.color = windowBackground
+                drawRoundRect(windowX, windowY, windowX + windowWidth, windowY + windowHeight, dp4, dp4, mTouchPaint)
+                // 绘制时间文字
+                mTouchPaint.color = white
+                drawText(touchTimeText, windowX + offset / 2, windowY + offset, mTouchPaint)
+                // 绘制算力值文字
+                drawText(touchDiaPowerText, windowX + offset / 2, windowY + offset + windowHeight / 2, mTouchPaint)
             }
         }
     }
