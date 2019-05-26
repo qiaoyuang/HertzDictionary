@@ -36,6 +36,9 @@ class WordManagerServiceV3(private val mView: WordDisplayView) {
     var currentLocalWord: LocalWord? = null
         private set
 
+    val allLocalWords: List<LocalWord>
+        get() = mData
+
     @Suppress("DEPRECATION")
     private val mProgressDialog by lazy {
         mContext.progressDialog(title = "请稍候......", message = "正在获取单词数据......") {

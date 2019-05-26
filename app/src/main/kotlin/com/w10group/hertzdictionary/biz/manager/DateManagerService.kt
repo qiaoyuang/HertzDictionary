@@ -16,19 +16,21 @@ object DateManagerService {
     private const val ONE_DAY = 86400000
 
     // 生成某单词的周曲线数据
-    fun createWeekValue(localWord: LocalWord): CurveValue = createXYValue(weekTimestampList, localWord)
+    fun createWeekValue(vararg localWords: LocalWord): CurveValue = createXYValue(weekTimestampList, *localWords)
 
     // 生成某单词的月曲线数据
-    fun createMonthValue(localWord: LocalWord): CurveValue = createXYValue(monthTimestampList, localWord)
+    fun createMonthValue(vararg localWords: LocalWord): CurveValue = createXYValue(monthTimestampList, *localWords)
 
-    private fun createXYValue(timeList: List<Long>, localWord: LocalWord): CurveValue {
+    private fun createXYValue(timeList: List<Long>, vararg localWords: LocalWord): CurveValue {
         val valueList = IntArray(timeList.size) { 0 }
-        localWord.timeList?.apply {
-            forEach {
-                timeList.forEachIndexed { index, _it ->
-                    if (it - _it < ONE_DAY) {
-                        valueList[index]++
-                        return@forEachIndexed
+        localWords.forEach { localWord ->
+            localWord.timeList?.apply {
+                forEach {
+                    timeList.forEachIndexed { index, _it ->
+                        if (it - _it < ONE_DAY) {
+                            valueList[index]++
+                            return@forEachIndexed
+                        }
                     }
                 }
             }

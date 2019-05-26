@@ -11,6 +11,7 @@ import org.jetbrains.anko.*
 
 /**
  * 首页日期选择器 Adapter
+ * @author Qiao
  */
 
 class DateSpinnerAdapter(private val mContext: Context) : SpinnerAdapter {

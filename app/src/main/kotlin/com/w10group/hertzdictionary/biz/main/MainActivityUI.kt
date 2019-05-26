@@ -31,6 +31,9 @@ import com.w10group.hertzdictionary.biz.manager.ImageManagerService
 import com.w10group.hertzdictionary.biz.manager.WordDisplayView
 import com.w10group.hertzdictionary.core.view.*
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import org.jetbrains.anko.*
 import org.jetbrains.anko.appcompat.v7.toolbar
 import org.jetbrains.anko.cardview.v7.cardView
@@ -266,15 +269,19 @@ class MainActivityUI(private val mMainActivity: MainActivity) : AnkoComponent<Ma
                                                 STATUS_WEEK -> {
                                                     status = STATUS_WEEK
                                                     mMainActivity.currentLocalWord?.let {
-                                                        val (timeList, valueList) = DateManagerService.createWeekValue(it)
-                                                        mCurveView.setData(timeList, valueList)
+                                                        mMainActivity.launch(Dispatchers.Default) {
+                                                            val (timeList, valueList) = DateManagerService.createWeekValue(it)
+                                                            withContext(Dispatchers.Main) { mCurveView.setData(timeList, valueList) }
+                                                        }
                                                     }
                                                 }
                                                 STATUS_MONTH -> {
                                                     status = STATUS_MONTH
                                                     mMainActivity.currentLocalWord?.let {
-                                                        val (timeList, valueList) = DateManagerService.createMonthValue(it)
-                                                        mCurveView.setData(timeList, valueList)
+                                                        mMainActivity.launch(Dispatchers.Default) {
+                                                            val (timeList, valueList) = DateManagerService.createMonthValue(it)
+                                                            withContext(Dispatchers.Main) { mCurveView.setData(timeList, valueList) }
+                                                        }
                                                     }
                                                 }
                                             }
@@ -510,14 +517,16 @@ class MainActivityUI(private val mMainActivity: MainActivity) : AnkoComponent<Ma
 
     override fun updateCurveView() {
         mMainActivity.currentLocalWord?.let {
-            when (status) {
-                STATUS_WEEK -> {
-                    val (timeList, valueList) = DateManagerService.createWeekValue(it)
-                    mCurveView.setData(timeList, valueList)
-                }
-                STATUS_MONTH -> {
-                    val (timeList, valueList) = DateManagerService.createMonthValue(it)
-                    mCurveView.setData(timeList, valueList)
+            mMainActivity.launch(Dispatchers.Default) {
+                when (status) {
+                    STATUS_WEEK -> {
+                        val (timeList, valueList) = DateManagerService.createWeekValue(it)
+                        withContext(Dispatchers.Main) { mCurveView.setData(timeList, valueList) }
+                    }
+                    STATUS_MONTH -> {
+                        val (timeList, valueList) = DateManagerService.createMonthValue(it)
+                        withContext(Dispatchers.Main) { mCurveView.setData(timeList, valueList) }
+                    }
                 }
             }
         }

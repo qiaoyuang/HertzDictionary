@@ -32,13 +32,14 @@ class CurveView : View {
     /**
      * 颜色
      */
-
     private val darkBlue = ContextCompat.getColor(context, R.color.pool_curve_blue_dark)
     private val lightBlue = ContextCompat.getColor(context, R.color.pool_curve_blue_light)
     private val windowBackground = ContextCompat.getColor(context, R.color.pool_curve_window_background)
     private val white = Color.WHITE
 
-    // dp 以及 sp 值
+    /**
+     * dp 以及 sp 值
+     */
     private val dp1 = 1.initDPValue()
     private val dp2 = 2.initDPValue()
     private val dp4 = 4.initDPValue()
@@ -326,6 +327,7 @@ class CurveView : View {
     private fun Int.initDPValue(): Float = context.dip(this).toFloat()
     private fun Int.initSPValue(): Float = context.sp(this).toFloat()
 
+    @Suppress("ClickableViewAccessibility")
     override fun onTouchEvent(event: MotionEvent): Boolean {
         touchX = event.x
         touchY = event.y

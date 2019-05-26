@@ -39,10 +39,6 @@
             android:name=".biz.licence.LicenceActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait" />
-        <activity
-            android:name=".biz.statistics.StatisticsActivity"
-            android:launchMode="singleTop"
-            android:screenOrientation="portrait" />
     </application>
 
 </manifest>
