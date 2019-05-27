@@ -1,4 +1,4 @@
-package com.w10group.hertzdictionary.biz.main
+package com.w10group.hertzdictionary.biz.ui.main
 
 import android.content.Context
 import android.os.Bundle
@@ -6,6 +6,7 @@ import android.view.*
 import android.view.inputmethod.InputMethodManager
 import com.w10group.hertzdictionary.R
 import com.w10group.hertzdictionary.biz.manager.WordManagerServiceV3
+import com.w10group.hertzdictionary.biz.ui.statistics.StatisticsActivity
 import com.w10group.hertzdictionary.core.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -43,6 +44,11 @@ class MainActivity : CoroutineScopeActivity() {
         mWordManagerService.refreshRecyclerView()
     }
 
+    fun startStatisticsActivity() = launch {
+        WordManagerServiceV3.instanceChannel.send(mWordManagerService)
+        startActivity<StatisticsActivity>()
+    }
+
     val currentLocalWord
         get() = mWordManagerService.currentLocalWord
 
@@ -53,8 +59,8 @@ class MainActivity : CoroutineScopeActivity() {
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         when (item?.itemId) {
-            R.id.move_to_Bottom -> mMainActivityUI.recyclerViewScroll(false)
-            R.id.move_to_top -> mMainActivityUI.recyclerViewScroll(true)
+            R.id.move_to_Bottom -> mMainActivityUI.scrollToBottom()
+            R.id.move_to_top -> mMainActivityUI.scrollToTop()
         }
         return super.onOptionsItemSelected(item)
     }

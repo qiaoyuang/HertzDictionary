@@ -1,4 +1,4 @@
-package com.w10group.hertzdictionary.biz.main
+package com.w10group.hertzdictionary.biz.ui.main
 
 import android.content.Context
 import android.os.Build
@@ -10,7 +10,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import com.w10group.hertzdictionary.R
 import com.w10group.hertzdictionary.biz.bean.DictInfo
-import com.w10group.hertzdictionary.biz.main.OtherMeanAdapter.OtherMeanViewHolder
+import com.w10group.hertzdictionary.biz.ui.main.OtherMeanAdapter.OtherMeanViewHolder
 import com.w10group.hertzdictionary.core.view.createTouchFeedback
 import org.jetbrains.anko.*
 

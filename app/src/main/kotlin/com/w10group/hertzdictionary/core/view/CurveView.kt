@@ -303,9 +303,8 @@ class CurveView : View {
         val maxWidth = offset * 9
         val x = diffScale * maxWidth + offset
         // 计算算力
-        val max = value.max()!!
-        val chartMax = (max / 30 + 1) * 30
-        val y = if (max == 0) height.toFloat() / 5 * 4 else (chartMax - value[index]) / chartMax * (height.toFloat() * 3 / 5) + height.toFloat() / 5
+        val max = value.max()!!.toFloat()
+        val y = if (max == 0f) height.toFloat() / 5 * 4 else (max - value[index]) / max * (height.toFloat() * 3 / 5) + height.toFloat() / 5
         return x to y
     }
 

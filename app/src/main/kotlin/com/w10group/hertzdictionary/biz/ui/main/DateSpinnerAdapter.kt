@@ -1,4 +1,4 @@
-package com.w10group.hertzdictionary.biz.main
+package com.w10group.hertzdictionary.biz.ui.main
 
 import android.content.Context
 import android.database.DataSetObserver

@@ -24,13 +24,11 @@ object DateManagerService {
     private fun createXYValue(timeList: List<Long>, vararg localWords: LocalWord): CurveValue {
         val valueList = IntArray(timeList.size) { 0 }
         localWords.forEach { localWord ->
-            localWord.timeList?.apply {
-                forEach {
-                    timeList.forEachIndexed { index, _it ->
-                        if (it - _it < ONE_DAY) {
-                            valueList[index]++
-                            return@forEachIndexed
-                        }
+            localWord.timeList?.forEach {
+                timeList.forEachIndexed { index, time ->
+                    if (it - time in 0 until ONE_DAY) {
+                        valueList[index]++
+                        return@forEachIndexed
                     }
                 }
             }

@@ -1,4 +1,4 @@
-package com.w10group.hertzdictionary.biz.licence
+package com.w10group.hertzdictionary.biz.ui.licence
 
 import android.os.Bundle
 import android.support.design.widget.AppBarLayout.ScrollingViewBehavior
@@ -10,7 +10,7 @@ import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.Toolbar
 import android.view.MenuItem
-import com.w10group.hertzdictionary.biz.licence.OSLAdapter.OSL
+import com.w10group.hertzdictionary.biz.ui.licence.OSLAdapter.OSL
 import com.w10group.hertzdictionary.R
 import com.w10group.hertzdictionary.core.CoroutineScopeActivity
 import com.w10group.hertzdictionary.core.view.getActionBarSize
@@ -47,7 +47,7 @@ class LicenceActivity : CoroutineScopeActivity() {
         coordinatorLayout {
             appBarLayout {
                 toolbar = toolbar {
-                    title = "开源许可证"
+                    title = getString(R.string.open_source_license)
                     backgroundColorResource = R.color.blue1
                 }.lparams(matchParent, getActionBarSize(context)) {
                     scrollFlags = SCROLL_FLAG_SCROLL or SCROLL_FLAG_ENTER_ALWAYS or SCROLL_FLAG_SNAP

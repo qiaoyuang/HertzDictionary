@@ -1,4 +1,4 @@
-package com.w10group.hertzdictionary.biz.about
+package com.w10group.hertzdictionary.biz.ui.about
 
 import android.content.ClipData
 import android.content.ClipboardManager
@@ -20,7 +20,7 @@ import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
 import com.w10group.hertzdictionary.R
-import com.w10group.hertzdictionary.biz.features.FeaturesActivity
+import com.w10group.hertzdictionary.biz.ui.features.FeaturesActivity
 import com.w10group.hertzdictionary.biz.manager.FileReadManagerService
 import com.w10group.hertzdictionary.biz.manager.ImageManagerService
 import com.w10group.hertzdictionary.core.*
@@ -101,7 +101,7 @@ class AboutDeveloperActivity : CoroutineScopeActivity() {
 
                 collapsingToolbarLayout {
                     fitsSystemWindows = true
-                    title = "关于开发者"
+                    title = getString(R.string.mine)
                     setContentScrimColor(blue1)
                     setExpandedTitleColor(Color.TRANSPARENT)
 

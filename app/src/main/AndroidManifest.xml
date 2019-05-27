@@ -16,7 +16,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".biz.main.MainActivity"
+            android:name=".biz.ui.main.MainActivity"
             android:launchMode="singleTask"
             android:screenOrientation="portrait"
             android:theme="@style/TransparentTheme">
@@ -27,16 +27,20 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".biz.features.FeaturesActivity"
+            android:name=".biz.ui.features.FeaturesActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".biz.about.AboutDeveloperActivity"
+            android:name=".biz.ui.about.AboutDeveloperActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
             android:theme="@style/TransparentTheme" />
         <activity
-            android:name=".biz.licence.LicenceActivity"
+            android:name=".biz.ui.licence.LicenceActivity"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".biz.ui.statistics.StatisticsActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait" />
     </application>

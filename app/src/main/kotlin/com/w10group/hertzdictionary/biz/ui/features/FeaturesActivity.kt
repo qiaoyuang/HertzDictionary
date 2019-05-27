@@ -1,4 +1,4 @@
-package com.w10group.hertzdictionary.biz.features
+package com.w10group.hertzdictionary.biz.ui.features
 
 import android.content.pm.PackageManager
 import android.graphics.Color
@@ -72,7 +72,7 @@ class FeaturesActivity : CoroutineScopeActivity() {
             appBarLayout {
                 translationZ = dip(8).toFloat()
                 toolbar = toolbar {
-                    title = "未来新功能"
+                    title = getString(R.string.more_features)
                     backgroundColorResource = R.color.blue1
                 }.lparams(matchParent, getActionBarSize(context)) {
                     scrollFlags = SCROLL_FLAG_SCROLL or SCROLL_FLAG_ENTER_ALWAYS or SCROLL_FLAG_SNAP
@@ -270,7 +270,7 @@ class FeaturesActivity : CoroutineScopeActivity() {
                         bottomMargin = dip(8)
                     }
 
-                }.lparams(matchParent, matchParent)
+                }.lparams(matchParent, wrapContent)
 
             }.lparams(matchParent, matchParent) {
                 behavior = ScrollingViewBehavior()

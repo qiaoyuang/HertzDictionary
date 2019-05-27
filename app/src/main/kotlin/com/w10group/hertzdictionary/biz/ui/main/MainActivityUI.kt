@@ -1,4 +1,4 @@
-package com.w10group.hertzdictionary.biz.main
+package com.w10group.hertzdictionary.biz.ui.main
 
 import android.animation.LayoutTransition
 import android.content.Context
@@ -22,10 +22,10 @@ import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import android.widget.*
 import com.w10group.hertzdictionary.R
-import com.w10group.hertzdictionary.biz.about.AboutDeveloperActivity
+import com.w10group.hertzdictionary.biz.ui.about.AboutDeveloperActivity
 import com.w10group.hertzdictionary.biz.bean.InquireResult
-import com.w10group.hertzdictionary.biz.features.FeaturesActivity
-import com.w10group.hertzdictionary.biz.licence.LicenceActivity
+import com.w10group.hertzdictionary.biz.ui.features.FeaturesActivity
+import com.w10group.hertzdictionary.biz.ui.licence.LicenceActivity
 import com.w10group.hertzdictionary.biz.manager.DateManagerService
 import com.w10group.hertzdictionary.biz.manager.ImageManagerService
 import com.w10group.hertzdictionary.biz.manager.WordDisplayView
@@ -66,7 +66,6 @@ class MainActivityUI(private val mMainActivity: MainActivity) : AnkoComponent<Ma
     private lateinit var mTVOtherTranslation: TextView
     private lateinit var mTVRelatedWords: TextView
 
-    private lateinit var mDateSpinner: AppCompatSpinner
     private lateinit var mCurveView: CurveView
 
     private val gray600 by lazy { ContextCompat.getColor(mMainActivity, R.color.gray600) }
@@ -162,6 +161,7 @@ class MainActivityUI(private val mMainActivity: MainActivity) : AnkoComponent<Ma
                 mNestedScrollView = nestedScrollView {
                     post { visibility = View.GONE }
                     verticalLayout {
+                        bottomPadding = dip(16)
                         cardView {
                             elevation = dip(4).toFloat()
                             isClickable = true
@@ -228,7 +228,9 @@ class MainActivityUI(private val mMainActivity: MainActivity) : AnkoComponent<Ma
                                 margin = dip(16)
                             }
                         }.lparams(matchParent, wrapContent) {
-                            margin = dip(8)
+                            topMargin = dip(8)
+                            marginStart = dip(8)
+                            marginEnd = dip(8)
                         }
 
                         mOtherMeanCard = cardView {
@@ -249,6 +251,7 @@ class MainActivityUI(private val mMainActivity: MainActivity) : AnkoComponent<Ma
                                 mOtherMeanLayout = verticalLayout().lparams(matchParent, wrapContent)
                             }.lparams(matchParent, wrapContent)
                         }.lparams(matchParent, wrapContent) {
+                            topMargin = dip(8)
                             marginStart = dip(8)
                             marginEnd = dip(8)
                         }
@@ -260,7 +263,7 @@ class MainActivityUI(private val mMainActivity: MainActivity) : AnkoComponent<Ma
                             foreground = createTouchFeedbackBorderless(context)
                             verticalLayout {
 
-                                mDateSpinner = appCompatSpinner {
+                                appCompatSpinner {
                                     adapter = DateSpinnerAdapter(context)
                                     onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
                                         override fun onNothingSelected(parent: AdapterView<*>?) = Unit
@@ -300,7 +303,6 @@ class MainActivityUI(private val mMainActivity: MainActivity) : AnkoComponent<Ma
                             marginStart = dip(8)
                             marginEnd = dip(8)
                             topMargin = dip(8)
-                            bottomMargin = dip(16)
                         }
 
                     }.lparams(matchParent, wrapContent)
@@ -351,6 +353,7 @@ class MainActivityUI(private val mMainActivity: MainActivity) : AnkoComponent<Ma
                 setNavigationItemSelectedListener {
                     it.isCheckable = false
                     when (it.itemId) {
+                        R.id.main_menu_statistics -> mMainActivity.startStatisticsActivity()
                         R.id.main_menu_more_features -> startActivity<FeaturesActivity>()
                         R.id.main_menu_mine -> startActivity<AboutDeveloperActivity>()
                         R.id.main_menu_licence -> startActivity<LicenceActivity>()
@@ -374,11 +377,19 @@ class MainActivityUI(private val mMainActivity: MainActivity) : AnkoComponent<Ma
         ImageManagerService.loadBackground(mMainActivity, mBackgroundImageView)
     }
 
-    fun recyclerViewScroll(isTop: Boolean) {
+    fun scrollToTop() {
         if (mMainActivity.status == MainActivity.STATUS_INQUIRED_NOT) {
             mScrollFlag = true
-            if (isTop) mRecyclerView.scrollToPosition(0)
-            else mRecyclerView.scrollToPosition(mRecyclerView.adapter?.itemCount ?: 0)
+            mRecyclerView.smoothScrollToPosition(0)
+        }
+    }
+
+    fun scrollToBottom() {
+        if (mMainActivity.status == MainActivity.STATUS_INQUIRED_NOT) {
+            mRecyclerView.adapter?.itemCount?.let {
+                mScrollFlag = true
+                mRecyclerView.smoothScrollToPosition(it - 1)
+            }
         }
     }
 

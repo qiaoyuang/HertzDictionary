@@ -2,7 +2,7 @@ package com.w10group.hertzdictionary.biz.manager
 
 import com.w10group.hertzdictionary.biz.bean.InquireResult
 import com.w10group.hertzdictionary.biz.bean.LocalWord
-import com.w10group.hertzdictionary.biz.main.WordListAdapter
+import com.w10group.hertzdictionary.biz.ui.main.WordListAdapter
 import com.w10group.hertzdictionary.core.NetworkUtil
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.Channel
@@ -17,6 +17,10 @@ import java.util.concurrent.CopyOnWriteArrayList
  */
 
 class WordManagerServiceV3(private val mView: WordDisplayView) {
+
+     companion object {
+         val instanceChannel = Channel<WordManagerServiceV3>(1)
+     }
 
     private val mContext = mView.getContext()
     private val mCoroutineScope = mView.getCoroutineScope()

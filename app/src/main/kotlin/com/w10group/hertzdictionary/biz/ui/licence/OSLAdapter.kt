@@ -1,4 +1,4 @@
-package com.w10group.hertzdictionary.biz.licence
+package com.w10group.hertzdictionary.biz.ui.licence
 
 import android.content.Context
 import android.os.Build
