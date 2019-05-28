@@ -118,6 +118,15 @@ class CurveView : View {
     // 深蓝色曲线路径
     private val mCurvePath = Path()
 
+    private var isPathEmpty = false
+        set(value) {
+            field = value
+            if (value) {
+                mGraphicsPath.reset()
+                mCurvePath.reset()
+            }
+        }
+
     /**
      * 一些参数
      */
@@ -148,6 +157,7 @@ class CurveView : View {
             throw IllegalArgumentException("The size of xList and yList must be greater than 1.")
         touchX = 0f
         touchY = 0f
+        isPathEmpty = true
         invalidate()
     }
 
@@ -199,7 +209,17 @@ class CurveView : View {
         drawText(value1, x, y4, mTextPaint)
     }
 
-    // 第三步：绘制横向虚线
+    // 第三步：绘制右上角算力单位
+    private fun Canvas.drawUnit() {
+        val x = width.toFloat() - dp32
+        val y = dp24
+        mUnitPaint.color = darkBlue
+        drawText(DEFAULT_UNIT, x, y, mUnitPaint)
+        mUnitPaint.color = lightBlue
+        drawRoundRect(x - dp4, y - dp12, x + dp28, y + dp4, 10f, 10f, mUnitPaint)
+    }
+
+    // 第四步：绘制横向虚线
     private fun Canvas.drawDottedLine() {
         val startX = (width / 10).toFloat()
         val stopX = width.toFloat()
@@ -214,15 +234,20 @@ class CurveView : View {
         drawLine(y4)
     }
 
-    // 第四步：绘制算力曲线以及下方浅蓝色区域
+    // 第五步：绘制算力曲线以及下方浅蓝色区域
     private fun Canvas.drawCurve() {
+        if (!isPathEmpty) {
+            if (value.any { it != 0 })
+                drawPath(mGraphicsPath, mGraphicsPaint)
+            drawPath(mCurvePath, mCurvePaint)
+            return
+        }
         val x0 = (width / 10).toFloat()
         val y0 = (height / 5 * 4).toFloat()
         if (value.all { it == 0 }) {
             mCurvePath.moveTo(x0, y0)
             mCurvePath.lineTo(width.toFloat(), y0)
             drawPath(mCurvePath, mCurvePaint)
-            mCurvePath.reset()
             return
         }
         mGraphicsPath.moveTo(x0, y0)
@@ -238,18 +263,6 @@ class CurveView : View {
         mGraphicsPath.close()
         drawPath(mGraphicsPath, mGraphicsPaint)
         drawPath(mCurvePath, mCurvePaint)
-        mGraphicsPath.reset()
-        mCurvePath.reset()
-    }
-
-    // 第五步：绘制右上角算力单位
-    private fun Canvas.drawUnit() {
-        val x = width.toFloat() - dp32
-        val y = dp24
-        mUnitPaint.color = darkBlue
-        drawText(DEFAULT_UNIT, x, y, mUnitPaint)
-        mUnitPaint.color = lightBlue
-        drawRoundRect(x - dp4, y - dp12, x + dp28, y + dp4, 10f, 10f, mUnitPaint)
     }
 
     // 第六步：绘制触摸点以及弹窗
@@ -330,6 +343,7 @@ class CurveView : View {
     override fun onTouchEvent(event: MotionEvent): Boolean {
         touchX = event.x
         touchY = event.y
+        isPathEmpty = false
         invalidate()
         return true
     }

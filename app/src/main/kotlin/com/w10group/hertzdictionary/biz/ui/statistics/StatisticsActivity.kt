@@ -5,6 +5,11 @@ import android.view.MenuItem
 import com.w10group.hertzdictionary.core.CoroutineScopeActivity
 import org.jetbrains.anko.setContentView
 
+/**
+ * 统计 Activity
+ * @author Qiao
+ */
+
 class StatisticsActivity : CoroutineScopeActivity() {
 
     private val mStatisticsActivityUI = StatisticsActivityUI(this)
