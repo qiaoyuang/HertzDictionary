@@ -3,13 +3,15 @@ package com.w10group.hertzdictionary.biz.manager
 import com.w10group.hertzdictionary.biz.bean.LocalWord
 import java.util.*
 import kotlin.collections.ArrayList
+import kotlin.collections.HashMap
 
 /**
  * 日期时间管理服务
  * @author Qiao
  */
 
-typealias CurveValue = Pair<List<Long>, List<Int>>
+typealias MostValue = Pair<List<LocalWord>, Int>
+typealias CurveValue = Triple<List<Long>, List<Int>, MostValue>
 
 object DateManagerService {
 
@@ -23,17 +25,25 @@ object DateManagerService {
 
     private fun createXYValue(timeList: List<Long>, vararg localWords: LocalWord): CurveValue {
         val valueList = IntArray(timeList.size) { 0 }
+        val wordAndCountMap = HashMap<LocalWord, Int>()
         localWords.forEach { localWord ->
+            wordAndCountMap[localWord] = 0
             localWord.timeList?.forEach {
                 timeList.forEachIndexed { index, time ->
                     if (it - time in 0 until ONE_DAY) {
+                        wordAndCountMap[localWord] = wordAndCountMap[localWord]!! + 1
                         valueList[index]++
                         return@forEachIndexed
                     }
                 }
             }
         }
-        return timeList to valueList.toList()
+        val biggestValue = wordAndCountMap.entries.maxBy { it.value }?.value!!
+        return Triple(timeList, valueList.toList(), wordAndCountMap.entries
+                .asSequence()
+                .filter { it.value == biggestValue }
+                .map { it.key }
+                .toList() to biggestValue)
     }
 
     // 获取最近一周的时间戳
