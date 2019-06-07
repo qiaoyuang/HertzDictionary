@@ -5,52 +5,125 @@ import android.os.Bundle
 import android.view.*
 import android.view.inputmethod.InputMethodManager
 import com.w10group.hertzdictionary.R
+import com.w10group.hertzdictionary.biz.manager.DateManagerService
 import com.w10group.hertzdictionary.biz.manager.WordManagerServiceV3
-import com.w10group.hertzdictionary.biz.ui.statistics.StatisticsActivity
-import com.w10group.hertzdictionary.core.*
+import com.w10group.hertzdictionary.core.architecture.CoroutineScopeActivity
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
-import org.jetbrains.anko.*
+import kotlinx.coroutines.withContext
 
 /**
  * Created by Administrator on 2018/6/15.
  * 主界面 Activity
  */
 
-class MainActivity : CoroutineScopeActivity() {
+class MainActivity : CoroutineScopeActivity<MainActivity>() {
 
     internal companion object {
         // 标记当前词典的状态是否是查询状态
         const val STATUS_INQUIRED_NOT = 0
         const val STATUS_INQUIRED = 1
+
+        const val CURVE_STATUS_WEEK = 0
+        const val CURVE_STATUS_MONTH = 1
     }
 
-    internal var status = STATUS_INQUIRED_NOT
-    private val mWordManagerService by lazy { WordManagerServiceV3(mMainActivityUI) }
+    var curveStatus = CURVE_STATUS_WEEK
+        set(value) {
+            field = value
+            createCurveData()
+        }
 
-    private val mMainActivityUI = MainActivityUI(this)
+    var status = STATUS_INQUIRED_NOT
 
+    private lateinit var mAdapter: WordListAdapter
+    private lateinit var mNetworkJob: Job
+
+    override val uiComponent = MainActivityUIComponent(this)
+    override val implementer = this
+    
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        mMainActivityUI.setContentView(this)
-        mMainActivityUI.initToolBar()
-        launch { mMainActivityUI.loadBackgroundImageView() }
-        launch(Dispatchers.IO) { mWordManagerService.getAllWord() }
+        launch { uiComponent.loadBackgroundImageView() }
+        launch(Dispatchers.IO) {
+            mAdapter = WordListAdapter(implementer, WordManagerServiceV3.allLocalWords, this) {
+                uiComponent.setWordText(it)
+                inquire(it)
+            }
+            withContext(Dispatchers.Main) {
+                uiComponent.setAdapter(mAdapter)
+            }
+        }
     }
 
-    fun inquire(word: String) = mWordManagerService.inquire(word)
+    override fun onStart() {
+        super.onStart()
+        // 获取查询结果
+        launch {
+            for (element in WordManagerServiceV3.inquireResultChannel) {
+                val (inquireResult, word) = element
+                uiComponent.displayInquireResult(inquireResult, word)
+            }
+        }
+        // 获取其它义项以及相关词组
+        launch {
+            for (element in WordManagerServiceV3.OTRWChannel) {
+                val (otherTranslation, relatedWords) = element
+                uiComponent.displayOtherTranslation(otherTranslation)
+                uiComponent.displayRelatedWords(relatedWords)
+            }
+        }
+        // 获取更新曲线图的信号
+        launch {
+            for (element in WordManagerServiceV3.curveChannel) {
+                mAdapter.sumCount++
+                createCurveData()
+            }
+        }
+    }
+
+    fun inquire(word: String) {
+        mNetworkJob = WordManagerServiceV3.inquire(word, implementer, uiComponent.mRecyclerView, uiComponent.mProgressDialog)
+    }
+
+    fun cancelNetwork() = mNetworkJob.cancel()
 
     fun refreshRecyclerView() = launch {
-        mWordManagerService.refreshRecyclerView()
+        val word = WordManagerServiceV3.listUpdateChannel.receive()
+        if (word.isSaved) {
+            if (WordManagerServiceV3.isMoved[0] >= 0) {
+                mAdapter.notifyItemRemoved(WordManagerServiceV3.isMoved[0])
+                mAdapter.notifyItemInserted(WordManagerServiceV3.isMoved[1])
+            }
+            mAdapter.notifyItemRangeChanged(0, mAdapter.itemCount)
+        } else {
+            val index = mAdapter.itemCount - 1
+            mAdapter.notifyItemRangeChanged(0, index)
+            mAdapter.notifyItemInserted(index)
+        }
     }
 
-    fun startStatisticsActivity() = launch {
-        WordManagerServiceV3.instanceChannel.send(mWordManagerService)
-        startActivity<StatisticsActivity>()
+    private fun createCurveData() {
+        when (curveStatus) {
+            CURVE_STATUS_WEEK -> {
+                WordManagerServiceV3.currentLocalWord?.let {
+                    launch(Dispatchers.Default) {
+                        val (timeList, valueList) = DateManagerService.createWeekValue(it)
+                        withContext(Dispatchers.Main) { uiComponent.updateCurveView(timeList, valueList) }
+                    }
+                }
+            }
+            CURVE_STATUS_MONTH -> {
+                WordManagerServiceV3.currentLocalWord?.let {
+                    launch(Dispatchers.Default) {
+                        val (timeList, valueList) = DateManagerService.createMonthValue(it)
+                        withContext(Dispatchers.Main) { uiComponent.updateCurveView(timeList, valueList) }
+                    }
+                }
+            }
+        }
     }
-
-    val currentLocalWord
-        get() = mWordManagerService.currentLocalWord
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.menu_main, menu)
@@ -59,8 +132,8 @@ class MainActivity : CoroutineScopeActivity() {
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         when (item?.itemId) {
-            R.id.move_to_Bottom -> mMainActivityUI.scrollToBottom()
-            R.id.move_to_top -> mMainActivityUI.scrollToTop()
+            R.id.move_to_Bottom -> uiComponent.scrollToBottom()
+            R.id.move_to_top -> uiComponent.scrollToTop()
         }
         return super.onOptionsItemSelected(item)
     }
@@ -68,7 +141,7 @@ class MainActivity : CoroutineScopeActivity() {
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
             if (status == STATUS_INQUIRED) {
-                mMainActivityUI.restore()
+                uiComponent.restore()
                 return false
             }
         }
@@ -78,7 +151,7 @@ class MainActivity : CoroutineScopeActivity() {
     override fun dispatchTouchEvent(ev: MotionEvent?): Boolean {
         ev?.let { event ->
             if (event.action == MotionEvent.ACTION_DOWN) {
-                if (mMainActivityUI.isShouldHideInput(currentFocus, event)) {
+                if (uiComponent.isShouldHideInput(currentFocus, event)) {
                     currentFocus?.windowToken?.let {
                         val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
                         imm.hideSoftInputFromWindow(it, 0)

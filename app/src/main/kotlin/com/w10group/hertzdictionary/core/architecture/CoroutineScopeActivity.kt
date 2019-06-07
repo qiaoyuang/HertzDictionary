@@ -1,10 +1,11 @@
-package com.w10group.hertzdictionary.core
+package com.w10group.hertzdictionary.core.architecture
 
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
+import org.jetbrains.anko.setContentView
 import kotlin.coroutines.CoroutineContext
 
 /**
@@ -12,7 +13,11 @@ import kotlin.coroutines.CoroutineContext
  * @author Qiao
  */
 
-abstract class CoroutineScopeActivity : AppCompatActivity(), CoroutineScope {
+abstract class CoroutineScopeActivity<T : CoroutineScopeActivity<T>> : AppCompatActivity(), CoroutineScope {
+
+    abstract val uiComponent: UIComponent<T>
+
+    abstract val implementer: T
 
     private lateinit var job: Job
 
@@ -22,6 +27,8 @@ abstract class CoroutineScopeActivity : AppCompatActivity(), CoroutineScope {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         job = Job()
+        uiComponent.setContentView(implementer)
+        uiComponent.init()
     }
 
     override fun onRestart() {
@@ -32,6 +39,11 @@ abstract class CoroutineScopeActivity : AppCompatActivity(), CoroutineScope {
     override fun onStop() {
         super.onStop()
         job.cancel()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        uiComponent.recycler()
     }
 
 }

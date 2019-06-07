@@ -31,6 +31,7 @@ import org.jetbrains.anko.design.snackbar
 import org.jetbrains.anko.support.v4.viewPager
 import java.io.File
 import java.util.*
+import kotlin.coroutines.CoroutineContext
 
 /**
  * Created by qiaoyuang on 2018/7/9.
@@ -39,7 +40,12 @@ import java.util.*
 
 class CompleteScaleImageView(private val mActivity: Activity,
                              private val mImageDownloader: ImageDownloader,
-                             private val mRequestCode: Int) {
+                             private val mRequestCode: Int) : CoroutineScope {
+
+    private val mTotalJob = Job()
+
+    override val coroutineContext: CoroutineContext
+        get() = Dispatchers.IO + mTotalJob
 
     private lateinit var mViewPager: ViewPager
     private val mAdapter by lazy { DialogPagerAdapter(mViews, mDialog) }
@@ -215,7 +221,7 @@ class CompleteScaleImageView(private val mActivity: Activity,
         } else View.INVISIBLE
     }
 
-   fun showByCoroutines(coroutineScope: CoroutineScope, startPosition: Int = 0): Job = coroutineScope.launch {
+   fun showByCoroutines(startPosition: Int = 0): Job = launch {
         if (mViews.isEmpty()) {
             if (mStatus == URL) {
                 mUrls?.let { urls ->
@@ -267,6 +273,7 @@ class CompleteScaleImageView(private val mActivity: Activity,
                 it.find<SubsamplingScaleImageView>(SUBSAMPLING_ID).recycle()
             }
         }
+        mTotalJob.cancel()
     }
 
 }

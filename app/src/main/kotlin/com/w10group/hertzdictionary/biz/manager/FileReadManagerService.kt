@@ -1,7 +1,6 @@
 package com.w10group.hertzdictionary.biz.manager
 
 import android.content.Context
-import android.widget.TextView
 import kotlinx.coroutines.*
 import java.io.BufferedReader
 import java.io.InputStreamReader
@@ -15,18 +14,16 @@ object FileReadManagerService {
 
     fun processByCoroutines(coroutineScope: CoroutineScope,
                             context: Context,
-                            fileName: String,
-                            vararg list: TextView) = coroutineScope.launch(Dispatchers.IO) {
+                            fileName: String): Deferred<List<String>> = coroutineScope.async(Dispatchers.IO) {
         BufferedReader(InputStreamReader(context.assets.open(fileName), "UTF-8")).use {
-            var i = 0
             val builder = StringBuilder()
             var line = it.readLine()
             var isFirst = true
+            val result = ArrayList<String>()
             while (line != null) {
                 if (line == "*") {
-                    val text = builder.toString()
-                    launch(Dispatchers.Main) { list[i++].text = text }
-                    builder.delete(0, builder.length)
+                    result.add(builder.toString())
+                    builder.clear()
                     isFirst = true
                 } else {
                     if (isFirst) isFirst = false
@@ -35,6 +32,7 @@ object FileReadManagerService {
                 }
                 line = it.readLine()
             }
+            result
         }
     }
 

@@ -1,27 +1,12 @@
 package com.w10group.hertzdictionary.biz.ui.licence
 
 import android.os.Bundle
-import android.support.design.widget.AppBarLayout.ScrollingViewBehavior
-import android.support.design.widget.AppBarLayout.LayoutParams.SCROLL_FLAG_SCROLL
-import android.support.design.widget.AppBarLayout.LayoutParams.SCROLL_FLAG_ENTER_ALWAYS
-import android.support.design.widget.AppBarLayout.LayoutParams.SCROLL_FLAG_SNAP
-import android.support.v7.widget.DefaultItemAnimator
-import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
-import android.support.v7.widget.Toolbar
 import android.view.MenuItem
 import com.w10group.hertzdictionary.biz.ui.licence.OSLAdapter.OSL
-import com.w10group.hertzdictionary.R
-import com.w10group.hertzdictionary.core.CoroutineScopeActivity
-import com.w10group.hertzdictionary.core.view.getActionBarSize
+import com.w10group.hertzdictionary.core.architecture.CoroutineScopeActivity
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import org.jetbrains.anko.*
-import org.jetbrains.anko.appcompat.v7.toolbar
-import org.jetbrains.anko.design.appBarLayout
-import org.jetbrains.anko.design.coordinatorLayout
-import org.jetbrains.anko.recyclerview.v7.recyclerView
 import java.io.BufferedReader
 import java.io.InputStreamReader
 import java.util.*
@@ -31,41 +16,19 @@ import java.util.*
  * 开源许可证Activity
  */
 
-class LicenceActivity : CoroutineScopeActivity() {
+class LicenceActivity : CoroutineScopeActivity<LicenceActivity>() {
 
     private companion object {
         const val OPEN_SOURCE_FILE_NAME = "open_source.txt"
     }
 
+    override val uiComponent = LicenceActivityUIComponent(this)
+    override val implementer = this
+
     private val mData = LinkedList<OSL>()
-    private lateinit var mRecyclerView: RecyclerView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        lateinit var toolbar: Toolbar
-
-        coordinatorLayout {
-            appBarLayout {
-                toolbar = toolbar {
-                    title = getString(R.string.open_source_license)
-                    backgroundColorResource = R.color.blue1
-                }.lparams(matchParent, getActionBarSize(context)) {
-                    scrollFlags = SCROLL_FLAG_SCROLL or SCROLL_FLAG_ENTER_ALWAYS or SCROLL_FLAG_SNAP
-                }
-            }.lparams(matchParent, wrapContent)
-
-            mRecyclerView = recyclerView {
-                layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
-                itemAnimator = DefaultItemAnimator()
-            }.lparams(matchParent, wrapContent) {
-                marginStart = dip(16)
-                marginEnd = dip(16)
-                behavior = ScrollingViewBehavior()
-            }
-        }
-
-        setSupportActionBar(toolbar)
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
         loadDataByCoroutines()
     }
 
@@ -104,7 +67,7 @@ class LicenceActivity : CoroutineScopeActivity() {
             }
         }
         withContext(Dispatchers.Main) {
-            mRecyclerView.adapter = OSLAdapter(this@LicenceActivity, mData)
+            uiComponent.setAdapter(OSLAdapter(this@LicenceActivity, mData))
         }
     }
 

@@ -55,7 +55,7 @@ object DateManagerService {
         get() = getTimestampList(30)
 
     // 获取当前时间戳
-    private val currentTimestamp
+    val currentTimestamp
         get() = System.currentTimeMillis()
 
     // 获取时间戳列表

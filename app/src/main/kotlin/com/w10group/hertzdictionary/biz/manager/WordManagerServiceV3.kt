@@ -1,12 +1,14 @@
 package com.w10group.hertzdictionary.biz.manager
 
+import android.app.ProgressDialog
+import android.content.Context
+import android.view.View
 import com.w10group.hertzdictionary.biz.bean.InquireResult
 import com.w10group.hertzdictionary.biz.bean.LocalWord
-import com.w10group.hertzdictionary.biz.ui.main.WordListAdapter
 import com.w10group.hertzdictionary.core.NetworkUtil
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.Channel
-import org.jetbrains.anko.progressDialog
+import org.jetbrains.anko.design.snackbar
 import org.litepal.LitePal
 import org.litepal.extension.find
 import java.util.concurrent.CopyOnWriteArrayList
@@ -16,77 +18,55 @@ import java.util.concurrent.CopyOnWriteArrayList
  * 单词查询存储计算等管理服务，协程重构第二版
  */
 
-class WordManagerServiceV3(private val mView: WordDisplayView) {
+object WordManagerServiceV3 {
 
-     companion object {
-         val instanceChannel = Channel<WordManagerServiceV3>(1)
-     }
+    val listUpdateChannel = Channel<LocalWord>(1)
 
-    private val mContext = mView.getContext()
-    private val mCoroutineScope = mView.getCoroutineScope()
+    val inquireResultChannel = Channel<Pair<InquireResult, String>>(1)
 
-    private val mData by lazy { CopyOnWriteArrayList<LocalWord>() }
-    private val mAdapter: WordListAdapter by lazy {
-        WordListAdapter(mContext, mData, mCoroutineScope) {
-            mView.setWordText(it)
-            inquire(it)
-        }
-    }
+    val OTRWChannel = Channel<Pair<String, String>>(1)
 
-    private val mUpdateChannel = Channel<LocalWord>(1)
-
-    private lateinit var mNetworkJob: Job
+    val curveChannel = Channel<Boolean>(1)
 
     var currentLocalWord: LocalWord? = null
         private set
 
-    val allLocalWords: List<LocalWord>
-        get() = mData
-
-    @Suppress("DEPRECATION")
-    private val mProgressDialog by lazy {
-        mContext.progressDialog(title = "请稍候......", message = "正在获取单词数据......") {
-            setProgressStyle(0)
-            setOnDismissListener { mNetworkJob.cancel() }
-        }
-    }
-
-    // 获取所有单词
-    suspend fun getAllWord() {
+    val allLocalWords = CopyOnWriteArrayList<LocalWord>().apply {
         val list = LitePal.order("count desc").find<LocalWord>()
-        mData.addAll(list)
-        withContext(Dispatchers.Main) { mView.setAdapter(mAdapter) }
+        addAll(list)
     }
 
     // 查询单词
-    fun inquire(word: String) {
-        mNetworkJob = mCoroutineScope.launch {
-            if (!NetworkUtil.checkNetwork(mContext)) {
-                mView.snackBar("当前无网络连接")
-                return@launch
-            }
-            mProgressDialog.show()
-            val inquireResult = try {
-                NetworkUtil.instance.inquireWordByCoroutinesAsync(word).await()
-            } catch (e: Exception) {
-                e.printStackTrace()
-                mProgressDialog.dismiss()
-                mView.snackBar("网络出现问题，请稍后再试。")
-                return@launch
-            }
-            val pairDeferred = async(Dispatchers.Default) { getOtherTranslationAndRelateWords(inquireResult) }
-            mView.displayInquireResult(inquireResult, word)
-            this@WordManagerServiceV3 showOtherTranslationAndRelateWords pairDeferred.await()
-            mProgressDialog.dismiss()
-            mCoroutineScope.launch(Dispatchers.Default) { updateRecyclerViewData(inquireResult) }
+    @Suppress("DEPRECATION")
+    fun inquire(word: String,
+                context: Context,
+                view: View,
+                progressDialog: ProgressDialog): Job = GlobalScope.launch {
+        if (!NetworkUtil.checkNetwork(context)) {
+            view.snackbar("当前无网络连接")
+            return@launch
         }
+        progressDialog.show()
+        val inquireResult = try {
+            NetworkUtil.instance.inquireWordByCoroutinesAsync(word).await()
+        } catch (e: Exception) {
+            e.printStackTrace()
+            progressDialog.dismiss()
+            view.snackbar("网络出现问题，请稍后再试。")
+            return@launch
+        }
+        val pairDeferred = async(Dispatchers.Default) { getOtherTranslationAndRelateWords(inquireResult) }
+        inquireResultChannel.send(inquireResult to word)
+        OTRWChannel.send(pairDeferred.await())
+        progressDialog.dismiss()
+        GlobalScope.launch(Dispatchers.Default) { updateRecyclerViewData(inquireResult) }
     }
 
     // 拼接其它义项以及相关词组并返回
     private suspend fun getOtherTranslationAndRelateWords(inquireResult: InquireResult): Pair<String, String> {
         // 拼接其它义项
         val otherTranslationDeferred = inquireResult.alternativeTranslations?.get(0)?.words?.let {
-            mCoroutineScope.async(Dispatchers.Default) {
+            GlobalScope.async(Dispatchers.Default) {
                 StringBuilder().apply {
                     val last = it.size - 1
                     it.forEachIndexed { index, alternative ->
@@ -98,7 +78,7 @@ class WordManagerServiceV3(private val mView: WordDisplayView) {
         }
         // 拼接相关词组
         val relatedWordsDeferred = inquireResult.relatedWords?.words?.let {
-            mCoroutineScope.async(Dispatchers.Default) {
+            GlobalScope.async(Dispatchers.Default) {
                 StringBuilder().apply {
                     val last = it.size - 1
                     it.forEachIndexed { index, word -> append(if (index == last) word else "$word, ") }
@@ -110,19 +90,12 @@ class WordManagerServiceV3(private val mView: WordDisplayView) {
         return otherTranslation to relatedWords
     }
 
-    // 展示其它义项以及相关词组
-    private infix fun showOtherTranslationAndRelateWords(pair: Pair<String, String>) {
-        val (otherTranslation, relatedWords) = pair
-        mView displayOtherTranslation otherTranslation
-        mView displayRelatedWords relatedWords
-    }
-
     // 刷新RecyclerView的词序
     private suspend fun updateRecyclerViewData(inquireResult: InquireResult) {
         val orig = inquireResult.word!![0]
         var word: LocalWord? = null
         // 在mData中查找word是否存在，如果存在则找到它并记录其index
-        mData.forEachIndexed { index, localWord ->
+        allLocalWords.forEachIndexed { index, localWord ->
             if (localWord.en == orig.en) {
                 word = localWord
                 localWord.count++
@@ -132,59 +105,43 @@ class WordManagerServiceV3(private val mView: WordDisplayView) {
         // 如果word没有初始化表示word不存在于mData中，所以创建新word
         if (word == null) {
             word = LocalWord(ch = orig.ch, en = orig.en)
-            mData.add(word!!)
+            allLocalWords.add(word!!)
         }
-        mAdapter.sumCount++
         if (word!!.timeList == null) {
             word!!.timeList = ArrayList()
         }
-        word!!.timeList!!.add(System.currentTimeMillis())
+        word!!.timeList!!.add(DateManagerService.currentTimestamp)
         currentLocalWord = word
-        mCoroutineScope.launch(Dispatchers.Main) { mView.updateCurveView() }
-        mUpdateChannel.send(word!!)
+        curveChannel.send(true)
+        listUpdateChannel.send(word!!)
         withContext(Dispatchers.IO) { word!!.save() }
     }
 
-    suspend fun refreshRecyclerView() {
-        val word = mUpdateChannel.receive()
-        if (word.isSaved) {
-            if (mIsMoved[0] >= 0) {
-                mAdapter.notifyItemRemoved(mIsMoved[0])
-                mAdapter.notifyItemInserted(mIsMoved[1])
-            }
-            mAdapter.notifyItemRangeChanged(0, mData.size)
-        } else {
-            val index = mData.size - 1
-            mAdapter.notifyItemRangeChanged(0, index)
-            mAdapter.notifyItemInserted(index)
-        }
-    }
-
     // 第一个数字为负的时候表示未移动过，非负时表示移动前的位置，第二个数表示移动后的位置
-    private val mIsMoved by lazy { intArrayOf(-1, -1) }
+    val isMoved = intArrayOf(-1, -1)
 
     // 调整LocalWord在mData中的位置，并返回链表是否被调整过
     private infix fun LocalWord.reSort(index: Int) {
-        mIsMoved[0] = -1
+        isMoved[0] = -1
         when {
             index == 0 -> return
-            mData[index - 1].count >= count -> return
+            allLocalWords[index - 1].count >= count -> return
             else -> {
                 val start = index - 1
                 for (i in start downTo 0) {
-                    val word = mData[i]
+                    val word = allLocalWords[i]
                     if (word.count >= count) {
-                        mData.removeAt(index)
+                        allLocalWords.removeAt(index)
                         val newIndex = i + 1
-                        mData.add(newIndex, this)
-                        mIsMoved[0] = index
-                        mIsMoved[1] = newIndex
+                        allLocalWords.add(newIndex, this)
+                        isMoved[0] = index
+                        isMoved[1] = newIndex
                         return
                     } else if (i == 0 && word.count < count) {
-                        mData.removeAt(index)
-                        mData.add(i, this)
-                        mIsMoved[0] = index
-                        mIsMoved[1] = i
+                        allLocalWords.removeAt(index)
+                        allLocalWords.add(i, this)
+                        isMoved[0] = index
+                        isMoved[1] = i
                     }
                 }
             }

@@ -8,16 +8,9 @@ import android.view.View
 import android.widget.AdapterView
 import android.widget.TextView
 import com.w10group.hertzdictionary.R
-import com.w10group.hertzdictionary.biz.bean.LocalWord
-import com.w10group.hertzdictionary.biz.manager.CurveValue
-import com.w10group.hertzdictionary.biz.manager.DateManagerService
-import com.w10group.hertzdictionary.biz.manager.MostValue
-import com.w10group.hertzdictionary.biz.manager.WordManagerServiceV3
 import com.w10group.hertzdictionary.biz.ui.main.DateSpinnerAdapter
+import com.w10group.hertzdictionary.core.architecture.UIComponent
 import com.w10group.hertzdictionary.core.view.*
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import org.jetbrains.anko.*
 import org.jetbrains.anko.appcompat.v7.toolbar
 import org.jetbrains.anko.cardview.v7.cardView
@@ -30,7 +23,7 @@ import org.jetbrains.anko.support.v4.nestedScrollView
  * @author Qiao
  */
 
-class StatisticsActivityUI(private val mStatisticsActivity: StatisticsActivity) : AnkoComponent<StatisticsActivity> {
+class StatisticsActivityUIComponent(private val mStatisticsActivity: StatisticsActivity) : UIComponent<StatisticsActivity>() {
 
     private lateinit var mToolbar: Toolbar
     private lateinit var mCurveView: CurveView
@@ -40,8 +33,6 @@ class StatisticsActivityUI(private val mStatisticsActivity: StatisticsActivity) 
     private lateinit var tvMostWord: TextView
 
     private val gray600 by lazy { ContextCompat.getColor(mStatisticsActivity, R.color.gray600) }
-
-    private lateinit var mWordManagerServiceV3: WordManagerServiceV3
 
     override fun createView(ui: AnkoContext<StatisticsActivity>): View = ui.apply {
         coordinatorLayout {
@@ -70,8 +61,8 @@ class StatisticsActivityUI(private val mStatisticsActivity: StatisticsActivity) 
                                     override fun onNothingSelected(parent: AdapterView<*>?) = Unit
                                     override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
                                         when (position) {
-                                            0 -> weekSelected()
-                                            1 -> monthSelected()
+                                            0 -> mStatisticsActivity.weekSelected()
+                                            1 -> mStatisticsActivity.monthSelected()
                                         }
                                     }
                                 }
@@ -130,36 +121,20 @@ class StatisticsActivityUI(private val mStatisticsActivity: StatisticsActivity) 
         }
     }.view
 
-    private fun weekSelected() = selected(7) { DateManagerService.createWeekValue(*it) }
 
-    private fun monthSelected() = selected(30) { DateManagerService.createMonthValue(*it) }
 
-    private inline fun selected(count: Int, crossinline create: (Array<LocalWord>) -> CurveValue) = mStatisticsActivity.launch(Dispatchers.Default) {
-        if (!::mWordManagerServiceV3.isInitialized)
-            mWordManagerServiceV3 = WordManagerServiceV3.instanceChannel.receive()
-        val (timeList, valueList, mostResult) = create(mWordManagerServiceV3.allLocalWords.toTypedArray())
-        val totalCount = valueList.sum()
-        val totalCountText = "最近 $count 天共查询：$totalCount 次"
-        val averageCount = totalCount / count
-        val averageCountText = "平均每天查询：$averageCount 次"
-        val mostWordText = mostResult.toText()
-        withContext(Dispatchers.Main) {
-            tvTotalCount.text = totalCountText
-            tvAverageCount.text = averageCountText
-            tvMostWord.text = mostWordText
-            mCurveView.setData(timeList, valueList)
-        }
+    fun updateUI(totalCountText: String,
+                 averageCountText: String,
+                 mostWordText: String,
+                 timeList: List<Long>,
+                 valueList: List<Int>) {
+        tvTotalCount.text = totalCountText
+        tvAverageCount.text = averageCountText
+        tvMostWord.text = mostWordText
+        mCurveView.setData(timeList, valueList)
     }
 
-    private fun MostValue.toText(): String = StringBuilder().apply {
-        append("查询次数最多的单词为：")
-        first.forEachIndexed { index, localWord ->
-            append(if (index == 0) localWord.en else "、${localWord.en}")
-        }
-        append("；共查询 $second 次")
-    }.toString()
-
-    fun initToolbar() {
+    override fun init() {
         mStatisticsActivity.setSupportActionBar(mToolbar)
         mStatisticsActivity.supportActionBar?.setDisplayHomeAsUpEnabled(true)
     }

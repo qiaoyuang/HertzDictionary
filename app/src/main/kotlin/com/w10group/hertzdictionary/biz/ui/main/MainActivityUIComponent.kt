@@ -1,7 +1,6 @@
 package com.w10group.hertzdictionary.biz.ui.main
 
 import android.animation.LayoutTransition
-import android.content.Context
 import android.graphics.Color
 import android.os.Build
 import android.support.design.widget.AppBarLayout
@@ -26,14 +25,10 @@ import com.w10group.hertzdictionary.biz.ui.about.AboutDeveloperActivity
 import com.w10group.hertzdictionary.biz.bean.InquireResult
 import com.w10group.hertzdictionary.biz.ui.features.FeaturesActivity
 import com.w10group.hertzdictionary.biz.ui.licence.LicenceActivity
-import com.w10group.hertzdictionary.biz.manager.DateManagerService
 import com.w10group.hertzdictionary.biz.manager.ImageManagerService
-import com.w10group.hertzdictionary.biz.manager.WordDisplayView
+import com.w10group.hertzdictionary.biz.ui.statistics.StatisticsActivity
+import com.w10group.hertzdictionary.core.architecture.UIComponent
 import com.w10group.hertzdictionary.core.view.*
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import org.jetbrains.anko.*
 import org.jetbrains.anko.appcompat.v7.toolbar
 import org.jetbrains.anko.cardview.v7.cardView
@@ -47,14 +42,17 @@ import org.jetbrains.anko.support.v4.nestedScrollView
  * @author Qiao
  */
 
-class MainActivityUI(private val mMainActivity: MainActivity) : AnkoComponent<MainActivity>, WordDisplayView {
+class MainActivityUIComponent(private val mMainActivity: MainActivity) : UIComponent<MainActivity>() {
 
     private lateinit var mDrawerLayout: DrawerLayout
     private lateinit var mAppBarLayout: AppBarLayout
     private lateinit var mCollapsingToolbarLayout: CollapsingToolbarLayout
     private lateinit var mToolBar: Toolbar
     private lateinit var mNestedScrollView: NestedScrollView
-    private lateinit var mRecyclerView: RecyclerView
+
+    lateinit var mRecyclerView: RecyclerView
+        private set
+
     private lateinit var mBackgroundImageView: ImageView
     private lateinit var mOtherMeanCard: CardView
     private lateinit var mOtherMeanLayout: LinearLayout
@@ -74,12 +72,13 @@ class MainActivityUI(private val mMainActivity: MainActivity) : AnkoComponent<Ma
     private val blue2 by lazy { ContextCompat.getColor(mMainActivity, R.color.blue2) }
     private val mTitleText by lazy { mMainActivity.getString(R.string.app_name) }
 
-    private companion object {
-        const val STATUS_WEEK = 0
-        const val STATUS_MONTH = 1
+    @Suppress("DEPRECATION")
+    val mProgressDialog by lazy {
+        mMainActivity.progressDialog(title = "请稍候......", message = "正在获取单词数据......") {
+            setProgressStyle(0)
+            setOnDismissListener { mMainActivity.cancelNetwork() }
+        }
     }
-
-    private var status = STATUS_WEEK
 
     override fun createView(ui: AnkoContext<MainActivity>): View = ui.apply {
         mDrawerLayout = drawerLayout {
@@ -268,26 +267,7 @@ class MainActivityUI(private val mMainActivity: MainActivity) : AnkoComponent<Ma
                                     onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
                                         override fun onNothingSelected(parent: AdapterView<*>?) = Unit
                                         override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-                                            when (position) {
-                                                STATUS_WEEK -> {
-                                                    status = STATUS_WEEK
-                                                    mMainActivity.currentLocalWord?.let {
-                                                        mMainActivity.launch(Dispatchers.Default) {
-                                                            val (timeList, valueList) = DateManagerService.createWeekValue(it)
-                                                            withContext(Dispatchers.Main) { mCurveView.setData(timeList, valueList) }
-                                                        }
-                                                    }
-                                                }
-                                                STATUS_MONTH -> {
-                                                    status = STATUS_MONTH
-                                                    mMainActivity.currentLocalWord?.let {
-                                                        mMainActivity.launch(Dispatchers.Default) {
-                                                            val (timeList, valueList) = DateManagerService.createMonthValue(it)
-                                                            withContext(Dispatchers.Main) { mCurveView.setData(timeList, valueList) }
-                                                        }
-                                                    }
-                                                }
-                                            }
+                                            mMainActivity.curveStatus = position
                                         }
                                     }
                                 }.lparams(wrapContent, wrapContent) {
@@ -353,7 +333,7 @@ class MainActivityUI(private val mMainActivity: MainActivity) : AnkoComponent<Ma
                 setNavigationItemSelectedListener {
                     it.isCheckable = false
                     when (it.itemId) {
-                        R.id.main_menu_statistics -> mMainActivity.startStatisticsActivity()
+                        R.id.main_menu_statistics -> startActivity<StatisticsActivity>()
                         R.id.main_menu_more_features -> startActivity<FeaturesActivity>()
                         R.id.main_menu_mine -> startActivity<AboutDeveloperActivity>()
                         R.id.main_menu_licence -> startActivity<LicenceActivity>()
@@ -366,7 +346,7 @@ class MainActivityUI(private val mMainActivity: MainActivity) : AnkoComponent<Ma
         }
     }.view
 
-    fun initToolBar() {
+    override fun init() {
         mMainActivity.setSupportActionBar(mToolBar)
         val toggle = ActionBarDrawerToggle(mMainActivity, mDrawerLayout, mToolBar, R.string.navigation_drawer_open, R.string.navigation_drawer_close)
         mDrawerLayout.addDrawerListener(toggle)
@@ -442,20 +422,13 @@ class MainActivityUI(private val mMainActivity: MainActivity) : AnkoComponent<Ma
         mMainActivity.refreshRecyclerView()
     }
 
-    override fun setWordText(text: String) = mETInput.setText(text)
+    fun setWordText(text: String) = mETInput.setText(text)
 
-    override fun snackBar(text: String) {
-        mRecyclerView.snackbar(text)
-    }
-
-    override fun setAdapter(adapter: RecyclerView.Adapter<*>) {
+    fun setAdapter(adapter: RecyclerView.Adapter<*>) {
         mRecyclerView.adapter = adapter
     }
 
-    override fun getContext(): Context = mMainActivity
-    override fun getCoroutineScope(): CoroutineScope = mMainActivity
-
-    override fun displayInquireResult(inquireResult: InquireResult, word: String) {
+    fun displayInquireResult(inquireResult: InquireResult, word: String) {
         //改变控件状态
         if (mMainActivity.status == MainActivity.STATUS_INQUIRED_NOT) {
             mRecyclerView.visibility = View.GONE
@@ -520,27 +493,12 @@ class MainActivityUI(private val mMainActivity: MainActivity) : AnkoComponent<Ma
         }
     }
 
-    override infix fun displayOtherTranslation(words: String)
+    infix fun displayOtherTranslation(words: String)
             = mTVOtherTranslation.setWords("其它义项：", words)
 
-    override infix fun displayRelatedWords(words: String)
+    infix fun displayRelatedWords(words: String)
             = mTVRelatedWords.setWords("相关词组：", words)
 
-    override fun updateCurveView() {
-        mMainActivity.currentLocalWord?.let {
-            mMainActivity.launch(Dispatchers.Default) {
-                when (status) {
-                    STATUS_WEEK -> {
-                        val (timeList, valueList) = DateManagerService.createWeekValue(it)
-                        withContext(Dispatchers.Main) { mCurveView.setData(timeList, valueList) }
-                    }
-                    STATUS_MONTH -> {
-                        val (timeList, valueList) = DateManagerService.createMonthValue(it)
-                        withContext(Dispatchers.Main) { mCurveView.setData(timeList, valueList) }
-                    }
-                }
-            }
-        }
-    }
+    fun updateCurveView(timeList: List<Long>, valueList: List<Int>) = mCurveView.setData(timeList, valueList)
 
 }
