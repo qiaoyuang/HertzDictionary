@@ -68,8 +68,8 @@ class MainActivity : CoroutineScopeActivity<MainActivity>() {
         launch {
             for (element in WordManagerServiceV3.OTRWChannel) {
                 val (otherTranslation, relatedWords) = element
-                uiComponent.displayOtherTranslation(otherTranslation)
-                uiComponent.displayRelatedWords(relatedWords)
+                uiComponent displayOtherTranslation otherTranslation
+                uiComponent displayRelatedWords relatedWords
             }
         }
         // 获取更新曲线图的信号
@@ -86,7 +86,7 @@ class MainActivity : CoroutineScopeActivity<MainActivity>() {
         WordManagerServiceV3.networkJob.cancel()
     }
 
-    fun inquire(word: String) = WordManagerServiceV3.inquire(word, uiComponent.mRecyclerView)
+    fun inquire(word: String) = WordManagerServiceV3.inquire(word, uiComponent.snackBarView)
 
     fun refreshRecyclerView() = launch {
         val word = WordManagerServiceV3.listUpdateChannel.receive()

@@ -2,6 +2,9 @@ package com.w10group.hertzdictionary.biz.ui.statistics
 
 import android.graphics.Color
 import android.support.design.widget.AppBarLayout
+import android.support.design.widget.AppBarLayout.LayoutParams.SCROLL_FLAG_SCROLL
+import android.support.design.widget.AppBarLayout.LayoutParams.SCROLL_FLAG_ENTER_ALWAYS
+import android.support.design.widget.AppBarLayout.LayoutParams.SCROLL_FLAG_SNAP
 import android.support.v4.content.ContextCompat
 import android.support.v7.widget.Toolbar
 import android.view.View
@@ -43,7 +46,7 @@ class StatisticsActivityUIComponent(private val mStatisticsActivity: StatisticsA
                     title = context.getString(R.string.statistics)
                     backgroundColorResource = R.color.blue1
                 }.lparams(matchParent, getActionBarSize(context)) {
-                    scrollFlags = AppBarLayout.LayoutParams.SCROLL_FLAG_SCROLL or AppBarLayout.LayoutParams.SCROLL_FLAG_ENTER_ALWAYS or AppBarLayout.LayoutParams.SCROLL_FLAG_SNAP
+                    scrollFlags = SCROLL_FLAG_SCROLL or SCROLL_FLAG_ENTER_ALWAYS or SCROLL_FLAG_SNAP
                 }
             }.lparams(matchParent, wrapContent)
 
@@ -120,8 +123,6 @@ class StatisticsActivityUIComponent(private val mStatisticsActivity: StatisticsA
             }
         }
     }.view
-
-
 
     fun updateUI(totalCountText: String,
                  averageCountText: String,

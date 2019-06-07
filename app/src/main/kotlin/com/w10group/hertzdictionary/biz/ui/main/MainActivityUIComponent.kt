@@ -4,7 +4,11 @@ import android.animation.LayoutTransition
 import android.graphics.Color
 import android.os.Build
 import android.support.design.widget.AppBarLayout
+import android.support.design.widget.AppBarLayout.LayoutParams.SCROLL_FLAG_SCROLL
+import android.support.design.widget.AppBarLayout.LayoutParams.SCROLL_FLAG_EXIT_UNTIL_COLLAPSED
 import android.support.design.widget.CollapsingToolbarLayout
+import android.support.design.widget.CollapsingToolbarLayout.LayoutParams.COLLAPSE_MODE_PARALLAX
+import android.support.design.widget.CollapsingToolbarLayout.LayoutParams.COLLAPSE_MODE_PIN
 import android.support.v4.content.ContextCompat
 import android.support.v4.widget.DrawerLayout
 import android.support.v4.widget.NestedScrollView
@@ -50,8 +54,10 @@ class MainActivityUIComponent(private val mMainActivity: MainActivity) : UICompo
     private lateinit var mToolBar: Toolbar
     private lateinit var mNestedScrollView: NestedScrollView
 
-    lateinit var mRecyclerView: RecyclerView
-        private set
+    private lateinit var mRecyclerView: RecyclerView
+
+    val snackBarView: View
+        get() = mRecyclerView
 
     private lateinit var mBackgroundImageView: ImageView
     private lateinit var mOtherMeanCard: CardView
@@ -95,7 +101,7 @@ class MainActivityUIComponent(private val mMainActivity: MainActivity) : UICompo
                             fitsSystemWindows = true
                             backgroundColor = blue2
                         }.lparams(matchParent, getStatusBarSize(context)) {
-                            collapseMode = CollapsingToolbarLayout.LayoutParams.COLLAPSE_MODE_PIN
+                            collapseMode = COLLAPSE_MODE_PIN
                         }
 
                         verticalLayout {
@@ -134,17 +140,17 @@ class MainActivityUIComponent(private val mMainActivity: MainActivity) : UICompo
                             topMargin = dip(100)
                             marginStart = dip(16)
                             marginEnd = dip(16)
-                            collapseMode = CollapsingToolbarLayout.LayoutParams.COLLAPSE_MODE_PARALLAX
+                            collapseMode = COLLAPSE_MODE_PARALLAX
                         }
 
                         mToolBar = toolbar {
                             backgroundColor = blue1
                         }.lparams(matchParent, getActionBarSize(context)) {
-                            collapseMode = CollapsingToolbarLayout.LayoutParams.COLLAPSE_MODE_PIN
+                            collapseMode = COLLAPSE_MODE_PIN
                         }
 
                     }.lparams(matchParent, wrapContent) {
-                        scrollFlags = AppBarLayout.LayoutParams.SCROLL_FLAG_SCROLL or AppBarLayout.LayoutParams.SCROLL_FLAG_EXIT_UNTIL_COLLAPSED
+                        scrollFlags = SCROLL_FLAG_SCROLL or SCROLL_FLAG_EXIT_UNTIL_COLLAPSED
                     }
 
                 }.lparams(matchParent, wrapContent)

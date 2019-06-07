@@ -1,6 +1,9 @@
 package com.w10group.hertzdictionary.biz.ui.licence
 
 import android.support.design.widget.AppBarLayout
+import android.support.design.widget.AppBarLayout.LayoutParams.SCROLL_FLAG_SCROLL
+import android.support.design.widget.AppBarLayout.LayoutParams.SCROLL_FLAG_ENTER_ALWAYS
+import android.support.design.widget.AppBarLayout.LayoutParams.SCROLL_FLAG_SNAP
 import android.support.v7.widget.DefaultItemAnimator
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
@@ -33,7 +36,7 @@ class LicenceActivityUIComponent(private val mLicenceActivity: LicenceActivity) 
                     title = context.getString(R.string.open_source_license)
                     backgroundColorResource = R.color.blue1
                 }.lparams(matchParent, getActionBarSize(context)) {
-                    scrollFlags = AppBarLayout.LayoutParams.SCROLL_FLAG_SCROLL or AppBarLayout.LayoutParams.SCROLL_FLAG_ENTER_ALWAYS or AppBarLayout.LayoutParams.SCROLL_FLAG_SNAP
+                    scrollFlags = SCROLL_FLAG_SCROLL or SCROLL_FLAG_ENTER_ALWAYS or SCROLL_FLAG_SNAP
                 }
             }.lparams(matchParent, wrapContent)
 

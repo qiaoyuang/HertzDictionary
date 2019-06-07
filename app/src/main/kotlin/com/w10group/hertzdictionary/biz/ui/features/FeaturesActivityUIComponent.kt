@@ -4,6 +4,9 @@ import android.content.pm.PackageManager
 import android.graphics.Color
 import android.graphics.Paint
 import android.support.design.widget.AppBarLayout
+import android.support.design.widget.AppBarLayout.LayoutParams.SCROLL_FLAG_SCROLL
+import android.support.design.widget.AppBarLayout.LayoutParams.SCROLL_FLAG_ENTER_ALWAYS
+import android.support.design.widget.AppBarLayout.LayoutParams.SCROLL_FLAG_SNAP
 import android.support.v4.content.ContextCompat
 import android.support.v7.widget.Toolbar
 import android.view.Gravity
@@ -65,7 +68,7 @@ class FeaturesActivityUIComponent(private val mFeatureActivity: FeaturesActivity
                     title = context.getString(R.string.more_features)
                     backgroundColorResource = R.color.blue1
                 }.lparams(matchParent, getActionBarSize(context)) {
-                    scrollFlags = AppBarLayout.LayoutParams.SCROLL_FLAG_SCROLL or AppBarLayout.LayoutParams.SCROLL_FLAG_ENTER_ALWAYS or AppBarLayout.LayoutParams.SCROLL_FLAG_SNAP
+                    scrollFlags = SCROLL_FLAG_SCROLL or SCROLL_FLAG_ENTER_ALWAYS or SCROLL_FLAG_SNAP
                 }
             }.lparams(matchParent, wrapContent)
 

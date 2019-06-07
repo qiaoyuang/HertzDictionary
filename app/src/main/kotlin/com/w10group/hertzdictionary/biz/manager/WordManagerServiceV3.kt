@@ -69,7 +69,7 @@ object WordManagerServiceV3 {
             inquireResultChannel.send(inquireResult to word)
             OTRWChannel.send(pairDeferred.await())
             mProgressDialog.dismiss()
-            GlobalScope.launch(Dispatchers.Default) { updateRecyclerViewData(inquireResult) }
+            launch(Dispatchers.Default) { updateRecyclerViewData(inquireResult) }
         }
     }
 

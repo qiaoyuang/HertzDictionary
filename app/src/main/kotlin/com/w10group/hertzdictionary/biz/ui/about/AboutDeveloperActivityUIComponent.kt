@@ -7,7 +7,10 @@ import android.content.pm.PackageManager
 import android.graphics.Color
 import android.os.Build
 import android.support.design.widget.AppBarLayout
-import android.support.design.widget.CollapsingToolbarLayout
+import android.support.design.widget.AppBarLayout.LayoutParams.SCROLL_FLAG_SCROLL
+import android.support.design.widget.AppBarLayout.LayoutParams.SCROLL_FLAG_EXIT_UNTIL_COLLAPSED
+import android.support.design.widget.CollapsingToolbarLayout.LayoutParams.COLLAPSE_MODE_PARALLAX
+import android.support.design.widget.CollapsingToolbarLayout.LayoutParams.COLLAPSE_MODE_PIN
 import android.support.v4.content.ContextCompat
 import android.support.v7.widget.Toolbar
 import android.view.Gravity
@@ -104,7 +107,7 @@ class AboutDeveloperActivityUIComponent(private val mAboutDeveloperActivity: Abo
                             foreground = createTouchFeedbackBorderless(context)
                         setOnClickListener {  mCompleteScaleImageView.showByCoroutines(1) }
                     }.lparams(matchParent, matchParent) {
-                        collapseMode = CollapsingToolbarLayout.LayoutParams.COLLAPSE_MODE_PARALLAX
+                        collapseMode = COLLAPSE_MODE_PARALLAX
                     }
 
                     mIMAvatar = circleImageView {
@@ -117,7 +120,7 @@ class AboutDeveloperActivityUIComponent(private val mAboutDeveloperActivity: Abo
                     }.lparams(dip(80), dip(80)) {
                         gravity = Gravity.CENTER_HORIZONTAL or Gravity.TOP
                         topMargin = dip(88)
-                        collapseMode = CollapsingToolbarLayout.LayoutParams.COLLAPSE_MODE_PARALLAX
+                        collapseMode = COLLAPSE_MODE_PARALLAX
                     }
 
                     textView {
@@ -127,15 +130,15 @@ class AboutDeveloperActivityUIComponent(private val mAboutDeveloperActivity: Abo
                     }.lparams(wrapContent, wrapContent) {
                         gravity = Gravity.CENTER_HORIZONTAL or Gravity.BOTTOM
                         bottomMargin = dip(48)
-                        collapseMode = CollapsingToolbarLayout.LayoutParams.COLLAPSE_MODE_PARALLAX
+                        collapseMode = COLLAPSE_MODE_PARALLAX
                     }
 
                     mToolbar = toolbar().lparams(matchParent, getActionBarSize(context)) {
-                        collapseMode = CollapsingToolbarLayout.LayoutParams.COLLAPSE_MODE_PIN
+                        collapseMode = COLLAPSE_MODE_PIN
                     }
 
                 }.lparams(matchParent, matchParent) {
-                    scrollFlags = AppBarLayout.LayoutParams.SCROLL_FLAG_SCROLL or AppBarLayout.LayoutParams.SCROLL_FLAG_EXIT_UNTIL_COLLAPSED
+                    scrollFlags = SCROLL_FLAG_SCROLL or SCROLL_FLAG_EXIT_UNTIL_COLLAPSED
                 }
             }.lparams(matchParent, dip(256))
 
