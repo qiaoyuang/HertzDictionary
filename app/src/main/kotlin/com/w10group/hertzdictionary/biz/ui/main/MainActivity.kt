@@ -9,7 +9,6 @@ import com.w10group.hertzdictionary.biz.manager.DateManagerService
 import com.w10group.hertzdictionary.biz.manager.WordManagerServiceV3
 import com.w10group.hertzdictionary.core.architecture.CoroutineScopeActivity
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
@@ -38,7 +37,6 @@ class MainActivity : CoroutineScopeActivity<MainActivity>() {
     var status = STATUS_INQUIRED_NOT
 
     private lateinit var mAdapter: WordListAdapter
-    private lateinit var mNetworkJob: Job
 
     override val uiComponent = MainActivityUIComponent(this)
     override val implementer = this
@@ -83,11 +81,12 @@ class MainActivity : CoroutineScopeActivity<MainActivity>() {
         }
     }
 
-    fun inquire(word: String) {
-        mNetworkJob = WordManagerServiceV3.inquire(word, implementer, uiComponent.mRecyclerView, uiComponent.mProgressDialog)
+    override fun onStop() {
+        super.onStop()
+        WordManagerServiceV3.networkJob.cancel()
     }
 
-    fun cancelNetwork() = mNetworkJob.cancel()
+    fun inquire(word: String) = WordManagerServiceV3.inquire(word, uiComponent.mRecyclerView)
 
     fun refreshRecyclerView() = launch {
         val word = WordManagerServiceV3.listUpdateChannel.receive()

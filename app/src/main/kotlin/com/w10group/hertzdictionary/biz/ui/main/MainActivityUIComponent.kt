@@ -72,14 +72,6 @@ class MainActivityUIComponent(private val mMainActivity: MainActivity) : UICompo
     private val blue2 by lazy { ContextCompat.getColor(mMainActivity, R.color.blue2) }
     private val mTitleText by lazy { mMainActivity.getString(R.string.app_name) }
 
-    @Suppress("DEPRECATION")
-    val mProgressDialog by lazy {
-        mMainActivity.progressDialog(title = "请稍候......", message = "正在获取单词数据......") {
-            setProgressStyle(0)
-            setOnDismissListener { mMainActivity.cancelNetwork() }
-        }
-    }
-
     override fun createView(ui: AnkoContext<MainActivity>): View = ui.apply {
         mDrawerLayout = drawerLayout {
             layoutTransition = LayoutTransition()

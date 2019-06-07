@@ -1,7 +1,6 @@
 package com.w10group.hertzdictionary.biz.manager
 
 import android.app.ProgressDialog
-import android.content.Context
 import android.view.View
 import com.w10group.hertzdictionary.biz.bean.InquireResult
 import com.w10group.hertzdictionary.biz.bean.LocalWord
@@ -9,6 +8,7 @@ import com.w10group.hertzdictionary.core.NetworkUtil
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.Channel
 import org.jetbrains.anko.design.snackbar
+import org.jetbrains.anko.progressDialog
 import org.litepal.LitePal
 import org.litepal.extension.find
 import java.util.concurrent.CopyOnWriteArrayList
@@ -36,30 +36,41 @@ object WordManagerServiceV3 {
         addAll(list)
     }
 
+    @Suppress("DEPRECATION")
+    private lateinit var mProgressDialog: ProgressDialog
+
+    lateinit var networkJob: Job
+        private set
+
     // 查询单词
     @Suppress("DEPRECATION")
     fun inquire(word: String,
-                context: Context,
-                view: View,
-                progressDialog: ProgressDialog): Job = GlobalScope.launch {
-        if (!NetworkUtil.checkNetwork(context)) {
-            view.snackbar("当前无网络连接")
-            return@launch
+                view: View) {
+        networkJob = GlobalScope.launch(Dispatchers.Main) {
+            if (!NetworkUtil.checkNetwork(view.context)) {
+                view.snackbar("当前无网络连接")
+                return@launch
+            }
+            if (!this@WordManagerServiceV3::mProgressDialog.isInitialized)
+                mProgressDialog = view.context.progressDialog(title = "请稍候......", message = "正在获取单词数据......") {
+                    setProgressStyle(0)
+                    setOnDismissListener { networkJob.cancel() }
+                }
+            mProgressDialog.show()
+            val inquireResult = try {
+                NetworkUtil.instance.inquireWordByCoroutinesAsync(word).await()
+            } catch (e: Exception) {
+                e.printStackTrace()
+                mProgressDialog.dismiss()
+                view.snackbar("网络出现问题，请稍后再试。")
+                return@launch
+            }
+            val pairDeferred = async(Dispatchers.Default) { getOtherTranslationAndRelateWords(inquireResult) }
+            inquireResultChannel.send(inquireResult to word)
+            OTRWChannel.send(pairDeferred.await())
+            mProgressDialog.dismiss()
+            GlobalScope.launch(Dispatchers.Default) { updateRecyclerViewData(inquireResult) }
         }
-        progressDialog.show()
-        val inquireResult = try {
-            NetworkUtil.instance.inquireWordByCoroutinesAsync(word).await()
-        } catch (e: Exception) {
-            e.printStackTrace()
-            progressDialog.dismiss()
-            view.snackbar("网络出现问题，请稍后再试。")
-            return@launch
-        }
-        val pairDeferred = async(Dispatchers.Default) { getOtherTranslationAndRelateWords(inquireResult) }
-        inquireResultChannel.send(inquireResult to word)
-        OTRWChannel.send(pairDeferred.await())
-        progressDialog.dismiss()
-        GlobalScope.launch(Dispatchers.Default) { updateRecyclerViewData(inquireResult) }
     }
 
     // 拼接其它义项以及相关词组并返回
