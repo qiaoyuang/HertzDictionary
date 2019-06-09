@@ -33,27 +33,27 @@ inline fun ViewManager.subsamplingImageView(init: SubsamplingScaleImageView.() -
 inline fun ViewManager.curveView(init: CurveView.() -> Unit = {}): CurveView =
         ankoView({ CurveView(it) }, theme = 0, init = init)
 
-// 创建触摸反馈效果Drawable
+// 创建触摸反馈效果 Drawable
 fun createTouchFeedback(context: Context): Drawable? {
     val typedValue = TypedValue()
     context.theme.resolveAttribute(android.R.attr.selectableItemBackground, typedValue, true)
     return ContextCompat.getDrawable(context, typedValue.resourceId)
 }
 
-// 创建触摸反馈效果Drawable(超出边界)
+// 创建触摸反馈效果 Drawable（超出边界）
 fun createTouchFeedbackBorderless(context: Context): Drawable? {
     val typedValue = TypedValue()
     context.theme.resolveAttribute(android.R.attr.selectableItemBackgroundBorderless, typedValue, true)
     return ContextCompat.getDrawable(context, typedValue.resourceId)
 }
 
-// 获取系统的ActionBarSize
+// 获取系统的 ActionBarSize
 fun getActionBarSize(context: Context): Int {
     val typedValue = context.attr(android.R.attr.actionBarSize).data
     return TypedValue.complexToDimension(typedValue, context.resources.displayMetrics).toInt()
 }
 
-// 获取系统StatusBarSize
+// 获取系统 StatusBarSize
 fun getStatusBarSize(context: Context): Int {
     val resourceId = context.resources.getIdentifier("status_bar_height", "dimen", "android")
     return context.resources.getDimensionPixelSize(resourceId)

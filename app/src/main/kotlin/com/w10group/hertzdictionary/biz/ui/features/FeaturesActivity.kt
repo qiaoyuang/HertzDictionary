@@ -2,7 +2,7 @@ package com.w10group.hertzdictionary.biz.ui.features
 
 import android.os.Bundle
 import android.view.MenuItem
-import com.w10group.hertzdictionary.biz.manager.FileReadManagerService
+import com.w10group.hertzdictionary.biz.manager.readFileAsync
 import com.w10group.hertzdictionary.core.architecture.CoroutineScopeActivity
 import kotlinx.coroutines.launch
 
@@ -23,7 +23,7 @@ class FeaturesActivity : CoroutineScopeActivity<FeaturesActivity>() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         launch {
-            val deferred = FileReadManagerService.processByCoroutines(this, implementer, FEATURE_FILE_NAME)
+            val deferred = readFileAsync(implementer, FEATURE_FILE_NAME)
             uiComponent.updateTextView(deferred.await())
         }
     }

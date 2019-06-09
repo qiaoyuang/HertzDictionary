@@ -351,9 +351,7 @@ class MainActivityUIComponent(private val mMainActivity: MainActivity) : UICompo
         toggle.syncState()
     }
 
-    suspend fun loadBackgroundImageView() {
-        ImageManagerService.loadBackground(mMainActivity, mBackgroundImageView)
-    }
+    suspend fun loadBackgroundImageView() = ImageManagerService.loadBackground(mMainActivity, mBackgroundImageView)
 
     fun scrollToTop() {
         if (mMainActivity.status == MainActivity.STATUS_INQUIRED_NOT) {

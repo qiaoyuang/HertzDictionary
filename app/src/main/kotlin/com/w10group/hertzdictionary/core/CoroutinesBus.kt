@@ -9,8 +9,7 @@ import kotlin.reflect.KClass
 
 /**
  * 事件总线
- * 还不完善，缺少缓冲机制以及多线程调度能力
- * 后续计划使用协程实现上述功能
+ * @author Qiao
  */
 
 object CoroutinesBus {

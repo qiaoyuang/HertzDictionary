@@ -43,8 +43,8 @@ class MainActivity : CoroutineScopeActivity<MainActivity>() {
     
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        launch { uiComponent.loadBackgroundImageView() }
         launch(Dispatchers.IO) {
+            uiComponent.loadBackgroundImageView()
             mAdapter = WordListAdapter(implementer, WordManagerServiceV3.allLocalWords, this) {
                 uiComponent.setWordText(it)
                 inquire(it)
@@ -83,7 +83,7 @@ class MainActivity : CoroutineScopeActivity<MainActivity>() {
 
     override fun onStop() {
         super.onStop()
-        WordManagerServiceV3.networkJob.cancel()
+        WordManagerServiceV3.networkJob?.cancel()
     }
 
     fun inquire(word: String) = WordManagerServiceV3.inquire(word, uiComponent.snackBarView)

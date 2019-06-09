@@ -2,8 +2,8 @@ package com.w10group.hertzdictionary.biz.ui.about
 
 import android.os.Bundle
 import android.view.MenuItem
-import com.w10group.hertzdictionary.biz.manager.FileReadManagerService
 import com.w10group.hertzdictionary.biz.manager.ImageManagerService
+import com.w10group.hertzdictionary.biz.manager.readFileAsync
 import com.w10group.hertzdictionary.core.architecture.CoroutineScopeActivity
 import kotlinx.coroutines.launch
 
@@ -25,7 +25,7 @@ class AboutDeveloperActivity : CoroutineScopeActivity<AboutDeveloperActivity>() 
         super.onCreate(savedInstanceState)
         launch {
             ImageManagerService.loadBackground(implementer, uiComponent.mIMBackground)
-            val deferred = FileReadManagerService.processByCoroutines(this, implementer, ABOUT_ME_FILE_NAME)
+            val deferred = readFileAsync(implementer, ABOUT_ME_FILE_NAME)
             uiComponent.updateTextView(deferred.await())
         }
         ImageManagerService.loadAvatar(this, uiComponent.mIMAvatar)

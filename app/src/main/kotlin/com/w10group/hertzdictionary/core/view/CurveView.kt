@@ -21,7 +21,6 @@ import java.text.NumberFormat
 class CurveView : View {
 
     companion object {
-
         private const val DEFAULT_UNIT = "次/天"
     }
 

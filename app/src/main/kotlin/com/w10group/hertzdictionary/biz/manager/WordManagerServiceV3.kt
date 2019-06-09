@@ -1,6 +1,5 @@
 package com.w10group.hertzdictionary.biz.manager
 
-import android.app.ProgressDialog
 import android.view.View
 import com.w10group.hertzdictionary.biz.bean.InquireResult
 import com.w10group.hertzdictionary.biz.bean.LocalWord
@@ -36,10 +35,7 @@ object WordManagerServiceV3 {
         addAll(list)
     }
 
-    @Suppress("DEPRECATION")
-    private lateinit var mProgressDialog: ProgressDialog
-
-    lateinit var networkJob: Job
+    var networkJob: Job? = null
         private set
 
     // 查询单词
@@ -51,24 +47,23 @@ object WordManagerServiceV3 {
                 view.snackbar("当前无网络连接")
                 return@launch
             }
-            if (!this@WordManagerServiceV3::mProgressDialog.isInitialized)
-                mProgressDialog = view.context.progressDialog(title = "请稍候......", message = "正在获取单词数据......") {
-                    setProgressStyle(0)
-                    setOnDismissListener { networkJob.cancel() }
-                }
-            mProgressDialog.show()
+            val progressDialog = view.context.progressDialog(title = "请稍候......", message = "正在获取单词数据......") {
+                setProgressStyle(0)
+                setOnDismissListener { networkJob?.cancel() }
+            }
+            progressDialog.show()
             val inquireResult = try {
                 NetworkUtil.instance.inquireWordByCoroutinesAsync(word).await()
             } catch (e: Exception) {
                 e.printStackTrace()
-                mProgressDialog.dismiss()
+                progressDialog.dismiss()
                 view.snackbar("网络出现问题，请稍后再试。")
                 return@launch
             }
             val pairDeferred = async(Dispatchers.Default) { getOtherTranslationAndRelateWords(inquireResult) }
             inquireResultChannel.send(inquireResult to word)
             OTRWChannel.send(pairDeferred.await())
-            mProgressDialog.dismiss()
+            progressDialog.dismiss()
             launch(Dispatchers.Default) { updateRecyclerViewData(inquireResult) }
         }
     }

@@ -36,10 +36,6 @@ object ImageManagerService {
     }
 
     suspend fun loadBackground(context: Context, imageView: ImageView) {
-        getURL(context, imageView)
-    }
-
-    private suspend fun getURL(context: Context, imageView: ImageView) {
         val sharedPreferences = context.getSharedPreferences(FILE_NAME, Context.MODE_PRIVATE)
         if (!::todayURL.isInitialized) {
             todayURL = sharedPreferences.getString(KEY_URL, DEFAULT_VALUE)!!
