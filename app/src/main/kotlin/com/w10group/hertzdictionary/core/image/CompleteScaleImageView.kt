@@ -35,17 +35,17 @@ import kotlin.coroutines.CoroutineContext
 
 /**
  * Created by qiaoyuang on 2018/7/9.
- * 大图查看器封装(网络查看模式支持并发)
+ * 大图查看器封装（网络查看模式支持并发）
  */
 
 class CompleteScaleImageView(private val mActivity: Activity,
                              private val mImageDownloader: ImageDownloader,
                              private val mRequestCode: Int) : CoroutineScope {
 
-    private val mTotalJob = Job()
+    private lateinit var mTotalJob: Job
 
     override val coroutineContext: CoroutineContext
-        get() = Dispatchers.IO + mTotalJob
+        get() = Dispatchers.Main + mTotalJob
 
     private lateinit var mViewPager: ViewPager
     private val mAdapter by lazy { DialogPagerAdapter(mViews, mDialog) }
@@ -55,7 +55,10 @@ class CompleteScaleImageView(private val mActivity: Activity,
     private lateinit var mIVDelete: ImageView//删除按钮
     private lateinit var mTVImageCount: TextView//显示当前为第几页的TextView
 
-    private val mDialog = Dialog(mActivity, R.style.Dialog_Fullscreen)
+    private val mDialog = Dialog(mActivity, R.style.Dialog_Fullscreen).apply {
+        setContentView(initView())
+        setOnDismissListener { mTotalJob.cancel() }
+    }
 
     private val mViews by lazy { LinkedList<View>() }
     private val mDownloadFiles by lazy { LinkedList<File>() }//下载图片列表，当使用网络查看模式时，该列表保存所有下载下来的完整尺寸图片
@@ -68,6 +71,8 @@ class CompleteScaleImageView(private val mActivity: Activity,
         const val FILE = 1
         const val PROGRESS_BAR_ID = 10
         const val SUBSAMPLING_ID = 11
+
+        const val VALUE_TEXT_COLOR = "textColor"
     }
 
     //标示当前状态是网络图片显示模式还是本地图片显示模式
@@ -91,15 +96,11 @@ class CompleteScaleImageView(private val mActivity: Activity,
                 mViews.clear()
         }
 
-    private val mAnim by lazy {
-        val colorAnim = ObjectAnimator.ofArgb(mTVImageCount, "textColor", Color.WHITE, Color.TRANSPARENT)
-        colorAnim.duration = 1500
-        colorAnim.interpolator = LinearInterpolator()
-        colorAnim.setEvaluator(ArgbEvaluator())
-        colorAnim
+    private val mAnim = ObjectAnimator.ofArgb(mTVImageCount, VALUE_TEXT_COLOR , Color.WHITE, Color.TRANSPARENT).apply {
+        duration = 1500
+        interpolator = LinearInterpolator()
+        setEvaluator(ArgbEvaluator())
     }
-
-    init { mDialog.setContentView(initView()) }
 
     private fun initView(): View =
         AnkoContext.create(mActivity).apply {
@@ -175,12 +176,14 @@ class CompleteScaleImageView(private val mActivity: Activity,
             }
         }.view
 
+    // 保存图片
     fun restoreImage() {
         val file = mDownloadFiles[mSelectedPosition]
         MediaStore.Images.Media.insertImage(mActivity.contentResolver, file.absolutePath, file.name, mAlbumName)
         mViewPager.snackbar("图片保存成功")
     }
 
+    // 动态申请权限被拒绝后的回调
     fun permissionsRejectSnack() {
         mViewPager.longSnackbar("您拒绝了存储权限申请，保存图片失败", "设置") {
             val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
@@ -214,42 +217,47 @@ class CompleteScaleImageView(private val mActivity: Activity,
         this.onDelete = onDelete
     }
 
-    //设置下载按钮是否启用
-    fun setDownloadEnable(isEnable: Boolean) {
-        mIVDownload.visibility = if (isEnable) {
-            View.VISIBLE
-        } else View.INVISIBLE
-    }
+    var isDownloaderEnable: Boolean = false
+        set(value) {
+            field = value
+            mIVDownload.visibility = if (value) {
+                View.VISIBLE
+            } else View.INVISIBLE
+        }
 
-   fun showByCoroutines(startPosition: Int = 0): Job = launch {
-        if (mViews.isEmpty()) {
-            if (mStatus == URL) {
-                mUrls?.let { urls ->
-                    for (i in 0 until urls.size) {
-                        mViews.add(createItemView())
-                        val deferred = async(Dispatchers.IO) {
-                            val downloadFile = mImageDownloader.download(urls[i], mActivity)
-                            mDownloadFiles.add(downloadFile)
-                            downloadFile
+    // 启动并展示图片
+    fun showByCoroutines(startPosition: Int = 0) {
+        mTotalJob = Job()
+        launch {
+            if (mViews.isEmpty()) {
+                if (mStatus == URL) {
+                    mUrls?.let { urls ->
+                        for (i in 0 until urls.size) {
+                            mViews.add(createItemView())
+                            val deferred = async(Dispatchers.IO) {
+                                val downloadFile = mImageDownloader.download(urls[i], mActivity)
+                                mDownloadFiles.add(downloadFile)
+                                downloadFile
+                            }
+                            launch {
+                                mViews[i].find<SubsamplingScaleImageView>(SUBSAMPLING_ID).setImage(ImageSource.uri(Uri.fromFile(deferred.await())))
+                                mViews[i].find<ProgressBar>(PROGRESS_BAR_ID).visibility = View.INVISIBLE
+                            }
                         }
-                        launch(Dispatchers.Main) {
-                            mViews[i].find<SubsamplingScaleImageView>(SUBSAMPLING_ID).setImage(ImageSource.uri(Uri.fromFile(deferred.await())))
-                            mViews[i].find<ProgressBar>(PROGRESS_BAR_ID).visibility = View.INVISIBLE
+                        initShow(startPosition)
+                    }
+                } else if (mStatus == FILE) {
+                    mFiles?.let {
+                        for (file in it) {
+                            val view = createItemView()
+                            val subsamplingScaleImageView = view.find<SubsamplingScaleImageView>(SUBSAMPLING_ID)
+                            mViews.add(view)
+                            subsamplingScaleImageView.setImage(ImageSource.uri(Uri.fromFile(file)))
                         }
                     }
-                    initShow(startPosition)
                 }
-            } else if (mStatus == FILE) {
-                mFiles?.let {
-                    for (file in it) {
-                        val view = createItemView()
-                        val subsamplingScaleImageView = view.find<SubsamplingScaleImageView>(SUBSAMPLING_ID)
-                        mViews.add(view)
-                        subsamplingScaleImageView.setImage(ImageSource.uri(Uri.fromFile(file)))
-                    }
-                }
-            }
-        } else showAgain(startPosition)
+            } else showAgain(startPosition)
+        }
     }
 
     private fun initShow(startPosition: Int) {
@@ -267,13 +275,13 @@ class CompleteScaleImageView(private val mActivity: Activity,
         mAnim.start()
     }
 
+    // 回收资源
     fun recycler() {
         if (mViews.isNotEmpty()) {
             mViews.forEach {
                 it.find<SubsamplingScaleImageView>(SUBSAMPLING_ID).recycle()
             }
         }
-        mTotalJob.cancel()
     }
 
 }

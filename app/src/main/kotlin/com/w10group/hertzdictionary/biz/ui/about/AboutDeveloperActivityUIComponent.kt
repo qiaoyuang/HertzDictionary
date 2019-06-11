@@ -309,7 +309,7 @@ class AboutDeveloperActivityUIComponent(private val mAboutDeveloperActivity: Abo
 
     private fun createCompleteScaleImageView(list: MutableList<String>, requestCode: Int): CompleteScaleImageView {
         val completeScaleImageView = CompleteScaleImageView(mAboutDeveloperActivity, GlideDownloader, requestCode)
-        completeScaleImageView.setDownloadEnable(true)
+        completeScaleImageView.isDownloaderEnable = true
         completeScaleImageView.mUrls = list
         return completeScaleImageView
     }

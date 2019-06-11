@@ -19,11 +19,12 @@ import kotlinx.coroutines.withContext
 
 class MainActivity : CoroutineScopeActivity<MainActivity>() {
 
-    internal companion object {
+    companion object {
         // 标记当前词典的状态是否是查询状态
         const val STATUS_INQUIRED_NOT = 0
         const val STATUS_INQUIRED = 1
 
+        // 标记曲线横轴显示时间的状态
         const val CURVE_STATUS_WEEK = 0
         const val CURVE_STATUS_MONTH = 1
     }
@@ -44,12 +45,12 @@ class MainActivity : CoroutineScopeActivity<MainActivity>() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         launch(Dispatchers.IO) {
-            uiComponent.loadBackgroundImageView()
             mAdapter = WordListAdapter(implementer, WordManagerServiceV3.allLocalWords, this) {
                 uiComponent.setWordText(it)
                 inquire(it)
             }
             withContext(Dispatchers.Main) {
+                uiComponent.loadBackgroundImageView()
                 uiComponent.setAdapter(mAdapter)
             }
         }
