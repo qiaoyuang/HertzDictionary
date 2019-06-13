@@ -38,7 +38,7 @@ object DateManagerService {
                 }
             }
         }
-        val biggestValue = wordAndCountMap.entries.maxBy { it.value }?.value!!
+        val biggestValue = wordAndCountMap.entries.maxBy { it.value }?.value ?: 0
         return Triple(timeList, valueList.toList(), wordAndCountMap.entries
                 .asSequence()
                 .filter { it.value == biggestValue }

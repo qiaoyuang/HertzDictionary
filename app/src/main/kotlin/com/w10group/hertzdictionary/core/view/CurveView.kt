@@ -194,9 +194,11 @@ class CurveView : View {
     private fun Canvas.drawYText() {
         val maxValue = value.max()!!
         val value1 = "0"
-        val value4 = "$maxValue"
-        val value3 = mFormat.format(maxValue.toFloat() / 3 * 2)
-        val value2 = mFormat.format(maxValue.toFloat() / 3)
+        val (value2, value3, value4) = if (maxValue == 0)
+            Triple("1", "2", "3")
+        else Triple(mFormat.format(maxValue.toFloat() / 3),
+                mFormat.format(maxValue.toFloat() / 3 * 2),
+                "$maxValue")
         val x = 0f
         val y1 = (height / 5).toFloat()
         val y2 = (height / 5 * 2).toFloat()
