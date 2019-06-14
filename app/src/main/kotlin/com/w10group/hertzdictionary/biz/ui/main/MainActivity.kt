@@ -45,7 +45,7 @@ class MainActivity : CoroutineScopeActivity<MainActivity>() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         launch(Dispatchers.IO) {
-            mAdapter = WordListAdapter(implementer, WordManagerServiceV3.allLocalWords, implementer) {
+            mAdapter = WordListAdapter(implementer, WordManagerServiceV3.allLocalWords) {
                 uiComponent.setWordText(it)
                 inquire(it)
             }

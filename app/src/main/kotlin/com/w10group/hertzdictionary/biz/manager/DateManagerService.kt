@@ -47,15 +47,15 @@ object DateManagerService {
     }
 
     // 获取最近一周的时间戳
-    private val weekTimestampList
+    private inline val weekTimestampList
         get() = getTimestampList(7)
 
     // 获取最近一个月的时间戳
-    private val monthTimestampList
+    private inline val monthTimestampList
         get() = getTimestampList(30)
 
     // 获取当前时间戳
-    val currentTimestamp
+    inline val currentTimestamp
         get() = System.currentTimeMillis()
 
     // 获取时间戳列表

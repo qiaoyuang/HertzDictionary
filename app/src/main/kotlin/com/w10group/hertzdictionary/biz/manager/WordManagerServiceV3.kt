@@ -69,32 +69,33 @@ object WordManagerServiceV3 {
     }
 
     // 拼接其它义项以及相关词组并返回
-    private suspend fun getOtherTranslationAndRelateWords(inquireResult: InquireResult): Pair<String, String> {
-        // 拼接其它义项
-        val otherTranslationDeferred = inquireResult.alternativeTranslations?.get(0)?.words?.let {
-            GlobalScope.async(Dispatchers.Default) {
-                StringBuilder().apply {
-                    val last = it.size - 1
-                    it.forEachIndexed { index, alternative ->
-                        if (index != 0)
-                            append(if (index == last) alternative.word else "${alternative.word}，")
-                    }
-                }.toString()
+    private suspend fun getOtherTranslationAndRelateWords(
+            inquireResult: InquireResult): Pair<String, String> = coroutineScope {
+            // 拼接其它义项
+            val otherTranslationDeferred = inquireResult.alternativeTranslations?.get(0)?.words?.let {
+                async(Dispatchers.Default) {
+                    StringBuilder().apply {
+                        val last = it.size - 1
+                        it.forEachIndexed { index, alternative ->
+                            if (index != 0)
+                                append(if (index == last) alternative.word else "${alternative.word}，")
+                        }
+                    }.toString()
+                }
             }
-        }
-        // 拼接相关词组
-        val relatedWordsDeferred = inquireResult.relatedWords?.words?.let {
-            GlobalScope.async(Dispatchers.Default) {
-                StringBuilder().apply {
-                    val last = it.size - 1
-                    it.forEachIndexed { index, word -> append(if (index == last) word else "$word, ") }
-                }.toString()
+            // 拼接相关词组
+            val relatedWordsDeferred = inquireResult.relatedWords?.words?.let {
+                async(Dispatchers.Default) {
+                    StringBuilder().apply {
+                        val last = it.size - 1
+                        it.forEachIndexed { index, word -> append(if (index == last) word else "$word, ") }
+                    }.toString()
+                }
             }
+            val otherTranslation = otherTranslationDeferred?.await() ?: ""
+            val relatedWords = relatedWordsDeferred?.await() ?: ""
+            otherTranslation to relatedWords
         }
-        val otherTranslation = otherTranslationDeferred?.await() ?: ""
-        val relatedWords = relatedWordsDeferred?.await() ?: ""
-        return otherTranslation to relatedWords
-    }
 
     // 刷新RecyclerView的词序
     private suspend fun updateRecyclerViewData(inquireResult: InquireResult) {
