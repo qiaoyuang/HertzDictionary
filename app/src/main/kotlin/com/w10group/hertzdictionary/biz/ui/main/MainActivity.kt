@@ -91,10 +91,11 @@ class MainActivity : CoroutineScopeActivity<MainActivity>() {
 
     fun refreshRecyclerView() = launch {
         val word = WordManagerServiceV3.listUpdateChannel.receive()
+        val (front, next) = WordManagerServiceV3.coordinate
         if (word.isSaved) {
-            if (WordManagerServiceV3.isMoved[0] >= 0) {
-                mAdapter.notifyItemRemoved(WordManagerServiceV3.isMoved[0])
-                mAdapter.notifyItemInserted(WordManagerServiceV3.isMoved[1])
+            if (front >= 0) {
+                mAdapter.notifyItemRemoved(front)
+                mAdapter.notifyItemInserted(next)
             }
             mAdapter.notifyItemRangeChanged(0, mAdapter.itemCount)
         } else {

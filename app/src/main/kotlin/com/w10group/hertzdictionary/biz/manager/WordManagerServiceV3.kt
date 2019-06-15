@@ -40,8 +40,7 @@ object WordManagerServiceV3 {
 
     // 查询单词
     @Suppress("DEPRECATION")
-    fun inquire(word: String,
-                view: View) {
+    fun inquire(word: String, view: View) {
         networkJob = GlobalScope.launch(Dispatchers.Main) {
             if (!NetworkUtil.checkNetwork(view.context)) {
                 view.snackbar("当前无网络连接")
@@ -125,11 +124,11 @@ object WordManagerServiceV3 {
     }
 
     // 第一个数字为负的时候表示未移动过，非负时表示移动前的位置，第二个数表示移动后的位置
-    val isMoved = intArrayOf(-1, -1)
+    val coordinate = intArrayOf(-1, -1)
 
     // 调整LocalWord在mData中的位置，并返回链表是否被调整过
     private infix fun LocalWord.reSort(index: Int) {
-        isMoved[0] = -1
+        coordinate[0] = -1
         when {
             index == 0 -> return
             allLocalWords[index - 1].count >= count -> return
@@ -141,14 +140,14 @@ object WordManagerServiceV3 {
                         allLocalWords.removeAt(index)
                         val newIndex = i + 1
                         allLocalWords.add(newIndex, this)
-                        isMoved[0] = index
-                        isMoved[1] = newIndex
+                        coordinate[0] = index
+                        coordinate[1] = newIndex
                         return
                     } else if (i == 0 && word.count < count) {
                         allLocalWords.removeAt(index)
                         allLocalWords.add(i, this)
-                        isMoved[0] = index
-                        isMoved[1] = i
+                        coordinate[0] = index
+                        coordinate[1] = i
                     }
                 }
             }
