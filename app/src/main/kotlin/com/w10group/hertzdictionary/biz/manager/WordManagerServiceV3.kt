@@ -52,7 +52,7 @@ object WordManagerServiceV3 {
             }
             progressDialog.show()
             val inquireResult = try {
-                NetworkUtil.instance.inquireWordByCoroutinesAsync(word).await()
+                NetworkUtil.instance.inquireWordByCoroutinesAsync(word)
             } catch (e: Exception) {
                 e.printStackTrace()
                 progressDialog.dismiss()

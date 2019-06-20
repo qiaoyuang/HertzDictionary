@@ -2,7 +2,6 @@ package com.w10group.hertzdictionary.core
 
 import android.content.Context
 import android.net.ConnectivityManager
-import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import com.w10group.hertzdictionary.biz.manager.NetworkService
 import kotlinx.serialization.json.Json
@@ -23,7 +22,6 @@ object NetworkUtil {
     private val mRetrofit: Retrofit = Retrofit.Builder()
             .baseUrl(BASE_URL)
             .addConverterFactory(Json.nonstrict.asConverterFactory(MediaType.get(MEDIA_TYPE_JSON)))
-            .addCallAdapterFactory(CoroutineCallAdapterFactory())
             .build()
 
     private var mInstanceSoftReference = initInstanceSoftReference()

@@ -1,7 +1,6 @@
 package com.w10group.hertzdictionary.biz.manager
 
 import com.w10group.hertzdictionary.biz.bean.InquireResult
-import kotlinx.coroutines.Deferred
 import okhttp3.ResponseBody
 import retrofit2.http.GET
 import retrofit2.http.Query
@@ -15,10 +14,10 @@ import retrofit2.http.Url
 interface NetworkService {
 
     @GET
-    fun getImageURLByCoroutinesAsync(@Url url: String): Deferred<ResponseBody>
+    suspend fun getImageURLByCoroutinesAsync(@Url url: String): ResponseBody
 
     @GET("translate_a/single")
-    fun inquireWordByCoroutinesAsync(@Query("q") word: String,
+    suspend fun inquireWordByCoroutinesAsync(@Query("q") word: String,
                                      @Query("dj") dj: Int = 1,
                                      @Query("client") client: String = "gtx",
                                      @Query("sl") source: String = "en",
@@ -28,6 +27,6 @@ interface NetworkService {
                                      @Query("dt") param2: String = "at",
                                      @Query("dt") param6: String = "rw",
                                      @Query("dt") param7: String = "bd",
-                                     @Query("dt") param8: String = "rm"): Deferred<InquireResult>
+                                     @Query("dt") param8: String = "rm"): InquireResult
 
 }
