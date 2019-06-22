@@ -106,7 +106,7 @@ class MainActivityUIComponent(private val mMainActivity: MainActivity) : UICompo
 
                         verticalLayout {
                             mETInput = editText {
-                                hint = "点击可输入单词"
+                                setText(R.string.click_input_word)
                                 hintTextColor = gray600
                                 textColor = Color.BLACK
                                 background = null
@@ -178,9 +178,9 @@ class MainActivityUIComponent(private val mMainActivity: MainActivity) : UICompo
                                 }
                                 textView {
                                     id = sourceLanguageId
+                                    setText(R.string.sample_chinese)
                                     textColor = Color.WHITE
                                     textSize = 16f
-                                    text = "简体中文"
                                 }.lparams(wrapContent, wrapContent) {
                                     alignParentTop()
                                     alignParentStart()
@@ -237,9 +237,9 @@ class MainActivityUIComponent(private val mMainActivity: MainActivity) : UICompo
                             foreground = createTouchFeedbackBorderless(context)
                             verticalLayout {
                                 textView {
+                                    setText(R.string.word_extension)
                                     textColor = Color.BLACK
                                     textSize = 16f
-                                    text = "词汇扩展"
                                 }.lparams(wrapContent, wrapContent) {
                                     topMargin = dip(8)
                                     bottomMargin = dip(16)
@@ -305,11 +305,11 @@ class MainActivityUIComponent(private val mMainActivity: MainActivity) : UICompo
                             super.onScrollStateChanged(recyclerView, newState)
                             if (newState == RecyclerView.SCROLL_STATE_IDLE) {
                                 if (firstPosition == 0 && mScrollFlag) {
-                                    recyclerView.snackbar( "已滑动到顶部")
+                                    recyclerView.snackbar(R.string.slide_to_top)
                                     mScrollFlag = false
                                 }
                                 if (lastPosition + 1 == adapter?.itemCount && mScrollFlag) {
-                                    recyclerView.snackbar("已滑动到底部")
+                                    recyclerView.snackbar(R.string.slide_to_bottom)
                                     mScrollFlag = false
                                 }
                             }
@@ -442,7 +442,7 @@ class MainActivityUIComponent(private val mMainActivity: MainActivity) : UICompo
                 mTVSrcPronunciation.visibility = View.GONE
             } else {
                 mTVSrcPronunciation.visibility = View.VISIBLE
-                val srcPronunciationText = "读音：${it[1].srcPronunciation}"
+                val srcPronunciationText = mMainActivity.getString(R.string.pronunciation, it[1].srcPronunciation)
                 mTVSrcPronunciation.text = srcPronunciationText
             }
 
@@ -490,10 +490,10 @@ class MainActivityUIComponent(private val mMainActivity: MainActivity) : UICompo
     }
 
     infix fun displayOtherTranslation(words: String)
-            = mTVOtherTranslation.setWords("其它义项：", words)
+            = mTVOtherTranslation.setWords(mMainActivity.getString(R.string.other_translation), words)
 
     infix fun displayRelatedWords(words: String)
-            = mTVRelatedWords.setWords("相关词组：", words)
+            = mTVRelatedWords.setWords(mMainActivity.getString(R.string.related_words), words)
 
     fun updateCurveView(timeList: List<Long>, valueList: List<Int>) = mCurveView.setData(timeList, valueList)
 

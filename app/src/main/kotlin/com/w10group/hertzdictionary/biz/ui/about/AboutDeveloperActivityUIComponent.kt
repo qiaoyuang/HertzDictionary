@@ -156,7 +156,7 @@ class AboutDeveloperActivityUIComponent(private val mAboutDeveloperActivity: Abo
                         }.lparams(matchParent, wrapContent)
 
                         mTVFeature = textView {
-                            text = "未来新功能"
+                            setText(R.string.new_feature)
                             textSize = 16f
                             textColor = blue1
                             setOnClickListener { startActivity<FeaturesActivity>() }
@@ -185,7 +185,7 @@ class AboutDeveloperActivityUIComponent(private val mAboutDeveloperActivity: Abo
                                         bottomMargin = dip(16)
                                     })
                             textView {
-                                text = "微信收款码"
+                                setText(R.string.wechat_receive_code)
                                 textSize = 16f
                                 textColorResource = R.color.wechat
                             }.lparams(wrapContent, wrapContent) {
@@ -209,7 +209,7 @@ class AboutDeveloperActivityUIComponent(private val mAboutDeveloperActivity: Abo
                                         bottomMargin = dip(16)
                                     })
                             textView {
-                                text = "支付宝收款码"
+                                setText(R.string.alipay_receive_code)
                                 textSize = 16f
                                 textColorResource = R.color.alipay
                             }.lparams(wrapContent, wrapContent) {
@@ -232,7 +232,7 @@ class AboutDeveloperActivityUIComponent(private val mAboutDeveloperActivity: Abo
                         frameLayout {
                             backgroundColor = blueGray
                             foreground = createTouchFeedbackBorderless(context)
-                            val content = "BTC钱包地址"
+                            val content = context.getString(R.string.btc_address)
                             setOnClickListener { copyToClipBoard(it, content, BTC_ADDRESS) }
                             GlideApp.with(mAboutDeveloperActivity).load(R.drawable.btc).dontAnimate().into(
                                     imageView().lparams(dip(24), dip(24)) {
@@ -257,7 +257,7 @@ class AboutDeveloperActivityUIComponent(private val mAboutDeveloperActivity: Abo
                         frameLayout {
                             backgroundColor = blueGray
                             foreground = createTouchFeedbackBorderless(context)
-                            val content = "ETH钱包地址"
+                            val content = context.getString(R.string.eth_address)
                             setOnClickListener { copyToClipBoard(it, content, ETH_ADDRESS) }
                             GlideApp.with(mAboutDeveloperActivity).load(R.drawable.eth).dontAnimate().into(
                                     imageView().lparams(dip(24), dip(24)) {
@@ -317,7 +317,7 @@ class AboutDeveloperActivityUIComponent(private val mAboutDeveloperActivity: Abo
     private fun copyToClipBoard(view: View, content: String, address: String) {
         val cmb = mAboutDeveloperActivity.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
         cmb.primaryClip = ClipData.newPlainText("label", address)
-        view.snackbar("${content}已复制到剪贴板")
+        view.snackbar(mAboutDeveloperActivity.getString(R.string.copy_down, content))
     }
 
     fun updateTextView(result: List<String>) {

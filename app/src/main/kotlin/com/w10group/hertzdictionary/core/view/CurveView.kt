@@ -279,7 +279,7 @@ class CurveView : View {
                 val endY = height.toFloat() / 5 * 4
 
                 // 绘制弹窗
-                val touchDiaPowerText = "次数：${value[index]}$DEFAULT_UNIT"
+                val touchDiaPowerText = context.getString(R.string.curve_view_count, "${value[index]}$DEFAULT_UNIT")
                 val touchTimeText = time[index].fmtDateNormal()
                 val windowWidth = dp96
                 val offset = dp16

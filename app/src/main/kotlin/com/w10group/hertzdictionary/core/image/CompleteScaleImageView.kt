@@ -50,10 +50,10 @@ class CompleteScaleImageView(private val mActivity: Activity,
     private lateinit var mViewPager: ViewPager
     private val mAdapter by lazy { DialogPagerAdapter(mViews, mDialog) }
 
-    private lateinit var mIVBack: ImageView//后退按钮
-    private lateinit var mIVDownload: ImageView//下载按钮
-    private lateinit var mIVDelete: ImageView//删除按钮
-    private lateinit var mTVImageCount: TextView//显示当前为第几页的TextView
+    private lateinit var mIVBack: ImageView // 后退按钮
+    private lateinit var mIVDownload: ImageView // 下载按钮
+    private lateinit var mIVDelete: ImageView // 删除按钮
+    private lateinit var mTVImageCount: TextView // 显示当前为第几页的TextView
 
     private val mDialog = Dialog(mActivity, R.style.Dialog_Fullscreen).apply {
         setContentView(initView())
@@ -180,12 +180,12 @@ class CompleteScaleImageView(private val mActivity: Activity,
     fun restoreImage() {
         val file = mDownloadFiles[mSelectedPosition]
         MediaStore.Images.Media.insertImage(mActivity.contentResolver, file.absolutePath, file.name, mAlbumName)
-        mViewPager.snackbar("图片保存成功")
+        mViewPager.snackbar(R.string.image_saved)
     }
 
     // 动态申请权限被拒绝后的回调
     fun permissionsRejectSnack() {
-        mViewPager.longSnackbar("您拒绝了存储权限申请，保存图片失败", "设置") {
+        mViewPager.longSnackbar(R.string.toast_reject_permission, R.string.setting) {
             val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             intent.data = Uri.fromParts("package", mActivity.packageName, null)

@@ -80,7 +80,8 @@ class FeaturesActivityUIComponent(private val mFeatureActivity: FeaturesActivity
                         foreground = createTouchFeedbackBorderless(context)
                         verticalLayout {
                             textView {
-                                val title = "当前版本：V${context.packageManager.getPackageInfo(context.packageName, 0).versionName}"
+                                val title = context.getString(R.string.current_version,
+                                        context.packageManager.getPackageInfo(context.packageName, 0).versionName)
                                 text = title
                                 textColor = Color.BLACK
                                 textSize = 22f
@@ -111,8 +112,7 @@ class FeaturesActivityUIComponent(private val mFeatureActivity: FeaturesActivity
 
                         verticalLayout {
                             textView {
-                                val title = "计划开发的新功能"
-                                text = title
+                                setText(R.string.plan_feature)
                                 textColor = Color.BLACK
                                 textSize = 22f
                             }.lparams(wrapContent, wrapContent) {
@@ -142,8 +142,7 @@ class FeaturesActivityUIComponent(private val mFeatureActivity: FeaturesActivity
 
                         verticalLayout {
                             textView {
-                                val title = "Bug反馈"
-                                text = title
+                                setText(R.string.bug_feedback)
                                 textColor = Color.BLACK
                                 textSize = 22f
                             }.lparams(wrapContent, wrapContent) {
@@ -163,7 +162,7 @@ class FeaturesActivityUIComponent(private val mFeatureActivity: FeaturesActivity
                                 paint.flags = Paint.UNDERLINE_TEXT_FLAG
                                 paint.isAntiAlias = true
                                 gravity = Gravity.CENTER_HORIZONTAL
-                                setOnClickListener { email(MY_EMAIL, "赫兹词典bug反馈") }
+                                setOnClickListener { email(MY_EMAIL, context.getString(R.string.email_subject)) }
                             }.lparams(wrapContent, wrapContent) {
                                 gravity = Gravity.CENTER_HORIZONTAL
                                 topMargin = dip(8)
@@ -189,7 +188,7 @@ class FeaturesActivityUIComponent(private val mFeatureActivity: FeaturesActivity
                                             bottomMargin = dip(16)
                                         })
                                 textView {
-                                    text = "我的微信"
+                                    setText(R.string.my_wechat)
                                     textSize = 16f
                                     textColorResource = R.color.wechat
                                 }.lparams(wrapContent, wrapContent) {
@@ -217,8 +216,7 @@ class FeaturesActivityUIComponent(private val mFeatureActivity: FeaturesActivity
 
                         verticalLayout {
                             textView {
-                                val title = "一点技术相关"
-                                text = title
+                                setText(R.string.about_tech)
                                 textColor = Color.BLACK
                                 textSize = 22f
                             }.lparams(wrapContent, wrapContent) {
@@ -286,7 +284,7 @@ class FeaturesActivityUIComponent(private val mFeatureActivity: FeaturesActivity
             mTVBugFeedback2.text = result[3]
             mTVAboutTech1.text = result[4]
             mTVAboutTech2.text = result[5]
-        } else mToolbar.snackbar("文件加载错误")
+        } else mToolbar.snackbar(R.string.file_load_error)
     }
 
     fun requestPermissionsResult(requestCode: Int, grantResults: IntArray) {

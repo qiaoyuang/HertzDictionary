@@ -1,6 +1,7 @@
 package com.w10group.hertzdictionary.biz.manager
 
 import android.view.View
+import com.w10group.hertzdictionary.R
 import com.w10group.hertzdictionary.biz.bean.InquireResult
 import com.w10group.hertzdictionary.biz.bean.LocalWord
 import com.w10group.hertzdictionary.core.NetworkUtil
@@ -43,10 +44,10 @@ object WordManagerServiceV3 {
     fun inquire(word: String, view: View) {
         networkJob = GlobalScope.launch(Dispatchers.Main) {
             if (!NetworkUtil.checkNetwork(view.context)) {
-                view.snackbar("当前无网络连接")
+                view.snackbar(R.string.no_network)
                 return@launch
             }
-            val progressDialog = view.context.progressDialog(title = "请稍候......", message = "正在获取单词数据......") {
+            val progressDialog = view.context.progressDialog(title = R.string.wait, message = R.string.getting_word) {
                 setProgressStyle(0)
                 setOnDismissListener { networkJob?.cancel() }
             }
@@ -56,7 +57,7 @@ object WordManagerServiceV3 {
             } catch (e: Exception) {
                 e.printStackTrace()
                 progressDialog.dismiss()
-                view.snackbar("网络出现问题，请稍后再试。")
+                view.snackbar(R.string.network_error)
                 return@launch
             }
             val pairDeferred = async(Dispatchers.Default) { getOtherTranslationAndRelateWords(inquireResult) }

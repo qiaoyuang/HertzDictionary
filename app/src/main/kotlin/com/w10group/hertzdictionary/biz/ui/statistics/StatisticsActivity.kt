@@ -1,6 +1,7 @@
 package com.w10group.hertzdictionary.biz.ui.statistics
 
 import android.view.MenuItem
+import com.w10group.hertzdictionary.R
 import com.w10group.hertzdictionary.biz.bean.LocalWord
 import com.w10group.hertzdictionary.biz.manager.CurveValue
 import com.w10group.hertzdictionary.biz.manager.DateManagerService
@@ -28,9 +29,9 @@ class StatisticsActivity : CoroutineScopeActivity<StatisticsActivity>() {
     private inline fun selected(count: Int, crossinline create: (Array<LocalWord>) -> CurveValue) = launch(Dispatchers.Default) {
         val (timeList, valueList, mostResult) = create(WordManagerServiceV3.allLocalWords.toTypedArray())
         val totalCount = valueList.sum()
-        val totalCountText = "最近 $count 天共查询：$totalCount 次"
+        val totalCountText = getString(R.string.last_required, count, totalCount)
         val averageCount = totalCount / count
-        val averageCountText = "平均每天查询：$averageCount 次"
+        val averageCountText = getString(R.string.average_required, averageCount)
         val mostWordText = mostResult.toText()
         withContext(Dispatchers.Main) {
             uiComponent.updateUI(totalCountText, averageCountText, mostWordText, timeList, valueList)
@@ -38,11 +39,11 @@ class StatisticsActivity : CoroutineScopeActivity<StatisticsActivity>() {
     }
 
     private fun MostValue.toText(): String = StringBuilder().apply {
-        append("查询次数最多的单词为：")
+        append(getString(R.string.most_required))
         first.forEachIndexed { index, localWord ->
             append(if (index == 0) localWord.en else "、${localWord.en}")
         }
-        append("；共查询 $second 次")
+        append(getString(R.string.total_required, second))
     }.toString()
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {

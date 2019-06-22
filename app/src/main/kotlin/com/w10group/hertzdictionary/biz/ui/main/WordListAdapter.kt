@@ -113,21 +113,21 @@ class WordListAdapter(private val mContext: Context,
         holder.apply {
             tvEnglish.text = word.en
             tvChinese.text = word.ch
-            val countStr = "已查询次数：${word.count}"
-            tvCount.text = countStr
-            val rateStr = "查询比例：${mFormat.format(word.count.toDouble() / sumCount.toDouble())}"
-            tvInquireRate.text = rateStr
+            tvCount.text = mContext.getString(R.string.required_count, word.count)
+            tvInquireRate.text = mContext.getString(R.string.required_rate, mFormat.format(word.count.toDouble() / sumCount.toDouble()))
             cardView.setOnClickListener { itemOnClickListener(word.en) }
             cardView.setOnLongClickListener { onLongClick(word, position) }
         }
     }
 
     private fun onLongClick(localWord: LocalWord, index: Int): Boolean {
-        mContext.selector("", listOf("删除：${localWord.en}", "清空所有单词")) { dialog, which ->
+        mContext.selector("",
+                listOf(mContext.getString(R.string.delete_word, localWord.en),
+                        mContext.getString(R.string.delete_all_word))) { dialog, which ->
             if (which == 0) {
                 mContext.alert {
-                    title = "您确定要删除${localWord.en}吗？"
-                    message = "删除单词会使单词的查询次数清零，且不可恢复，请您确认。"
+                    title = mContext.getString(R.string.are_you_sure_delete, localWord.en)
+                    message = mContext.getString(R.string.delete_clear_word)
                     okButton { alertDialog ->
                         mData.removeAt(index)
                         sumCount -= localWord.count
@@ -140,8 +140,8 @@ class WordListAdapter(private val mContext: Context,
                 }.show()
             } else {
                 mContext.alert {
-                    title = "您确定要清空所有单词吗？"
-                    message = "清空所有单词会使所有保存的已查询单词数据全部清零，且不可恢复，请您确认。"
+                    title = mContext.getString(R.string.are_you_sure_delete_all)
+                    message = mContext.getString(R.string.delete_clear_word_all)
                     okButton { alertDialog ->
                         mData.clear()
                         sumCount = 0

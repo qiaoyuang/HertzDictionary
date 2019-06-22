@@ -16,7 +16,9 @@ import org.jetbrains.anko.*
 
 class DateSpinnerAdapter(private val mContext: Context) : SpinnerAdapter {
 
-    private val mData = listOf("最近一星期", "最近一个月")
+    private val mData by lazy { listOf(mContext.getString(R.string.last_week),
+            mContext.getString(R.string.last_month)) }
+
     private val gray600 by lazy { ContextCompat.getColor(mContext, R.color.gray600) }
     private val blue1 by lazy { ContextCompat.getColor(mContext, R.color.blue1) }
 
