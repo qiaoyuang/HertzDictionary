@@ -106,7 +106,7 @@ class MainActivityUIComponent(private val mMainActivity: MainActivity) : UICompo
 
                         verticalLayout {
                             mETInput = editText {
-                                setText(R.string.click_input_word)
+                                setHint(R.string.click_input_word)
                                 hintTextColor = gray600
                                 textColor = Color.BLACK
                                 background = null

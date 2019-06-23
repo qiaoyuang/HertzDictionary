@@ -15,12 +15,12 @@ typealias CurveValue = Triple<List<Long>, List<Int>, MostValue>
 
 object DateManagerService {
 
-    private const val ONE_DAY = 86400000
+    private const val ONE_DAY = 86_400_000
 
-    // 生成某单词的周曲线数据
+    // 生成单词的周曲线数据
     fun createWeekValue(vararg localWords: LocalWord): CurveValue = createXYValue(weekTimestampList, *localWords)
 
-    // 生成某单词的月曲线数据
+    // 生成单词的月曲线数据
     fun createMonthValue(vararg localWords: LocalWord): CurveValue = createXYValue(monthTimestampList, *localWords)
 
     private fun createXYValue(timeList: List<Long>, vararg localWords: LocalWord): CurveValue {
