@@ -38,8 +38,7 @@ class AboutDeveloperActivity : CoroutineScopeActivity<AboutDeveloperActivity>() 
         return super.onOptionsItemSelected(item)
     }
 
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) =
         uiComponent.requestPermissionsResult(requestCode, grantResults)
-    }
 
 }

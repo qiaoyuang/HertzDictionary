@@ -40,6 +40,8 @@ import org.jetbrains.anko.design.*
 import org.jetbrains.anko.recyclerview.v7.recyclerView
 import org.jetbrains.anko.support.v4.drawerLayout
 import org.jetbrains.anko.support.v4.nestedScrollView
+import java.util.concurrent.Executor
+import java.util.concurrent.ExecutorService
 
 /**
  * MainActivity 的 Anko UI
@@ -122,8 +124,8 @@ class MainActivityUIComponent(private val mMainActivity: MainActivity) : UICompo
                                     false
                                 }
                                 addTextChangedListener(object : TextWatcher {
-                                    override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-                                    override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+                                    override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) = Unit
+                                    override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) = Unit
                                     override fun afterTextChanged(s: Editable?) {
                                         if (mMainActivity.status == MainActivity.STATUS_INQUIRED) restore()
                                     }
@@ -471,9 +473,7 @@ class MainActivityUIComponent(private val mMainActivity: MainActivity) : UICompo
                     }
                     recyclerView {
                         layoutManager = object : LinearLayoutManager(context, VERTICAL, false) {
-                            override fun canScrollVertically(): Boolean {
-                                return false
-                            }
+                            override fun canScrollVertically(): Boolean = true
                         }
                         dict.dictInfo?.let {
                             adapter = OtherMeanAdapter(context, it)

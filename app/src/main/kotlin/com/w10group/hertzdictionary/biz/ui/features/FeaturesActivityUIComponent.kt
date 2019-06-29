@@ -42,10 +42,10 @@ class FeaturesActivityUIComponent(private val mFeatureActivity: FeaturesActivity
 
     private val mRequestCode = 1
     private val mCompleteScaleImageView by lazy {
-        val completeScaleImageView = CompleteScaleImageView(mFeatureActivity, GlideDownloader, mRequestCode)
-        completeScaleImageView.isDownloaderEnable = true
-        completeScaleImageView.mUrls = arrayListOf(WECHAT_CODE)
-        completeScaleImageView
+        CompleteScaleImageView(mFeatureActivity, GlideDownloader, mRequestCode).apply {
+            isDownloaderEnable = true
+            mUrls = arrayListOf(WECHAT_CODE)
+        }
     }
 
     private lateinit var mToolbar: Toolbar
