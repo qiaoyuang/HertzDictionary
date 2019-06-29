@@ -40,8 +40,6 @@ import org.jetbrains.anko.design.*
 import org.jetbrains.anko.recyclerview.v7.recyclerView
 import org.jetbrains.anko.support.v4.drawerLayout
 import org.jetbrains.anko.support.v4.nestedScrollView
-import java.util.concurrent.Executor
-import java.util.concurrent.ExecutorService
 
 /**
  * MainActivity 的 Anko UI
