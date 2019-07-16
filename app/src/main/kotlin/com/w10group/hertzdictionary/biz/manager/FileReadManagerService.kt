@@ -11,7 +11,7 @@ import java.io.InputStreamReader
  */
 
 suspend fun readFileAsync(context: Context,
-                                 fileName: String): Deferred<List<String>> = coroutineScope {
+                          fileName: String): Deferred<List<String>> = coroutineScope {
     async(Dispatchers.IO) {
         BufferedReader(InputStreamReader(context.assets.open(fileName), "UTF-8")).use {
             val builder = StringBuilder()
