@@ -8,7 +8,7 @@ import kotlinx.coroutines.launch
 
 /**
  * Created by Administrator on 2018/6/25.
- * 未来新功能Activity
+ * 未来新功能 Activity
  */
 
 class FeaturesActivity : CoroutineScopeActivity<FeaturesActivity>() {
