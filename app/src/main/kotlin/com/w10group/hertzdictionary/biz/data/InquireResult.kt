@@ -1,4 +1,4 @@
-package com.w10group.hertzdictionary.biz.bean
+package com.w10group.hertzdictionary.biz.data
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable

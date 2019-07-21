@@ -3,18 +3,6 @@ package com.w10group.hertzdictionary.biz.ui.main
 import android.animation.LayoutTransition
 import android.graphics.Color
 import android.os.Build
-import android.support.design.widget.AppBarLayout
-import android.support.design.widget.AppBarLayout.LayoutParams.SCROLL_FLAG_SCROLL
-import android.support.design.widget.AppBarLayout.LayoutParams.SCROLL_FLAG_EXIT_UNTIL_COLLAPSED
-import android.support.design.widget.CollapsingToolbarLayout
-import android.support.design.widget.CollapsingToolbarLayout.LayoutParams.COLLAPSE_MODE_PARALLAX
-import android.support.design.widget.CollapsingToolbarLayout.LayoutParams.COLLAPSE_MODE_PIN
-import android.support.v4.content.ContextCompat
-import android.support.v4.widget.DrawerLayout
-import android.support.v4.widget.NestedScrollView
-import android.support.v7.app.ActionBarDrawerToggle
-import android.support.v7.widget.*
-import android.support.v7.widget.Toolbar
 import android.text.Editable
 import android.text.InputType
 import android.text.TextWatcher
@@ -24,9 +12,24 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import android.widget.*
+import androidx.appcompat.app.ActionBarDrawerToggle
+import androidx.appcompat.widget.Toolbar
+import androidx.cardview.widget.CardView
+import androidx.core.content.ContextCompat
+import androidx.core.widget.NestedScrollView
+import androidx.drawerlayout.widget.DrawerLayout
+import androidx.recyclerview.widget.DefaultItemAnimator
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.appbar.AppBarLayout
+import com.google.android.material.appbar.AppBarLayout.LayoutParams.SCROLL_FLAG_EXIT_UNTIL_COLLAPSED
+import com.google.android.material.appbar.AppBarLayout.LayoutParams.SCROLL_FLAG_SCROLL
+import com.google.android.material.appbar.CollapsingToolbarLayout
+import com.google.android.material.appbar.CollapsingToolbarLayout.LayoutParams.COLLAPSE_MODE_PARALLAX
+import com.google.android.material.appbar.CollapsingToolbarLayout.LayoutParams.COLLAPSE_MODE_PIN
 import com.w10group.hertzdictionary.R
 import com.w10group.hertzdictionary.biz.ui.about.AboutDeveloperActivity
-import com.w10group.hertzdictionary.biz.bean.InquireResult
+import com.w10group.hertzdictionary.biz.data.InquireResult
 import com.w10group.hertzdictionary.biz.ui.features.FeaturesActivity
 import com.w10group.hertzdictionary.biz.ui.licence.LicenceActivity
 import com.w10group.hertzdictionary.biz.manager.ImageManagerService
@@ -289,7 +292,7 @@ class MainActivityUIComponent(private val mMainActivity: MainActivity) : UICompo
                 }
 
                 mRecyclerView = recyclerView {
-                    val linearLayoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
+                    val linearLayoutManager = LinearLayoutManager(context)
                     layoutManager = linearLayoutManager
                     itemAnimator = DefaultItemAnimator()
                     var firstPosition = 0

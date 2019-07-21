@@ -45,7 +45,7 @@ class MainActivity : CoroutineScopeActivity<MainActivity>() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         launch(Dispatchers.IO) {
-            mAdapter = WordListAdapter(implementer, WordManagerServiceV3.allLocalWords) {
+            mAdapter = WordListAdapter(implementer, WordManagerServiceV3.getAllLocalWord()) {
                 uiComponent.setWordText(it)
                 inquire(it)
             }
@@ -90,16 +90,15 @@ class MainActivity : CoroutineScopeActivity<MainActivity>() {
     fun inquire(word: String) = WordManagerServiceV3.inquire(word, uiComponent.snackBarView)
 
     fun refreshRecyclerView() = launch {
-        val word = WordManagerServiceV3.listUpdateChannel.receive()
         val (front, next) = WordManagerServiceV3.coordinate
-        if (word.isSaved) {
-            if (front >= 0) {
+        if (front != -10) {
+            if (front > 0) {
                 mAdapter.notifyItemRemoved(front)
                 mAdapter.notifyItemInserted(next)
             }
             mAdapter.notifyItemRangeChanged(0, mAdapter.itemCount)
         } else {
-            val index = mAdapter.itemCount - 1
+            val index = mAdapter.itemCount
             mAdapter.notifyItemRangeChanged(0, index)
             mAdapter.notifyItemInserted(index)
         }

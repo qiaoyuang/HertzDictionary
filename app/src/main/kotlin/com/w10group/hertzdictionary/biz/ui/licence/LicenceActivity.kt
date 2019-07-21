@@ -2,7 +2,6 @@ package com.w10group.hertzdictionary.biz.ui.licence
 
 import android.os.Bundle
 import android.view.MenuItem
-import com.w10group.hertzdictionary.biz.ui.licence.OSLAdapter.OSL
 import com.w10group.hertzdictionary.core.architecture.CoroutineScopeActivity
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch

@@ -1,15 +1,13 @@
 package com.w10group.hertzdictionary.biz.ui.statistics
 
 import android.graphics.Color
-import android.support.design.widget.AppBarLayout
-import android.support.design.widget.AppBarLayout.LayoutParams.SCROLL_FLAG_SCROLL
-import android.support.design.widget.AppBarLayout.LayoutParams.SCROLL_FLAG_ENTER_ALWAYS
-import android.support.design.widget.AppBarLayout.LayoutParams.SCROLL_FLAG_SNAP
-import android.support.v4.content.ContextCompat
-import android.support.v7.widget.Toolbar
 import android.view.View
 import android.widget.AdapterView
 import android.widget.TextView
+import androidx.appcompat.widget.Toolbar
+import androidx.core.content.ContextCompat
+import com.google.android.material.appbar.AppBarLayout
+import com.google.android.material.appbar.AppBarLayout.LayoutParams.*
 import com.w10group.hertzdictionary.R
 import com.w10group.hertzdictionary.biz.ui.main.DateSpinnerAdapter
 import com.w10group.hertzdictionary.core.architecture.UIComponent

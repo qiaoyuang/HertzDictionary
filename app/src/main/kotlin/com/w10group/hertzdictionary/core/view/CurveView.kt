@@ -2,10 +2,10 @@ package com.w10group.hertzdictionary.core.view
 
 import android.content.Context
 import android.graphics.*
-import android.support.v4.content.ContextCompat
 import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.View
+import androidx.core.content.ContextCompat
 import com.w10group.hertzdictionary.R
 import com.w10group.hertzdictionary.core.fmtDateNormal
 import com.w10group.hertzdictionary.core.fmtMonthDay

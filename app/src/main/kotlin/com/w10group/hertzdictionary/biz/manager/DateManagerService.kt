@@ -1,6 +1,6 @@
 package com.w10group.hertzdictionary.biz.manager
 
-import com.w10group.hertzdictionary.biz.bean.LocalWord
+import com.w10group.hertzdictionary.biz.data.database.LocalWord
 import java.util.*
 import kotlin.collections.ArrayList
 import kotlin.collections.HashMap

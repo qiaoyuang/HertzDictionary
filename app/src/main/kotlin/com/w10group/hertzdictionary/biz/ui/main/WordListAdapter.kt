@@ -2,16 +2,18 @@ package com.w10group.hertzdictionary.biz.ui.main
 
 import android.content.Context
 import android.graphics.Color
-import android.support.constraint.ConstraintLayout.LayoutParams.PARENT_ID
-import android.support.v4.content.ContextCompat
-import android.support.v7.widget.CardView
-import android.support.v7.widget.RecyclerView.Adapter
-import android.support.v7.widget.RecyclerView.ViewHolder
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.cardview.widget.CardView
+import androidx.constraintlayout.widget.ConstraintLayout.LayoutParams.PARENT_ID
+import androidx.core.content.ContextCompat
+import androidx.recyclerview.widget.RecyclerView.Adapter
+import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.w10group.hertzdictionary.R
-import com.w10group.hertzdictionary.biz.bean.LocalWord
+import com.w10group.hertzdictionary.biz.data.database.LocalWord
+import com.w10group.hertzdictionary.biz.data.database.LocalWordDatabase
+import com.w10group.hertzdictionary.biz.manager.WordManagerServiceV3
 import org.jetbrains.anko.*
 import org.jetbrains.anko.cardview.v7.cardView
 import com.w10group.hertzdictionary.biz.ui.main.WordListAdapter.WordListViewHolder
@@ -20,8 +22,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import org.jetbrains.anko.constraint.layout.constraintLayout
-import org.litepal.LitePal
-import org.litepal.extension.deleteAll
 import java.text.NumberFormat
 
 /**
@@ -133,7 +133,7 @@ class WordListAdapter(private val mContext: Context,
                         sumCount -= localWord.count
                         notifyItemRemoved(index)
                         notifyItemRangeChanged(0, mData.size)
-                        GlobalScope.launch(Dispatchers.IO) { localWord.delete() }
+                        GlobalScope.launch(Dispatchers.IO) { LocalWordDatabase.db.delete(localWord) }
                         alertDialog.dismiss()
                     }
                     cancelButton { it.dismiss() }
@@ -146,7 +146,9 @@ class WordListAdapter(private val mContext: Context,
                         mData.clear()
                         sumCount = 0
                         notifyDataSetChanged()
-                        GlobalScope.launch(Dispatchers.IO) { LitePal.deleteAll<LocalWord>() }
+                        GlobalScope.launch(Dispatchers.IO) {
+                            LocalWordDatabase.db.delete(*WordManagerServiceV3.getAllLocalWord().toTypedArray())
+                        }
                         alertDialog.dismiss()
                     }
                     cancelButton { it.dismiss() }

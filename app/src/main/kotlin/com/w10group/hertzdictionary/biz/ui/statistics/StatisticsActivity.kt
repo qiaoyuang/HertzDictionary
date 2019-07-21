@@ -2,7 +2,7 @@ package com.w10group.hertzdictionary.biz.ui.statistics
 
 import android.view.MenuItem
 import com.w10group.hertzdictionary.R
-import com.w10group.hertzdictionary.biz.bean.LocalWord
+import com.w10group.hertzdictionary.biz.data.database.LocalWord
 import com.w10group.hertzdictionary.biz.manager.CurveValue
 import com.w10group.hertzdictionary.biz.manager.DateManagerService
 import com.w10group.hertzdictionary.biz.manager.MostValue
@@ -27,7 +27,7 @@ class StatisticsActivity : CoroutineScopeActivity<StatisticsActivity>() {
     fun monthSelected() = selected(30) { DateManagerService.createMonthValue(*it) }
 
     private inline fun selected(count: Int, crossinline create: (Array<LocalWord>) -> CurveValue) = launch(Dispatchers.Default) {
-        val (timeList, valueList, mostResult) = create(WordManagerServiceV3.allLocalWords.toTypedArray())
+        val (timeList, valueList, mostResult) = create(WordManagerServiceV3.getAllLocalWord().toTypedArray())
         val totalCount = valueList.sum()
         val totalCountText = getString(R.string.last_required, count, totalCount)
         val averageCount = totalCount / count

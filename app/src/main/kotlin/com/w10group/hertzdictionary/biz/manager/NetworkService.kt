@@ -1,6 +1,6 @@
 package com.w10group.hertzdictionary.biz.manager
 
-import com.w10group.hertzdictionary.biz.bean.InquireResult
+import com.w10group.hertzdictionary.biz.data.InquireResult
 import okhttp3.ResponseBody
 import retrofit2.http.GET
 import retrofit2.http.Query

@@ -2,10 +2,10 @@ package com.w10group.hertzdictionary.biz.ui.main
 
 import android.content.Context
 import android.database.DataSetObserver
-import android.support.v4.content.ContextCompat
 import android.view.View
 import android.view.ViewGroup
 import android.widget.SpinnerAdapter
+import androidx.core.content.ContextCompat
 import com.w10group.hertzdictionary.R
 import org.jetbrains.anko.*
 

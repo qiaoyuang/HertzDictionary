@@ -2,14 +2,14 @@ package com.w10group.hertzdictionary.biz.ui.main
 
 import android.content.Context
 import android.os.Build
-import android.support.v4.content.ContextCompat
-import android.support.v7.widget.RecyclerView.Adapter
-import android.support.v7.widget.RecyclerView.ViewHolder
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.core.content.ContextCompat
+import androidx.recyclerview.widget.RecyclerView.Adapter
+import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.w10group.hertzdictionary.R
-import com.w10group.hertzdictionary.biz.bean.DictInfo
+import com.w10group.hertzdictionary.biz.data.DictInfo
 import com.w10group.hertzdictionary.biz.ui.main.OtherMeanAdapter.OtherMeanViewHolder
 import com.w10group.hertzdictionary.core.view.createTouchFeedback
 import org.jetbrains.anko.*

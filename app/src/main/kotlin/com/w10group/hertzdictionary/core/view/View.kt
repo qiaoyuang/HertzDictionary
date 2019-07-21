@@ -2,10 +2,10 @@ package com.w10group.hertzdictionary.core.view
 
 import android.content.Context
 import android.graphics.drawable.Drawable
-import android.support.v4.content.ContextCompat
-import android.support.v7.widget.AppCompatSpinner
 import android.util.TypedValue
 import android.view.ViewManager
+import androidx.appcompat.widget.AppCompatSpinner
+import androidx.core.content.ContextCompat
 import com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView
 import com.w10group.hertzdictionary.R
 import de.hdodenhof.circleimageview.CircleImageView
