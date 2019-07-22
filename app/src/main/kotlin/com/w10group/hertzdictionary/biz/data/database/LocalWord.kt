@@ -1,7 +1,6 @@
 package com.w10group.hertzdictionary.biz.data.database
 
 import androidx.room.Entity
-import androidx.room.Ignore
 import androidx.room.PrimaryKey
 
 /**
@@ -13,4 +12,4 @@ import androidx.room.PrimaryKey
 data class LocalWord(@PrimaryKey var en: String = "",
                      var ch: String = "",
                      var count: Int = 1,
-                     @Ignore var timeList: ArrayList<Long>? = null)
+                     var timeList: ArrayList<Long> = ArrayList())

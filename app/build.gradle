@@ -49,22 +49,19 @@ dependencies {
     //implementation "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
     //implementation "org.jetbrains.kotlinx:kotlinx-io-jvm:0.1.7"
 
-    // Android v4支持包
-    implementation "com.android.support:support-v4:$support_version"
-
-    // Android 其它支持包
-    implementation "com.android.support:appcompat-v7:$support_version"
-    implementation "com.android.support:design:$support_version"
-    implementation "com.android.support:recyclerview-v7:$support_version"
-    implementation "com.android.support:cardview-v7:$support_version"
-    implementation 'com.android.support.constraint:constraint-layout:1.1.3'
-    //implementation "com.android.support:animated-vector-drawable:$support_version"
+    // Android 支持包
+    implementation "androidx.legacy:legacy-support-v4:1.0.0"
+    implementation "androidx.appcompat:appcompat:1.0.2"
+    implementation "com.google.android.material:material:1.1.0-alpha08"
+    implementation "androidx.recyclerview:recyclerview:1.0.0"
+    implementation "androidx.cardview:cardview:1.0.0"
+    implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
 
     // Retrofit
     implementation 'com.squareup.retrofit2:retrofit:2.6.0'
     implementation 'com.jakewharton.retrofit:retrofit2-kotlinx-serialization-converter:0.4.0'
 
-    // 大图查看器&圆形 ImageView
+    // 大图查看器 & 圆形 ImageView
     implementation 'com.davemorrissey.labs:subsampling-scale-image-view:3.10.0'
     implementation 'de.hdodenhof:circleimageview:3.0.0'
 

@@ -27,7 +27,7 @@ class StatisticsActivity : CoroutineScopeActivity<StatisticsActivity>() {
     fun monthSelected() = selected(30) { DateManagerService.createMonthValue(*it) }
 
     private inline fun selected(count: Int, crossinline create: (Array<LocalWord>) -> CurveValue) = launch(Dispatchers.Default) {
-        val (timeList, valueList, mostResult) = create(WordManagerServiceV3.getAllLocalWord().toTypedArray())
+        val (timeList, valueList, mostResult) = create(WordManagerServiceV3.getAllLocalWord(this@StatisticsActivity).toTypedArray())
         val totalCount = valueList.sum()
         val totalCountText = getString(R.string.last_required, count, totalCount)
         val averageCount = totalCount / count

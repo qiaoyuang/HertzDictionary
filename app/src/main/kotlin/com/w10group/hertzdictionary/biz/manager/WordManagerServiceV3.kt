@@ -1,5 +1,6 @@
 package com.w10group.hertzdictionary.biz.manager
 
+import android.content.Context
 import android.view.View
 import com.w10group.hertzdictionary.R
 import com.w10group.hertzdictionary.biz.data.InquireResult
@@ -30,13 +31,14 @@ object WordManagerServiceV3 {
 
     private lateinit var allLocalWords: CopyOnWriteArrayList<LocalWord>
 
-    suspend fun getAllLocalWord(): MutableList<LocalWord> =
+    suspend fun getAllLocalWord(context: Context): MutableList<LocalWord> =
         if (this::allLocalWords.isInitialized)
             allLocalWords
         else {
             allLocalWords = CopyOnWriteArrayList()
-            allLocalWords.addAll(LocalWordDatabase.db.queryAll())
-            allLocalWords
+            allLocalWords.apply {
+                addAll(LocalWordDatabase.getDAO(context).queryAll())
+            }
         }
 
     var networkJob: Job? = null
@@ -67,7 +69,7 @@ object WordManagerServiceV3 {
             inquireResultChannel.send(inquireResult to word)
             OTRWChannel.send(pairDeferred.await())
             progressDialog.dismiss()
-            launch(Dispatchers.Default) { updateRecyclerViewData(inquireResult) }
+            launch(Dispatchers.Default) { updateRecyclerViewData(inquireResult, view.context) }
         }
     }
 
@@ -100,8 +102,8 @@ object WordManagerServiceV3 {
             otherTranslation to relatedWords
         }
 
-    // 刷新RecyclerView的词序
-    private suspend fun updateRecyclerViewData(inquireResult: InquireResult) {
+    // 刷新 RecyclerView 的词序
+    private suspend fun updateRecyclerViewData(inquireResult: InquireResult, context: Context) {
         val orig = inquireResult.word!![0]
         var word: LocalWord? = null
         // 在 mData 中查找 word 是否存在，如果存在则找到它并记录其 index
@@ -117,25 +119,23 @@ object WordManagerServiceV3 {
             curveChannel.send(true)
         }
         // 如果 word 没有初始化表示 word 不存在于 mData 中，所以创建新 word
-        if (word == null) {
+        if (word == null) LocalWord(ch = orig.ch, en = orig.en).let {
             coordinate[0] = -10
-            word = LocalWord(ch = orig.ch, en = orig.en)
-            word!!.timeList = ArrayList()
-            word!!.timeList!!.add(DateManagerService.currentTimestamp)
-            allLocalWords.add(word!!)
-            sendWord(word!!)
-            withContext(Dispatchers.IO) { LocalWordDatabase.db.insert(word!!) }
-        } else {
-            //word!!.timeList!!.add(DateManagerService.currentTimestamp)
-            sendWord(word!!)
-            withContext(Dispatchers.IO) { LocalWordDatabase.db.update(word!!) }
+            it.timeList.add(DateManagerService.currentTimestamp)
+            allLocalWords.add(it)
+            sendWord(it)
+            withContext(Dispatchers.IO) { LocalWordDatabase.getDAO(context).insert(it) }
+        } else word!!.let {
+            it.timeList.add(DateManagerService.currentTimestamp)
+            sendWord(it)
+            withContext(Dispatchers.IO) { LocalWordDatabase.getDAO(context).update(it) }
         }
     }
 
     // 第一个数字为负 -1 的时候表示未移动过，-10 的时候表示是第一次查询，非负时表示移动前的位置，第二个数表示移动后的位置
     val coordinate = intArrayOf(-1, -1)
 
-    // 调整LocalWord在mData中的位置，并返回链表是否被调整过
+    // 调整 LocalWord 在 mData 中的位置，并返回链表是否被调整过
     private infix fun LocalWord.reSort(index: Int) {
         coordinate[0] = -1
         when {

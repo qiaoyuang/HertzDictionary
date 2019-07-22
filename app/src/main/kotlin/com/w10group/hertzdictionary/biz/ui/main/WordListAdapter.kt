@@ -46,6 +46,8 @@ class WordListAdapter(private val mContext: Context,
         maximumFractionDigits = 2
     }
 
+    private val dao = LocalWordDatabase.getDAO(mContext)
+
     var sumCount = mData.sumBy { it.count }
 
     override fun getItemCount(): Int = mData.size
@@ -133,7 +135,7 @@ class WordListAdapter(private val mContext: Context,
                         sumCount -= localWord.count
                         notifyItemRemoved(index)
                         notifyItemRangeChanged(0, mData.size)
-                        GlobalScope.launch(Dispatchers.IO) { LocalWordDatabase.db.delete(localWord) }
+                        GlobalScope.launch(Dispatchers.IO) { dao.delete(localWord) }
                         alertDialog.dismiss()
                     }
                     cancelButton { it.dismiss() }
@@ -147,7 +149,7 @@ class WordListAdapter(private val mContext: Context,
                         sumCount = 0
                         notifyDataSetChanged()
                         GlobalScope.launch(Dispatchers.IO) {
-                            LocalWordDatabase.db.delete(*WordManagerServiceV3.getAllLocalWord().toTypedArray())
+                            dao.delete(*WordManagerServiceV3.getAllLocalWord(mContext).toTypedArray())
                         }
                         alertDialog.dismiss()
                     }

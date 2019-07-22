@@ -11,5 +11,5 @@
 *
     最后提一点技术相关的问题，虽然我很想说："You just DO WHAT THE FUCK YOU WANT TO"；但是很遗憾，Github 上没有 WTFPL 许可证，所以本应用的源码在 Apache License 2.0 许可证下开源，Github 地址是：
 *
-    这个项目也算是个人的一点小尝试，项目完全采用 Kotlin + Anko 的方式开发。一开始对 Anko 的 DSL 代替 XML 写界面有点怀疑，但是目前来看，还没有出现什么大问题，虽然开发过程中小坑不断，但基本都被解决掉了，所以也算对 DSL 的一种验证，至少在我这种规模的项目下没有什么问题。至于在之后这个 App 在技术上的发展，我可能会引入 ViewModel、Room、LifeCycle、LiveData 等架构组件来进行重构；除此之外，我也会一直跟进 Kotlin 以及其他的 Android 开发新技术，例如在开发之初，我选择的 Rxjava + Gson 的技术选型目前已经全部替换为协程 + kotlinx.serialization，后续也会有更多类似的技术升级。
+    这个项目也算是个人的一点小尝试，项目完全采用 Kotlin + Anko 的方式开发。一开始对 Anko 的 DSL 代替 XML 写界面有点怀疑，但是目前来看，还没有出现什么大问题，虽然开发过程中小坑不断，但基本都被解决掉了，所以也算对 DSL 的一种验证，至少在我这种规模的项目下没有什么问题。至于在之后这个 App 在技术上的发展，我可能会引入 ViewModel、LifeCycle、LiveData 等架构组件来进行重构；除此之外，我也会一直跟进 Kotlin 以及其他的 Android 开发新技术，例如在开发之初，我选择的 Rxjava + Gson 的技术选型目前已经全部替换为协程 + kotlinx.serialization，后续也会有更多类似的技术升级。
 *
