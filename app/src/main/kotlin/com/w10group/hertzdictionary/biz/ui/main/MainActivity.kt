@@ -51,8 +51,10 @@ class MainActivity : CoroutineScopeActivity<MainActivity>() {
                 inquire(it)
             }
             withContext(Dispatchers.Main) {
-                uiComponent.loadBackgroundImageView()
-                uiComponent.setAdapter(mAdapter)
+                with(uiComponent) {
+                    setAdapter(mAdapter)
+                    loadBackgroundImageView()
+                }
             }
         }
     }

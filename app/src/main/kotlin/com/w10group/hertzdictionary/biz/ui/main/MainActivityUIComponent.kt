@@ -159,7 +159,7 @@ class MainActivityUIComponent(private val mMainActivity: MainActivity) : UICompo
                 }.lparams(matchParent, wrapContent)
 
                 mNestedScrollView = nestedScrollView {
-                    post { visibility = View.GONE }
+                    visibility = View.GONE
                     verticalLayout {
                         bottomPadding = dip(16)
                         cardView {

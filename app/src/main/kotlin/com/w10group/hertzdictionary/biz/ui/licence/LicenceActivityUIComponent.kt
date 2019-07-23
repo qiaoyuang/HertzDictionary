@@ -39,7 +39,7 @@ class LicenceActivityUIComponent(private val mLicenceActivity: LicenceActivity) 
             }.lparams(matchParent, wrapContent)
 
             mRecyclerView = recyclerView {
-                layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
+                layoutManager = LinearLayoutManager(context)
                 itemAnimator = DefaultItemAnimator()
             }.lparams(matchParent, wrapContent) {
                 marginStart = dip(16)
