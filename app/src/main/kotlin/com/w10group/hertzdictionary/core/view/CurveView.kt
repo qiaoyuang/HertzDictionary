@@ -176,13 +176,14 @@ class CurveView : View {
     private fun Canvas.drawXText() {
         val time1 = time[0].fmtMonthDay()
         val time4 = time.last().fmtMonthDay()
-        val time2 = time[time.size / 3].fmtMonthDay()
-        val time3 = time[time.size / 3 * 2].fmtMonthDay()
+        val position = time.size / 3
+        val time2 = time[position].fmtMonthDay()
+        val time3 = time[position * 2].fmtMonthDay()
         val y = (height * 9 / 10).toFloat()
         val fWidth = width.toFloat()
         val x1 = fWidth / 10
-        val x2 = fWidth / 10 * 4 - dp16
-        val x3 = fWidth / 10 * 7 - dp24
+        val x2 = x1 * 4 - dp16
+        val x3 = x1 * 7 - dp24
         val x4 = fWidth - dp32
         drawText(time1, x1, y, mTextPaint)
         drawText(time2, x2, y, mTextPaint)
@@ -201,9 +202,9 @@ class CurveView : View {
                 "$maxValue")
         val x = 0f
         val y1 = (height / 5).toFloat()
-        val y2 = (height / 5 * 2).toFloat()
-        val y3 = (height / 5 * 3).toFloat()
-        val y4 = (height / 5 * 4).toFloat()
+        val y2 = y1 * 2
+        val y3 = y1 * 3
+        val y4 = y1 * 4
         drawText(value4, x, y1, mTextPaint)
         drawText(value3, x, y2, mTextPaint)
         drawText(value2, x, y3, mTextPaint)
@@ -226,9 +227,9 @@ class CurveView : View {
         val stopX = width.toFloat()
         fun drawLine(y: Float) = drawLine(startX, y, stopX, y, mDashLinePaint)
         val y1 = (height / 5).toFloat()
-        val y2 = (height / 5 * 2).toFloat()
-        val y3 = (height / 5 * 3).toFloat()
-        val y4 = (height / 5 * 4).toFloat()
+        val y2 = y1 * 2
+        val y3 = y1 * 3
+        val y4 = y1 * 4
         drawLine(y1)
         drawLine(y2)
         drawLine(y3)
@@ -284,8 +285,9 @@ class CurveView : View {
                 val windowWidth = dp96
                 val offset = dp16
                 val windowHeight = dp48
-                val windowX = if (x < width / 2) x + offset / 2 else x - windowWidth - offset
-                val windowY = if (y < height / 2) y + offset / 2 else y - windowHeight - offset
+                val binaryOffset = offset / 2
+                val windowX = if (x < width / 2) x + binaryOffset else x - windowWidth - offset
+                val windowY = if (y < height / 2) y + binaryOffset else y - windowHeight - offset
 
                 // 画竖线
                 drawLine(x, startY, x, endY, mVerticalLinePaint)
@@ -300,9 +302,11 @@ class CurveView : View {
                 drawRoundRect(windowX, windowY, windowX + windowWidth, windowY + windowHeight, dp4, dp4, mTouchPaint)
                 // 绘制时间文字
                 mTouchPaint.color = white
-                drawText(touchTimeText, windowX + offset / 2, windowY + offset, mTouchPaint)
+                val drawX = windowX + offset / 2
+                val drawY = windowY + offset
+                drawText(touchTimeText, drawX, drawY, mTouchPaint)
                 // 绘制算力值文字
-                drawText(touchDiaPowerText, windowX + offset / 2, windowY + offset + windowHeight / 2, mTouchPaint)
+                drawText(touchDiaPowerText, drawX, drawY + windowHeight / 2, mTouchPaint)
             }
         }
     }
@@ -318,7 +322,8 @@ class CurveView : View {
         val x = diffScale * maxWidth + offset
         // 计算算力
         val max = value.max()!!.toFloat()
-        val y = if (max == 0f) height.toFloat() / 5 * 4 else (max - value[index]) / max * (height.toFloat() * 3 / 5) + height.toFloat() / 5
+        val baseHeight = height.toFloat() / 5
+        val y = if (max == 0f) baseHeight * 4 else (max - value[index]) / max * (baseHeight * 3) + baseHeight
         return x to y
     }
 

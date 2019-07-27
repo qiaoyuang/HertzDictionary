@@ -8,6 +8,7 @@ import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView.Adapter
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
+import com.w10group.hertzdictionary.biz.manager.KV
 import com.w10group.hertzdictionary.core.view.createTouchFeedbackBorderless
 import org.jetbrains.anko.*
 
@@ -16,7 +17,7 @@ import org.jetbrains.anko.*
  * 开源许可证的RecyclerView的Adapter
  */
 
-class OSLAdapter(private val mContext: Context, private val mData: List<OSL>) : Adapter<OSLViewHolder>() {
+class OSLAdapter(private val mContext: Context, private val mData: List<KV>) : Adapter<OSLViewHolder>() {
 
     companion object {
         const val TITLE_ID = 1
@@ -30,8 +31,8 @@ class OSLAdapter(private val mContext: Context, private val mData: List<OSL>) : 
     override fun onBindViewHolder(holder: OSLViewHolder, position: Int) {
         val data = mData[position]
         holder.apply {
-            tvTitle.text = data.title
-            tvContent.text = data.content
+            tvTitle.text = data.first
+            tvContent.text = data.second
         }
     }
 
@@ -68,5 +69,3 @@ class OSLViewHolder(itemView: View) : ViewHolder(itemView) {
     val tvTitle = itemView.find<TextView>(OSLAdapter.TITLE_ID)
     val tvContent = itemView.find<TextView>(OSLAdapter.CONTENT_ID)
 }
-
-data class OSL(var title: String = "", var content: String = "")

@@ -53,7 +53,6 @@ class FeaturesActivityUIComponent(private val mFeatureActivity: FeaturesActivity
     private lateinit var mTVBugFeedback1: TextView
     private lateinit var mTVBugFeedback2: TextView
     private lateinit var mTVAboutTech1: TextView
-    private lateinit var mTVAboutTech2: TextView
 
     private val blue1 by lazy { ContextCompat.getColor(mFeatureActivity, R.color.blue1) }
 
@@ -240,12 +239,7 @@ class FeaturesActivityUIComponent(private val mFeatureActivity: FeaturesActivity
                             }.lparams(wrapContent, wrapContent) {
                                 gravity = Gravity.CENTER_HORIZONTAL
                                 topMargin = dip(8)
-                            }
-
-                            mTVAboutTech2 = textView {
-                                textSize = 16f
-                            }.lparams(matchParent, wrapContent) {
-                                margin = dip(8)
+                                bottomMargin = dip(8)
                             }
 
                         }.lparams(matchParent, wrapContent) {
@@ -275,13 +269,12 @@ class FeaturesActivityUIComponent(private val mFeatureActivity: FeaturesActivity
     override fun recycler() = mCompleteScaleImageView.recycler()
 
     fun updateTextView(result: List<String>) {
-        if (result.size > 5) {
+        if (result.size > 4) {
             mTVCurrentContent.text = result[0]
             mTVNextContent.text = result[1]
             mTVBugFeedback1.text = result[2]
             mTVBugFeedback2.text = result[3]
             mTVAboutTech1.text = result[4]
-            mTVAboutTech2.text = result[5]
         } else mToolbar.snackbar(R.string.file_load_error)
     }
 
