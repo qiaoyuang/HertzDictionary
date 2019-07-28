@@ -52,74 +52,71 @@ class WordListAdapter(private val mContext: Context,
 
     override fun getItemCount(): Int = mData.size
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): WordListViewHolder {
-        val view = AnkoContext.create(mContext).apply {
-            cardView {
-                lparams(matchParent, wrapContent) {
-                    topMargin = dip(4)
-                    marginStart = dip(4)
-                    marginEnd = dip(4)
-                }
-                id = CARD_ITEM_ID
-                elevation = dip(4).toFloat()
-                isClickable = true
-                backgroundColor = Color.WHITE
-                foreground = createTouchFeedbackBorderless(context)
-                constraintLayout {
-                    textView {
-                        id = TV_ENGLISH_ID
-                        textColor = Color.BLACK
-                        textSize = 20f
-                    }.lparams(wrapContent, wrapContent) {
-                        topToTop = PARENT_ID
-                        startToStart = PARENT_ID
-                        topMargin = dip(16)
-                        marginStart = dip(16)
-                    }
-                    textView {
-                        id = TV_CHINESE_ID
-                        textColor = gray
-                        textSize = 16f
-                    }.lparams(wrapContent, wrapContent) {
-                        topToBottom = TV_ENGLISH_ID
-                        bottomToBottom = PARENT_ID
-                        startToStart = TV_ENGLISH_ID
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): WordListViewHolder =
+            WordListViewHolder(AnkoContext.create(mContext).apply {
+                cardView {
+                    lparams(matchParent, wrapContent) {
                         topMargin = dip(4)
-                        bottomMargin = dip(16)
+                        marginStart = dip(4)
+                        marginEnd = dip(4)
                     }
-                    textView {
-                        id = TV_COUNT_ID
-                        textColor = gray
-                    }.lparams(wrapContent, wrapContent) {
-                        startToStart = PARENT_ID
-                        endToEnd = PARENT_ID
-                        bottomToBottom = TV_CHINESE_ID
-                        horizontalBias = 0.45f
-                    }
-                    textView {
-                        id = TV_INQUIRE_RATE_ID
-                        textColor = gray
-                    }.lparams(wrapContent, wrapContent) {
-                        endToEnd = PARENT_ID
-                        bottomToBottom = TV_CHINESE_ID
-                        marginEnd = dip(16)
-                    }
-                }.lparams(matchParent, wrapContent)
-            }
-        }.view
-        return WordListViewHolder(view)
-    }
+                    id = CARD_ITEM_ID
+                    elevation = dip(4).toFloat()
+                    isClickable = true
+                    backgroundColor = Color.WHITE
+                    foreground = createTouchFeedbackBorderless(context)
+                    constraintLayout {
+                        textView {
+                            id = TV_ENGLISH_ID
+                            textColor = Color.BLACK
+                            textSize = 20f
+                        }.lparams(wrapContent, wrapContent) {
+                            topToTop = PARENT_ID
+                            startToStart = PARENT_ID
+                            topMargin = dip(16)
+                            marginStart = dip(16)
+                        }
+                        textView {
+                            id = TV_CHINESE_ID
+                            textColor = gray
+                            textSize = 16f
+                        }.lparams(wrapContent, wrapContent) {
+                            topToBottom = TV_ENGLISH_ID
+                            bottomToBottom = PARENT_ID
+                            startToStart = TV_ENGLISH_ID
+                            topMargin = dip(4)
+                            bottomMargin = dip(16)
+                        }
+                        textView {
+                            id = TV_COUNT_ID
+                            textColor = gray
+                        }.lparams(wrapContent, wrapContent) {
+                            startToStart = PARENT_ID
+                            endToEnd = PARENT_ID
+                            bottomToBottom = TV_CHINESE_ID
+                            horizontalBias = 0.45f
+                        }
+                        textView {
+                            id = TV_INQUIRE_RATE_ID
+                            textColor = gray
+                        }.lparams(wrapContent, wrapContent) {
+                            endToEnd = PARENT_ID
+                            bottomToBottom = TV_CHINESE_ID
+                            marginEnd = dip(16)
+                        }
+                    }.lparams(matchParent, wrapContent)
+                }
+            }.view)
 
-    override fun onBindViewHolder(holder: WordListViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: WordListViewHolder, position: Int) = with(holder) {
         val word = mData[position]
-        holder.apply {
-            tvEnglish.text = word.en
-            tvChinese.text = word.ch
-            tvCount.text = mContext.getString(R.string.required_count, word.count)
-            tvInquireRate.text = mContext.getString(R.string.required_rate, mFormat.format(word.count.toDouble() / sumCount.toDouble()))
-            cardView.setOnClickListener { itemOnClickListener(word.en) }
-            cardView.setOnLongClickListener { onLongClick(word, position) }
-        }
+        tvEnglish.text = word.en
+        tvChinese.text = word.ch
+        tvCount.text = mContext.getString(R.string.required_count, word.count)
+        tvInquireRate.text = mContext.getString(R.string.required_rate,
+                mFormat.format(word.count.toDouble() / sumCount.toDouble()))
+        cardView.setOnClickListener { itemOnClickListener(word.en) }
+        cardView.setOnLongClickListener { onLongClick(word, position) }
     }
 
     private fun onLongClick(localWord: LocalWord, index: Int): Boolean {

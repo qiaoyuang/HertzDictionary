@@ -2,8 +2,7 @@ package com.w10group.hertzdictionary.biz.manager
 
 import android.content.Context
 import kotlinx.coroutines.*
-import java.io.BufferedReader
-import java.io.InputStreamReader
+import okio.Okio
 
 /**
  * Created by Administrator on 2018/7/8.
@@ -11,9 +10,9 @@ import java.io.InputStreamReader
  */
 
 suspend fun readFileToString(context: Context, fileName: String): List<String> = withContext(Dispatchers.IO) {
-    BufferedReader(InputStreamReader(context.assets.open(fileName), "UTF-8")).use {
+    Okio.buffer(Okio.source(context.assets.open(fileName))).use {
         val builder = StringBuilder()
-        var line = it.readLine()
+        var line = it.readUtf8Line()
         var isFirst = true
         val result = ArrayList<String>()
         while (line != null) {
@@ -26,7 +25,7 @@ suspend fun readFileToString(context: Context, fileName: String): List<String> =
                 else builder.append("\n\n")
                 builder.append(line)
             }
-            line = it.readLine()
+            line = it.readUtf8Line()
         }
         result
     }
@@ -35,9 +34,9 @@ suspend fun readFileToString(context: Context, fileName: String): List<String> =
 typealias KV = Pair<String, String>
 
 suspend fun readFileToKV(context: Context, fileName: String): List<KV> = withContext(Dispatchers.IO) {
-    BufferedReader(InputStreamReader(context.assets.open(fileName), "UTF-8")).use {
+    Okio.buffer(Okio.source(context.assets.open(fileName))).use {
         val builder = StringBuilder()
-        var line = it.readLine()
+        var line = it.readUtf8Line()
         var isFirst = true
         val result = ArrayList<KV>()
         var key = ""
@@ -60,7 +59,7 @@ suspend fun readFileToKV(context: Context, fileName: String): List<KV> = withCon
                     builder.append(line)
                 }
             }
-            line = it.readLine()
+            line = it.readUtf8Line()
         }
         result
     }

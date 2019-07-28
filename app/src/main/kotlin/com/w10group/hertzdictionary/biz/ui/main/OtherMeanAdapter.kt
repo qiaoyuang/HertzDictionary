@@ -32,47 +32,41 @@ class OtherMeanAdapter(private val mContext: Context,
 
     override fun getItemCount(): Int = mData.size
 
-    override fun onBindViewHolder(holder: OtherMeanViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: OtherMeanViewHolder, position: Int) = with(holder) {
         val data = mData[position]
-        holder.tvWord.text = data.word
-        val builder = StringBuilder()
-        data.reverses?.let {
-            val last = it.size - 1
-            it.forEachIndexed { index, word ->
-                if (index == last) {
-                    builder.append(word)
-                } else {
-                    builder.append("$word, ")
+        tvWord.text = data.word
+        tvReverse.text = StringBuilder().apply {
+            data.reverses?.let {
+                val last = it.size - 1
+                it.forEachIndexed { index, word ->
+                    append(if (index == last) word else "$word, ")
                 }
             }
-        }
-        holder.tvReverse.text = builder.toString()
+        }.toString()
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): OtherMeanViewHolder {
-        val view = AnkoContext.create(mContext).apply {
-            verticalLayout {
-                lparams(matchParent, wrapContent)
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                    isClickable = true
-                    foreground = createTouchFeedback(context)
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): OtherMeanViewHolder =
+            OtherMeanViewHolder(AnkoContext.create(mContext).apply {
+                verticalLayout {
+                    lparams(matchParent, wrapContent)
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                        isClickable = true
+                        foreground = createTouchFeedback(context)
+                    }
+                    textView {
+                        id = WORD
+                        textColor = black
+                        textSize = 14f
+                    }.lparams(wrapContent, wrapContent)
+                    textView {
+                        id = REVERSE
+                        textColor = gray600
+                        textSize = 14f
+                    }.lparams(wrapContent, wrapContent) {
+                        bottomMargin = dip(8)
+                    }
                 }
-                textView {
-                    id = WORD
-                    textColor = black
-                    textSize = 14f
-                }.lparams(wrapContent, wrapContent)
-                textView {
-                    id = REVERSE
-                    textColor = gray600
-                    textSize = 14f
-                }.lparams(wrapContent, wrapContent) {
-                    bottomMargin = dip(8)
-                }
-            }
-        }.view
-        return OtherMeanViewHolder(view)
-    }
+            }.view)
 
     class OtherMeanViewHolder(itemView: View) : ViewHolder(itemView) {
         val tvWord = itemView.find<TextView>(WORD)

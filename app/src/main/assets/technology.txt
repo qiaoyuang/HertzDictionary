@@ -4,7 +4,7 @@ Kotlin
 *
 线程调度
 &
-协程（kotlinx.coroutines）
+Coroutines
 *
 序列化
 &
@@ -21,6 +21,10 @@ Anko-Common
 数据库操作
 &
 Room(Jetpack)
+*
+文件 IO
+&
+Okio
 *
 网络请求
 &

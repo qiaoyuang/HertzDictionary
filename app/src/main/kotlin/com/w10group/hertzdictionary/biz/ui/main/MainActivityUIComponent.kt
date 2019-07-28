@@ -473,9 +473,8 @@ class MainActivityUIComponent(private val mMainActivity: MainActivity) : UICompo
                         marginStart = dip(16)
                     }
                     recyclerView {
-                        layoutManager = object : LinearLayoutManager(context, VERTICAL, false) {
-                            override fun canScrollVertically(): Boolean = true
-                        }
+                        layoutManager = LinearLayoutManager(context)
+                        overScrollMode = RecyclerView.OVER_SCROLL_NEVER
                         dict.dictInfo?.let {
                             adapter = OtherMeanAdapter(context, it)
                         }

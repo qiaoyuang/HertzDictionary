@@ -45,7 +45,7 @@
     <string name="bug_feedback">Bug 反馈</string>
     <string name="email_subject">赫兹词典 bug 反馈</string>
     <string name="my_wechat">我的微信</string>
-    <string name="about_tech">一点技术相关</string>
+    <string name="about_tech">技术相关</string>
     <string name="file_load_error">文件加载错误</string>
 
     <string name="required_count">已查询次数：%1$d</string>

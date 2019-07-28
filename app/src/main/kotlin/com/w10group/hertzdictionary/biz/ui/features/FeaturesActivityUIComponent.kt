@@ -8,9 +8,12 @@ import android.view.View
 import android.widget.TextView
 import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.appbar.AppBarLayout.LayoutParams.*
 import com.w10group.hertzdictionary.R
+import com.w10group.hertzdictionary.biz.manager.KV
 import com.w10group.hertzdictionary.core.GlideApp
 import com.w10group.hertzdictionary.core.GlideDownloader
 import com.w10group.hertzdictionary.core.architecture.UIComponent
@@ -23,6 +26,7 @@ import org.jetbrains.anko.cardview.v7.cardView
 import org.jetbrains.anko.design.appBarLayout
 import org.jetbrains.anko.design.coordinatorLayout
 import org.jetbrains.anko.design.snackbar
+import org.jetbrains.anko.recyclerview.v7.recyclerView
 import org.jetbrains.anko.support.v4.nestedScrollView
 
 /**
@@ -53,6 +57,8 @@ class FeaturesActivityUIComponent(private val mFeatureActivity: FeaturesActivity
     private lateinit var mTVBugFeedback1: TextView
     private lateinit var mTVBugFeedback2: TextView
     private lateinit var mTVAboutTech1: TextView
+
+    private lateinit var mRVTechSelection: RecyclerView
 
     private val blue1 by lazy { ContextCompat.getColor(mFeatureActivity, R.color.blue1) }
 
@@ -250,6 +256,25 @@ class FeaturesActivityUIComponent(private val mFeatureActivity: FeaturesActivity
                         marginStart = dip(4)
                         marginEnd = dip(4)
                         topMargin = dip(4)
+                    }
+
+                    cardView {
+                        elevation = dip(4).toFloat()
+                        isClickable = true
+                        foreground = createTouchFeedbackBorderless(context)
+                        mRVTechSelection = recyclerView {
+                            layoutManager = LinearLayoutManager(context)
+                            overScrollMode = RecyclerView.OVER_SCROLL_NEVER
+                        }.lparams(matchParent, wrapContent) {
+                            marginStart = dip(16)
+                            marginEnd = dip(16)
+                            topMargin = dip(14)
+                            bottomMargin = dip(14)
+                        }
+                    }.lparams(matchParent, wrapContent) {
+                        marginStart = dip(4)
+                        marginEnd = dip(4)
+                        topMargin = dip(4)
                         bottomMargin = dip(8)
                     }
 
@@ -261,9 +286,10 @@ class FeaturesActivityUIComponent(private val mFeatureActivity: FeaturesActivity
         }
     }.view
 
-    override fun init() {
-        mFeatureActivity.setSupportActionBar(mToolbar)
-        mFeatureActivity.supportActionBar?.setDisplayHomeAsUpEnabled(true)
+    override fun init() = with(mFeatureActivity) {
+        setSupportActionBar(mToolbar)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        Unit
     }
 
     override fun recycler() = mCompleteScaleImageView.recycler()
@@ -278,13 +304,16 @@ class FeaturesActivityUIComponent(private val mFeatureActivity: FeaturesActivity
         } else mToolbar.snackbar(R.string.file_load_error)
     }
 
+    fun setTechSelectionData(data: List<KV>) {
+        mRVTechSelection.adapter = TechSelectionAdapter(mFeatureActivity, data)
+    }
+
     fun requestPermissionsResult(requestCode: Int, grantResults: IntArray) {
         if (requestCode == mRequestCode) {
-            if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+            if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED)
                 mCompleteScaleImageView.restoreImage()
-            } else {
+            else
                 mCompleteScaleImageView.permissionsRejectSnack()
-            }
         }
     }
 
