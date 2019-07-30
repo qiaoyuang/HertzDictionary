@@ -11,21 +11,22 @@ import okio.Okio
 
 suspend fun readFileToString(context: Context, fileName: String): List<String> = withContext(Dispatchers.IO) {
     Okio.buffer(Okio.source(context.assets.open(fileName))).use {
-        val builder = StringBuilder()
-        var line = it.readUtf8Line()
-        var isFirst = true
         val result = ArrayList<String>()
-        while (line != null) {
-            if (line == "*") {
-                result.add(builder.toString())
-                builder.clear()
-                isFirst = true
-            } else {
-                if (isFirst) isFirst = false
-                else builder.append("\n\n")
-                builder.append(line)
+        with(StringBuilder()) {
+            var line = it.readUtf8Line()
+            var isFirst = true
+            while (line != null) {
+                if (line == "*") {
+                    result.add(toString())
+                    clear()
+                    isFirst = true
+                } else {
+                    if (isFirst) isFirst = false
+                    else append("\n\n")
+                    append(line)
+                }
+                line = it.readUtf8Line()
             }
-            line = it.readUtf8Line()
         }
         result
     }
@@ -35,31 +36,31 @@ typealias KV = Pair<String, String>
 
 suspend fun readFileToKV(context: Context, fileName: String): List<KV> = withContext(Dispatchers.IO) {
     Okio.buffer(Okio.source(context.assets.open(fileName))).use {
-        val builder = StringBuilder()
-        var line = it.readUtf8Line()
-        var isFirst = true
         val result = ArrayList<KV>()
-        var key = ""
-        while (line != null) {
-            when (line) {
-                "&" -> {
-                    key = builder.toString()
-                    builder.clear()
-                    isFirst = true
+        with(StringBuilder()) {
+            var line = it.readUtf8Line()
+            var isFirst = true
+            var key = ""
+            while (line != null) {
+                when (line) {
+                    "&" -> {
+                        key = toString()
+                        clear()
+                        isFirst = true
+                    }
+                    "*" -> {
+                        result.add(key to toString())
+                        clear()
+                        isFirst = true
+                    }
+                    else -> {
+                        if (isFirst) isFirst = false
+                        else append("\n")
+                        append(line)
+                    }
                 }
-                "*" -> {
-                    val kv = key to builder.toString()
-                    result.add(kv)
-                    builder.clear()
-                    isFirst = true
-                }
-                else -> {
-                    if (isFirst) isFirst = false
-                    else builder.append("\n")
-                    builder.append(line)
-                }
+                line = it.readUtf8Line()
             }
-            line = it.readUtf8Line()
         }
         result
     }
