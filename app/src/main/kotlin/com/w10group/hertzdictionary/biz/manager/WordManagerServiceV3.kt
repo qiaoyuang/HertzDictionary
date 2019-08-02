@@ -78,7 +78,7 @@ object WordManagerServiceV3 {
             inquireResult: InquireResult): Pair<String, String> = coroutineScope {
             // 拼接其它义项
             val otherTranslationDeferred = inquireResult.alternativeTranslations?.get(0)?.words?.let {
-                async(Dispatchers.Default) {
+                async {
                     StringBuilder().apply {
                         val last = it.size - 1
                         it.forEachIndexed { index, alternative ->
@@ -90,7 +90,7 @@ object WordManagerServiceV3 {
             }
             // 拼接相关词组
             val relatedWordsDeferred = inquireResult.relatedWords?.words?.let {
-                async(Dispatchers.Default) {
+                async {
                     StringBuilder().apply {
                         val last = it.size - 1
                         it.forEachIndexed { index, word -> append(if (index == last) word else "$word, ") }
