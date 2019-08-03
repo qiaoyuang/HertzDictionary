@@ -224,9 +224,7 @@ class CompleteScaleImageView(private val mActivity: Activity,
     var isDownloaderEnable: Boolean = false
         set(value) {
             field = value
-            mIVDownload.visibility = if (value)
-                View.VISIBLE
-            else View.INVISIBLE
+            mIVDownload.visibility = if (value) View.VISIBLE else View.INVISIBLE
         }
 
     // 启动并展示图片
@@ -276,9 +274,8 @@ class CompleteScaleImageView(private val mActivity: Activity,
 
     // 回收资源
     fun recycler() {
-        if (mViews.isNotEmpty()) {
+        if (mViews.isNotEmpty())
             mViews.forEach { it.second.recycle() }
-        }
     }
 
 }
