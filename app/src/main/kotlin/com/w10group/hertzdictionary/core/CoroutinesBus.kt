@@ -48,9 +48,8 @@ object CoroutinesBus {
                     return
                 }
             }
-            if (linkedList.isEmpty()) {
+            if (linkedList.isEmpty())
                 map.remove(clazz)
-            }
         }
     }
 

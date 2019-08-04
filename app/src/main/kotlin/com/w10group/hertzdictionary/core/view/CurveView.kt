@@ -161,15 +161,14 @@ class CurveView : View {
     }
 
     override fun onDraw(canvas: Canvas) {
-        if (time.isNotEmpty() && value.isNotEmpty())
-            with(canvas) {
-                drawXText()
-                drawYText()
-                drawUnit()
-                drawDottedLine()
-                drawCurve()
-                drawWindow()
-            }
+        if (time.isNotEmpty() && value.isNotEmpty()) with(canvas) {
+            drawXText()
+            drawYText()
+            drawUnit()
+            drawDottedLine()
+            drawCurve()
+            drawWindow()
+        }
     }
 
     // 第一步：绘制 X 轴坐标参数（时间）

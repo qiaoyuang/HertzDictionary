@@ -28,7 +28,7 @@ object DateManagerService {
         val wordAndCountMap = HashMap<LocalWord, Int>()
         localWords.forEach { localWord ->
             wordAndCountMap[localWord] = 0
-            localWord.timeList?.forEach {
+            localWord.timeList.forEach {
                 timeList.forEachIndexed { index, time ->
                     if (it - time in 0 until ONE_DAY) {
                         wordAndCountMap[localWord] = wordAndCountMap[localWord]!! + 1

@@ -364,12 +364,11 @@ class MainActivityUIComponent(private val mMainActivity: MainActivity) : UICompo
     }
 
     fun scrollToBottom() {
-        if (mMainActivity.status == MainActivity.STATUS_INQUIRED_NOT) {
+        if (mMainActivity.status == MainActivity.STATUS_INQUIRED_NOT)
             mRecyclerView.adapter?.itemCount?.let {
                 mScrollFlag = true
                 mRecyclerView.smoothScrollToPosition(it - 1)
             }
-        }
     }
 
     private fun createHeaderView() =
@@ -388,9 +387,8 @@ class MainActivityUIComponent(private val mMainActivity: MainActivity) : UICompo
     private var mScrollFlag = false
 
     private fun TextView.setWords(tips: String, words: String) {
-        visibility = if (words.isBlank()) {
-            View.GONE
-        } else {
+        visibility = if (words.isBlank()) View.GONE
+        else {
             val wordText = "$tips\n$words"
             text = wordText
             View.VISIBLE
@@ -449,19 +447,19 @@ class MainActivityUIComponent(private val mMainActivity: MainActivity) : UICompo
                 mTVSrcPronunciation.text = srcPronunciationText
             }
 
-            if (it[1].pronunciation.isBlank()) {
-                mTVPronunciation.visibility = View.GONE
-            } else {
-                mTVPronunciation.visibility = View.VISIBLE
+            mTVPronunciation.visibility = if (it[1].pronunciation.isBlank())
+                 View.GONE
+            else {
                 mTVPronunciation.text = it[1].pronunciation
+                View.VISIBLE
             }
         }
 
         //显示扩展词意
         mOtherMeanLayout.removeAllViews()
-        if (inquireResult.dict == null) {
+        if (inquireResult.dict == null)
             mOtherMeanCard.visibility = View.GONE
-        } else {
+        else {
             mOtherMeanCard.visibility = View.VISIBLE
             inquireResult.dict.forEach { dict ->
                 with<_LinearLayout, Unit>(mOtherMeanLayout as _LinearLayout) {

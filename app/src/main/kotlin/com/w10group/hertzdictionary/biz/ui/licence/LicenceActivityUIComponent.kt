@@ -49,9 +49,10 @@ class LicenceActivityUIComponent(private val mLicenceActivity: LicenceActivity) 
         }
     }.view
 
-    override fun init() {
-        mLicenceActivity.setSupportActionBar(mToolbar)
-        mLicenceActivity.supportActionBar?.setDisplayHomeAsUpEnabled(true)
+    override fun init() = with(mLicenceActivity) {
+        setSupportActionBar(mToolbar)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        Unit
     }
 
     fun <T : RecyclerView.ViewHolder> setAdapter(adapter: RecyclerView.Adapter<T>) {

@@ -34,11 +34,9 @@ object WordManagerServiceV3 {
     suspend fun getAllLocalWord(context: Context): MutableList<LocalWord> =
         if (this::allLocalWords.isInitialized)
             allLocalWords
-        else {
-            allLocalWords = CopyOnWriteArrayList()
-            allLocalWords.apply {
-                addAll(LocalWordDatabase.getDAO(context).queryAll())
-            }
+        else CopyOnWriteArrayList<LocalWord>().also {
+            it.addAll(LocalWordDatabase.getDAO(context).queryAll())
+            allLocalWords = it
         }
 
     var networkJob: Job? = null

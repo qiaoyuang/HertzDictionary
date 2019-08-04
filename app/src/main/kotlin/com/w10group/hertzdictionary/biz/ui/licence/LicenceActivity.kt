@@ -5,6 +5,7 @@ import android.view.MenuItem
 import com.w10group.hertzdictionary.biz.manager.readFileToKV
 import com.w10group.hertzdictionary.core.architecture.CoroutineScopeActivity
 import kotlinx.coroutines.launch
+
 /**
  * Created by Administrator on 2018/6/26.
  * 开源许可证Activity

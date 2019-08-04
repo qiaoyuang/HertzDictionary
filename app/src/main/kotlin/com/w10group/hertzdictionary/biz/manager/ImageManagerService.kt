@@ -37,9 +37,8 @@ object ImageManagerService {
 
     suspend fun loadBackground(context: Context, imageView: ImageView) {
         val sharedPreferences = context.getSharedPreferences(FILE_NAME, Context.MODE_PRIVATE)
-        if (!::todayURL.isInitialized) {
+        if (!::todayURL.isInitialized)
             todayURL = sharedPreferences.getString(KEY_URL, DEFAULT_VALUE)!!
-        }
         GlideApp.with(context).load(todayURL).dontAnimate().into(imageView)
         getURLOnInternetByCoroutines(context, imageView, sharedPreferences)
     }

@@ -153,14 +153,12 @@ class MainActivity : CoroutineScopeActivity<MainActivity>() {
 
     override fun dispatchTouchEvent(ev: MotionEvent?): Boolean {
         ev?.let { event ->
-            if (event.action == MotionEvent.ACTION_DOWN) {
-                if (uiComponent.isShouldHideInput(currentFocus, event)) {
+            if (event.action == MotionEvent.ACTION_DOWN)
+                if (uiComponent.isShouldHideInput(currentFocus, event))
                     currentFocus?.windowToken?.let {
                         val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
                         imm.hideSoftInputFromWindow(it, 0)
                     }
-                }
-            }
         }
         return super.dispatchTouchEvent(ev)
     }

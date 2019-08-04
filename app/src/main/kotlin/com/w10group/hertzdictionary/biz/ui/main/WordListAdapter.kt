@@ -123,36 +123,33 @@ class WordListAdapter(private val mContext: Context,
         mContext.selector("",
                 listOf(mContext.getString(R.string.delete_word, localWord.en),
                         mContext.getString(R.string.delete_all_word))) { dialog, which ->
-            if (which == 0) {
-                mContext.alert {
-                    title = mContext.getString(R.string.are_you_sure_delete, localWord.en)
-                    message = mContext.getString(R.string.delete_clear_word)
-                    okButton { alertDialog ->
-                        mData.removeAt(index)
-                        sumCount -= localWord.count
-                        notifyItemRemoved(index)
-                        notifyItemRangeChanged(0, mData.size)
-                        GlobalScope.launch(Dispatchers.IO) { dao.delete(localWord) }
-                        alertDialog.dismiss()
+            val alert = if (which == 0) mContext.alert {
+                title = mContext.getString(R.string.are_you_sure_delete, localWord.en)
+                message = mContext.getString(R.string.delete_clear_word)
+                okButton { alertDialog ->
+                    mData.removeAt(index)
+                    sumCount -= localWord.count
+                    notifyItemRemoved(index)
+                    notifyItemRangeChanged(0, mData.size)
+                    GlobalScope.launch(Dispatchers.IO) { dao.delete(localWord) }
+                    alertDialog.dismiss()
+                }
+                cancelButton { it.dismiss() }
+            } else mContext.alert {
+                title = mContext.getString(R.string.are_you_sure_delete_all)
+                message = mContext.getString(R.string.delete_clear_word_all)
+                okButton { alertDialog ->
+                    mData.clear()
+                    sumCount = 0
+                    notifyDataSetChanged()
+                    GlobalScope.launch(Dispatchers.IO) {
+                        dao.delete(*WordManagerServiceV3.getAllLocalWord(mContext).toTypedArray())
                     }
-                    cancelButton { it.dismiss() }
-                }.show()
-            } else {
-                mContext.alert {
-                    title = mContext.getString(R.string.are_you_sure_delete_all)
-                    message = mContext.getString(R.string.delete_clear_word_all)
-                    okButton { alertDialog ->
-                        mData.clear()
-                        sumCount = 0
-                        notifyDataSetChanged()
-                        GlobalScope.launch(Dispatchers.IO) {
-                            dao.delete(*WordManagerServiceV3.getAllLocalWord(mContext).toTypedArray())
-                        }
-                        alertDialog.dismiss()
-                    }
-                    cancelButton { it.dismiss() }
-                }.show()
+                    alertDialog.dismiss()
+                }
+                cancelButton { it.dismiss() }
             }
+            alert.show()
             dialog.dismiss()
         }
         return false

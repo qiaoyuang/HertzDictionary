@@ -326,23 +326,15 @@ class AboutDeveloperActivityUIComponent(private val mAboutDeveloperActivity: Abo
         mTVContent3.text = result[2]
     }
 
-    fun requestPermissionsResult(requestCode: Int, grantResults: IntArray) {
-        when (requestCode) {
-            mCompleteRequestCode -> {
-                if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    mCompleteScaleImageView.restoreImage()
-                } else {
-                    mCompleteScaleImageView.permissionsRejectSnack()
-                }
-            }
-            mReceiptRequestCode -> {
-                if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    mReceiptCompleteScaleImageView.restoreImage()
-                } else {
-                    mReceiptCompleteScaleImageView.permissionsRejectSnack()
-                }
-            }
-        }
+    fun requestPermissionsResult(requestCode: Int, grantResults: IntArray) = with(when (requestCode) {
+        mCompleteRequestCode -> mCompleteScaleImageView
+        mReceiptRequestCode -> mReceiptCompleteScaleImageView
+        else -> throw IllegalStateException("requestCode 不正确")
+    }) {
+        if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED)
+            restoreImage()
+        else
+            permissionsRejectSnack()
     }
 
 }

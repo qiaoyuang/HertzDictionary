@@ -28,9 +28,8 @@ object NetworkUtil {
 
     val instance: NetworkService
         get() {
-            if (mInstanceSoftReference.get() == null) {
+            if (mInstanceSoftReference.get() == null)
                 mInstanceSoftReference = initInstanceSoftReference()
-            }
             return mInstanceSoftReference.get()!!
         }
 

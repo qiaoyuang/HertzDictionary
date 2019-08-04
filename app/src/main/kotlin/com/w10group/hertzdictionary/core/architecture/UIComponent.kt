@@ -4,6 +4,7 @@ import org.jetbrains.anko.AnkoComponent
 
 /**
  * 带 CoroutineScope 的基础 AnkoComponent
+ * @author Qiao
  */
 
 abstract class UIComponent<T : CoroutineScopeActivity<T>> : AnkoComponent<T> {
