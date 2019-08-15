@@ -5,7 +5,7 @@ import android.net.ConnectivityManager
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import com.w10group.hertzdictionary.biz.manager.NetworkService
 import kotlinx.serialization.json.Json
-import okhttp3.MediaType
+import okhttp3.MediaType.Companion.toMediaType
 import retrofit2.Retrofit
 import java.lang.ref.SoftReference
 
@@ -21,7 +21,7 @@ object NetworkUtil {
 
     private val mRetrofit: Retrofit = Retrofit.Builder()
             .baseUrl(BASE_URL)
-            .addConverterFactory(Json.nonstrict.asConverterFactory(MediaType.get(MEDIA_TYPE_JSON)))
+            .addConverterFactory(Json.nonstrict.asConverterFactory(MEDIA_TYPE_JSON.toMediaType()))
             .build()
 
     private var mInstanceSoftReference = initInstanceSoftReference()

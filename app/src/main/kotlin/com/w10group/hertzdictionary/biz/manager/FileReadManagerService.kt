@@ -2,7 +2,8 @@ package com.w10group.hertzdictionary.biz.manager
 
 import android.content.Context
 import kotlinx.coroutines.*
-import okio.Okio
+import okio.buffer
+import okio.source
 
 /**
  * Created by Administrator on 2018/7/8.
@@ -10,7 +11,7 @@ import okio.Okio
  */
 
 suspend fun readFileToString(context: Context, fileName: String): List<String> = withContext(Dispatchers.IO) {
-    Okio.buffer(Okio.source(context.assets.open(fileName))).use {
+    context.assets.open(fileName).source().buffer().use {
         val result = ArrayList<String>()
         with(StringBuilder()) {
             var line = it.readUtf8Line()
@@ -35,7 +36,7 @@ suspend fun readFileToString(context: Context, fileName: String): List<String> =
 typealias KV = Pair<String, String>
 
 suspend fun readFileToKV(context: Context, fileName: String): List<KV> = withContext(Dispatchers.IO) {
-    Okio.buffer(Okio.source(context.assets.open(fileName))).use {
+    context.assets.open(fileName).source().buffer().use {
         val result = ArrayList<KV>()
         with(StringBuilder()) {
             var line = it.readUtf8Line()
