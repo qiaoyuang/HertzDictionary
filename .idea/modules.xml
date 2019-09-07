@@ -3,7 +3,9 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/HertzDictionary.iml" filepath="$PROJECT_DIR$/.idea/HertzDictionary.iml" />
+      <module fileurl="file://$PROJECT_DIR$/app/HertzDictionary-app.iml" filepath="$PROJECT_DIR$/app/HertzDictionary-app.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/project-HertzDictionary.iml" filepath="$PROJECT_DIR$/project-HertzDictionary.iml" />
     </modules>
   </component>
 </project>
