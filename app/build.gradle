@@ -45,14 +45,14 @@ dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutines_version"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutines_version"
-    implementation "org.jetbrains.kotlinx:kotlinx-serialization-runtime:0.11.1"
+    implementation "org.jetbrains.kotlinx:kotlinx-serialization-runtime:0.12.0"
     //implementation "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
     //implementation "org.jetbrains.kotlinx:kotlinx-io-jvm:0.1.13"
 
     // Android 支持包
     implementation "androidx.legacy:legacy-support-v4:1.0.0"
-    implementation "androidx.appcompat:appcompat:1.0.2"
-    implementation "com.google.android.material:material:1.1.0-alpha09"
+    implementation "androidx.appcompat:appcompat:1.1.0"
+    implementation "com.google.android.material:material:1.1.0-alpha10"
     implementation "androidx.recyclerview:recyclerview:1.0.0"
     implementation "androidx.cardview:cardview:1.0.0"
     implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
