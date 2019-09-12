@@ -41,7 +41,7 @@ class FeaturesActivity : CoroutineScopeActivity<FeaturesActivity>() {
         return super.onOptionsItemSelected(item)
     }
 
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray)
-            = uiComponent.requestPermissionsResult(requestCode, grantResults)
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) =
+            uiComponent.requestPermissionsResult(requestCode, grantResults)
 
 }

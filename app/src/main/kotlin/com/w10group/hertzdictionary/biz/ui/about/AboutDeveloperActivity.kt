@@ -25,6 +25,8 @@ class AboutDeveloperActivity : CoroutineScopeActivity<AboutDeveloperActivity>() 
         super.onCreate(savedInstanceState)
         launch {
             ImageManagerService.loadBackground(implementer, uiComponent.mIMBackground)
+        }
+        launch {
             val list = readFileToString(implementer, ABOUT_ME_FILE_NAME)
             uiComponent.updateTextView(list)
         }
