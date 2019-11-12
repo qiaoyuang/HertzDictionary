@@ -9,20 +9,16 @@ import androidx.core.content.ContextCompat
 import com.w10group.hertzdictionary.R
 import com.w10group.hertzdictionary.core.fmtDateNormal
 import com.w10group.hertzdictionary.core.fmtMonthDay
-import kotlin.math.abs
 import org.jetbrains.anko.dip
 import org.jetbrains.anko.sp
 import java.text.NumberFormat
+import kotlin.math.abs
 
 /**
- * 算力曲线自定义 View
+ * 查询频数曲线自定义 View
  * @author Qiao
  */
 class CurveView : View {
-
-    companion object {
-        private const val DEFAULT_UNIT = "次/天"
-    }
 
     constructor(context: Context) : super(context)
     constructor(context: Context, attributeSet: AttributeSet) : super(context, attributeSet)
@@ -88,7 +84,7 @@ class CurveView : View {
         strokeWidth = dp2
     }
 
-    // 算力单位画笔
+    // 查询频数单位画笔
     private val mUnitPaint = Paint().apply {
         isAntiAlias = true
         textSize = sp10
@@ -133,7 +129,7 @@ class CurveView : View {
     // 图标的时间（X 轴参数）
     private val time = ArrayList<Long>()
 
-    // 图表的算力值（Y 轴参数）
+    // 图表的查询频数值（Y 轴参数）
     private val value = ArrayList<Int>()
 
     // 触摸点的横纵坐标
@@ -144,16 +140,16 @@ class CurveView : View {
         maximumFractionDigits = 1
     }
 
+    private val mDeffaultUnit = context.getString(R.string.default_unit)
+
     // 设置数据
     fun setData(xList: List<Long>, yList: List<Int>) {
         time.clear()
         time.addAll(xList)
         value.clear()
         value.addAll(yList)
-        if (time.size != value.size)
-            throw IllegalArgumentException("xList and yList must be equal in size.")
-        if (time.size < 2)
-            throw IllegalArgumentException("The size of xList and yList must be greater than 1.")
+        require(time.size == value.size) { "xList and yList must be equal in size." }
+        require(time.size >= 2) { "The size of xList and yList must be greater than 1." }
         touchX = 0f
         touchY = 0f
         isPathEmpty = true
@@ -190,7 +186,7 @@ class CurveView : View {
         drawText(time4, x4, y, mTextPaint)
     }
 
-    // 第二步：绘制 Y 轴坐标参数（算力）
+    // 第二步：绘制 Y 轴坐标参数（查询频数）
     private fun Canvas.drawYText() {
         val maxValue = value.max()!!
         val value1 = "0"
@@ -210,12 +206,12 @@ class CurveView : View {
         drawText(value1, x, y4, mTextPaint)
     }
 
-    // 第三步：绘制右上角算力单位
+    // 第三步：绘制右上角查询频数单位
     private fun Canvas.drawUnit() {
         val x = width.toFloat() - dp32
         val y = dp24
         mUnitPaint.color = darkBlue
-        drawText(DEFAULT_UNIT, x, y, mUnitPaint)
+        drawText(mDeffaultUnit, x, y, mUnitPaint)
         mUnitPaint.color = lightBlue
         drawRoundRect(x - dp4, y - dp12, x + dp28, y + dp4, 10f, 10f, mUnitPaint)
     }
@@ -235,7 +231,7 @@ class CurveView : View {
         drawLine(y4)
     }
 
-    // 第五步：绘制算力曲线以及下方浅蓝色区域
+    // 第五步：绘制查询频数曲线以及下方浅蓝色区域
     private fun Canvas.drawCurve() {
         if (!isPathEmpty) {
             if (value.any { it != 0 })
@@ -279,7 +275,7 @@ class CurveView : View {
                 val endY = height.toFloat() / 5 * 4
 
                 // 绘制弹窗
-                val touchDiaPowerText = context.getString(R.string.curve_view_count, "${value[index]}$DEFAULT_UNIT")
+                val touchDiaPowerText = context.getString(R.string.curve_view_count, "${value[index]}$mDeffaultUnit")
                 val touchTimeText = time[index].fmtDateNormal()
                 val windowWidth = dp96
                 val offset = dp16
@@ -304,7 +300,7 @@ class CurveView : View {
                 val drawX = windowX + offset / 2
                 val drawY = windowY + offset
                 drawText(touchTimeText, drawX, drawY, mTouchPaint)
-                // 绘制算力值文字
+                // 绘制查询频数值文字
                 drawText(touchDiaPowerText, drawX, drawY + windowHeight / 2, mTouchPaint)
             }
         }
@@ -319,7 +315,7 @@ class CurveView : View {
         val offset = width.toFloat() / 10
         val maxWidth = offset * 9
         val x = diffScale * maxWidth + offset
-        // 计算算力
+        // 计算查询频数
         val max = value.max()!!.toFloat()
         val baseHeight = height.toFloat() / 5
         val y = if (max == 0f) baseHeight * 4 else (max - value[index]) / max * (baseHeight * 3) + baseHeight

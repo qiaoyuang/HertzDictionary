@@ -61,4 +61,6 @@
     <string name="average_required">平均每天查询：%1$d 次</string>
     <string name="most_required">查询次数最多的单词为：</string>
     <string name="total_required">；共查询 %1$d 次</string>
+
+    <string name="default_unit">次/天</string>
 </resources>
