@@ -140,7 +140,7 @@ class CurveView : View {
         maximumFractionDigits = 1
     }
 
-    private val mDeffaultUnit = context.getString(R.string.default_unit)
+    private val mDefaultUnit = context.getString(R.string.default_unit)
 
     // 设置数据
     fun setData(xList: List<Long>, yList: List<Int>) {
@@ -211,7 +211,7 @@ class CurveView : View {
         val x = width.toFloat() - dp32
         val y = dp24
         mUnitPaint.color = darkBlue
-        drawText(mDeffaultUnit, x, y, mUnitPaint)
+        drawText(mDefaultUnit, x, y, mUnitPaint)
         mUnitPaint.color = lightBlue
         drawRoundRect(x - dp4, y - dp12, x + dp28, y + dp4, 10f, 10f, mUnitPaint)
     }
@@ -275,7 +275,7 @@ class CurveView : View {
                 val endY = height.toFloat() / 5 * 4
 
                 // 绘制弹窗
-                val touchDiaPowerText = context.getString(R.string.curve_view_count, "${value[index]}$mDeffaultUnit")
+                val touchDiaPowerText = context.getString(R.string.curve_view_count, "${value[index]}$mDefaultUnit")
                 val touchTimeText = time[index].fmtDateNormal()
                 val windowWidth = dp96
                 val offset = dp16
@@ -348,5 +348,13 @@ class CurveView : View {
         invalidate()
         return true
     }
+
+    private external fun nativeValueToCoordinate(index: Int,
+                                            time: LongArray,
+                                            value: IntArray,
+                                            width: Int,
+                                            height: Int): FloatArray
+
+    private external fun nativeGetTimeTemp(time: LongArray, width: Int, touchX: Float): Int
 
 }

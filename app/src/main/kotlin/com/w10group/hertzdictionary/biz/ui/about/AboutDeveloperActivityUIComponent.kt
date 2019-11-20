@@ -316,7 +316,7 @@ class AboutDeveloperActivityUIComponent(private val mAboutDeveloperActivity: Abo
 
     private fun copyToClipBoard(view: View, content: String, address: String) {
         val cmb = mAboutDeveloperActivity.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-        cmb.primaryClip = ClipData.newPlainText("label", address)
+        cmb.setPrimaryClip(ClipData.newPlainText("label", address))
         view.snackbar(mAboutDeveloperActivity.getString(R.string.copy_down, content))
     }
 
