@@ -295,9 +295,11 @@ class MainActivityUIComponent(private val mMainActivity: MainActivity) : UICompo
                     val linearLayoutManager = LinearLayoutManager(context)
                     layoutManager = linearLayoutManager
                     itemAnimator = DefaultItemAnimator()
-                    var firstPosition = 0
-                    var lastPosition = 0
                     addOnScrollListener(object : RecyclerView.OnScrollListener() {
+
+                        var firstPosition = 0
+                        var lastPosition = 0
+
                         override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                             super.onScrolled(recyclerView, dx, dy)
                             firstPosition = linearLayoutManager.findFirstCompletelyVisibleItemPosition()
