@@ -296,14 +296,15 @@ class MainActivityUIComponent(private val mMainActivity: MainActivity) : UICompo
                     layoutManager = linearLayoutManager
                     itemAnimator = DefaultItemAnimator()
                     addOnScrollListener(object : RecyclerView.OnScrollListener() {
-
-                        var firstPosition = 0
-                        var lastPosition = 0
+                        private var firstPosition = 0
+                        private var lastPosition = 0
 
                         override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                             super.onScrolled(recyclerView, dx, dy)
-                            firstPosition = linearLayoutManager.findFirstCompletelyVisibleItemPosition()
-                            lastPosition = linearLayoutManager.findLastCompletelyVisibleItemPosition()
+                            with(linearLayoutManager) {
+                                firstPosition = findFirstCompletelyVisibleItemPosition()
+                                lastPosition = findLastCompletelyVisibleItemPosition()
+                            }
                         }
 
                         override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
@@ -459,10 +460,8 @@ class MainActivityUIComponent(private val mMainActivity: MainActivity) : UICompo
 
         //显示扩展词意
         mOtherMeanLayout.removeAllViews()
-        if (inquireResult.dict == null)
-            mOtherMeanCard.visibility = View.GONE
+        mOtherMeanCard.visibility = if (inquireResult.dict == null) View.GONE
         else {
-            mOtherMeanCard.visibility = View.VISIBLE
             inquireResult.dict.forEach { dict ->
                 with<_LinearLayout, Unit>(mOtherMeanLayout as _LinearLayout) {
                     textView {
@@ -486,6 +485,7 @@ class MainActivityUIComponent(private val mMainActivity: MainActivity) : UICompo
                     }
                 }
             }
+            View.VISIBLE
         }
     }
 
