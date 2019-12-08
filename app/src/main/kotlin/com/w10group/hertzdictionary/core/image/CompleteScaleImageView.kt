@@ -104,78 +104,77 @@ class CompleteScaleImageView(private val mActivity: Activity,
         setEvaluator(ArgbEvaluator())
     }
 
-    private fun initView(): View =
-        AnkoContext.create(mActivity).apply {
-            frameLayout {
-                backgroundColor = Color.BLACK
-                mViewPager = viewPager {
-                    addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
-                        override fun onPageScrollStateChanged(state: Int) = Unit
-                        override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) = Unit
-                        override fun onPageSelected(position: Int) {
-                            mSelectedPosition = position
-                            val text = "${position + 1}/${mViews.size}"
-                            mTVImageCount.text = text
-                            mAnim.start()
-                        }
-                    })
-                }.lparams(matchParent, matchParent)
-
-                mIVBack = imageView {
-                    imageResource = R.drawable.ic_arrow_back_white_24dp
-                    setPadding(dip(24), dip(24), 0, 0)
-                    setOnClickListener { mDialog.dismiss() }
-                }.lparams(wrapContent, wrapContent) {
-                    gravity = Gravity.START or Gravity.TOP
-                }
-
-                mIVDelete = imageView {
-                    imageResource = R.drawable.ic_delete_white_24dp
-                    visibility = View.INVISIBLE
-                    setPadding(0, dip(24), dip(24), 0)
-                    setOnClickListener {
-                        val size = mViews.size
-                        when (mStatus) {
-                            URL -> mUrls
-                            FILE -> mFiles
-                            else -> null
-                        }?.removeAt(mSelectedPosition)
-                        onDelete(mSelectedPosition)
-                        mViewPager.removeViewAt(mSelectedPosition)
-                        if (mSelectedPosition != size) {
-                            val text = "${mSelectedPosition + 1}/${mViews.size}"
-                            mTVImageCount.text = text
-                        }
-                        mAdapter.notifyDataSetChanged()
+    private fun initView(): View = mActivity.UI {
+        frameLayout {
+            backgroundColor = Color.BLACK
+            mViewPager = viewPager {
+                addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
+                    override fun onPageScrollStateChanged(state: Int) = Unit
+                    override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) = Unit
+                    override fun onPageSelected(position: Int) {
+                        mSelectedPosition = position
+                        val text = "${position + 1}/${mViews.size}"
+                        mTVImageCount.text = text
+                        mAnim.start()
                     }
-                }.lparams(wrapContent, wrapContent) {
-                    gravity = Gravity.END or Gravity.TOP
-                }
+                })
+            }.lparams(matchParent, matchParent)
 
-                mIVDownload = imageView {
-                    imageResource = R.drawable.ic_file_download_white_24dp
-                    visibility = View.INVISIBLE
-                    setPadding(0, 0, dip(24), dip(24))
-                    setOnClickListener {
-                        if (ContextCompat.checkSelfPermission(mActivity, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED)
-                            restoreImage()
-                        else
-                            ActivityCompat.requestPermissions(mActivity, arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE), mRequestCode)
-                    }
-                }.lparams(wrapContent, wrapContent) {
-                    gravity = Gravity.END or Gravity.BOTTOM
-                }
-
-                mTVImageCount = textView {
-                    textSize = 18f
-                    textColor = Color.WHITE
-                }.lparams(wrapContent, wrapContent) {
-                    gravity = Gravity.CENTER_HORIZONTAL or Gravity.BOTTOM
-                    bottomMargin = dip(48)
-                }
-
+            mIVBack = imageView {
+                imageResource = R.drawable.ic_arrow_back_white_24dp
+                setPadding(dip(24), dip(24), 0, 0)
+                setOnClickListener { mDialog.dismiss() }
+            }.lparams(wrapContent, wrapContent) {
+                gravity = Gravity.START or Gravity.TOP
             }
-        }.view
+
+            mIVDelete = imageView {
+                imageResource = R.drawable.ic_delete_white_24dp
+                visibility = View.INVISIBLE
+                setPadding(0, dip(24), dip(24), 0)
+                setOnClickListener {
+                    val size = mViews.size
+                    when (mStatus) {
+                        URL -> mUrls
+                        FILE -> mFiles
+                        else -> null
+                    }?.removeAt(mSelectedPosition)
+                    onDelete(mSelectedPosition)
+                    mViewPager.removeViewAt(mSelectedPosition)
+                    if (mSelectedPosition != size) {
+                        val text = "${mSelectedPosition + 1}/${mViews.size}"
+                        mTVImageCount.text = text
+                    }
+                    mAdapter.notifyDataSetChanged()
+                }
+            }.lparams(wrapContent, wrapContent) {
+                gravity = Gravity.END or Gravity.TOP
+            }
+
+            mIVDownload = imageView {
+                imageResource = R.drawable.ic_file_download_white_24dp
+                visibility = View.INVISIBLE
+                setPadding(0, 0, dip(24), dip(24))
+                setOnClickListener {
+                    if (ContextCompat.checkSelfPermission(mActivity, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED)
+                        restoreImage()
+                    else
+                        ActivityCompat.requestPermissions(mActivity, arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE), mRequestCode)
+                }
+            }.lparams(wrapContent, wrapContent) {
+                gravity = Gravity.END or Gravity.BOTTOM
+            }
+
+            mTVImageCount = textView {
+                textSize = 18f
+                textColor = Color.WHITE
+            }.lparams(wrapContent, wrapContent) {
+                gravity = Gravity.CENTER_HORIZONTAL or Gravity.BOTTOM
+                bottomMargin = dip(48)
+            }
+
+        }
+    }.view
 
     // 保存图片
     fun restoreImage() {
@@ -198,7 +197,7 @@ class CompleteScaleImageView(private val mActivity: Activity,
     private fun createItemView(): Triple<View, SubsamplingScaleImageView, ProgressBar> {
         lateinit var scaleImageView: SubsamplingScaleImageView
         lateinit var progressBar: ProgressBar
-        val view = AnkoContext.create(mActivity).apply {
+        val view = mActivity.UI {
             frameLayout {
                 progressBar = progressBar {
                     visibility = View.VISIBLE
@@ -228,7 +227,7 @@ class CompleteScaleImageView(private val mActivity: Activity,
         }
 
     // 启动并展示图片
-    fun showByCoroutines(startPosition: Int = 0) =
+    fun show(startPosition: Int = 0) =
             if (mViews.isEmpty()) when (mStatus) {
                 URL -> mUrls?.let { urls ->
                     mTotalJob = Job()

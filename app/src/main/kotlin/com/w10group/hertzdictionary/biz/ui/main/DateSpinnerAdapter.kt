@@ -36,7 +36,7 @@ class DateSpinnerAdapter(private val mContext: Context) : SpinnerAdapter {
 
     override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View = createView(blue1, position, false)
 
-    private fun createView(color: Int, position: Int, isMargin: Boolean) = AnkoContext.create(mContext).apply {
+    private fun createView(color: Int, position: Int, isMargin: Boolean) = mContext.UI {
         frameLayout {
             textView {
                 text = mData[position]

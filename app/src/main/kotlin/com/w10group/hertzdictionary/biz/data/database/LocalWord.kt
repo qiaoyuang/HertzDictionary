@@ -12,4 +12,4 @@ import androidx.room.PrimaryKey
 data class LocalWord(@PrimaryKey var en: String = "",
                      var ch: String = "",
                      var count: Int = 1,
-                     var timeList: ArrayList<Long> = ArrayList())
+                     var timeList: MutableList<Long> = mutableListOf())

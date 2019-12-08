@@ -374,17 +374,16 @@ class MainActivityUIComponent(private val mMainActivity: MainActivity) : UICompo
             }
     }
 
-    private fun createHeaderView() =
-            AnkoContext.create(mMainActivity).apply {
-                mBackgroundImageView = imageView {
-                    layoutParams = ViewGroup.LayoutParams(matchParent, dip(176))
-                    scaleType = ImageView.ScaleType.CENTER_CROP
-                    backgroundColor = blue1
-                    isClickable = true
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
-                        foreground = createTouchFeedbackBorderless(context)
-                }
-            }.view
+    private fun createHeaderView() = mMainActivity.UI {
+        mBackgroundImageView = imageView {
+            layoutParams = ViewGroup.LayoutParams(matchParent, dip(176))
+            scaleType = ImageView.ScaleType.CENTER_CROP
+            backgroundColor = blue1
+            isClickable = true
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
+                foreground = createTouchFeedbackBorderless(context)
+        }
+    }.view
 
     // 标记位，当值为true时，RecyclerView滑动到顶部或底部才会有弹窗。
     private var mScrollFlag = false

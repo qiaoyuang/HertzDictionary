@@ -28,7 +28,6 @@ abstract class CoroutineScopeActivity<T : CoroutineScopeActivity<T>> : AppCompat
         super.onCreate(savedInstanceState)
         job = Job()
         uiComponent.setContentView(implementer)
-        uiComponent.init()
     }
 
     override fun onRestart() {
@@ -39,11 +38,6 @@ abstract class CoroutineScopeActivity<T : CoroutineScopeActivity<T>> : AppCompat
     override fun onStop() {
         super.onStop()
         job.cancel()
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        uiComponent.recycler()
     }
 
 }

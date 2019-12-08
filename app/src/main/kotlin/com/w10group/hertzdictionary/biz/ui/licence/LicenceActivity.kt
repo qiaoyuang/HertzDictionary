@@ -20,6 +20,8 @@ class LicenceActivity : CoroutineScopeActivity<LicenceActivity>() {
     override val uiComponent = LicenceActivityUIComponent(this)
     override val implementer = this
 
+    init { lifecycle.addObserver(uiComponent) }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         launch {

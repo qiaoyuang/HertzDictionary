@@ -22,6 +22,8 @@ class StatisticsActivity : CoroutineScopeActivity<StatisticsActivity>() {
     override val uiComponent = StatisticsActivityUIComponent(this)
     override val implementer = this
 
+    init { lifecycle.addObserver(uiComponent) }
+
     fun weekSelected() = selected(7) { DateManagerService.createWeekValue(*it) }
 
     fun monthSelected() = selected(30) { DateManagerService.createMonthValue(*it) }

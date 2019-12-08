@@ -105,7 +105,7 @@ class AboutDeveloperActivityUIComponent(private val mAboutDeveloperActivity: Abo
                         scaleType = ImageView.ScaleType.CENTER_CROP
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
                             foreground = createTouchFeedbackBorderless(context)
-                        setOnClickListener {  mCompleteScaleImageView.showByCoroutines(1) }
+                        setOnClickListener {  mCompleteScaleImageView.show(1) }
                     }.lparams(matchParent, matchParent) {
                         collapseMode = COLLAPSE_MODE_PARALLAX
                     }
@@ -116,7 +116,7 @@ class AboutDeveloperActivityUIComponent(private val mAboutDeveloperActivity: Abo
                         borderColor = Color.WHITE
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
                             foreground = createTouchFeedbackBorderless(context)
-                        setOnClickListener { mCompleteScaleImageView.showByCoroutines() }
+                        setOnClickListener { mCompleteScaleImageView.show() }
                     }.lparams(dip(80), dip(80)) {
                         gravity = Gravity.CENTER_HORIZONTAL or Gravity.TOP
                         topMargin = dip(88)
@@ -176,7 +176,7 @@ class AboutDeveloperActivityUIComponent(private val mAboutDeveloperActivity: Abo
                         frameLayout {
                             backgroundColor = blueGray
                             foreground = createTouchFeedbackBorderless(context)
-                            setOnClickListener { mReceiptCompleteScaleImageView.showByCoroutines() }
+                            setOnClickListener { mReceiptCompleteScaleImageView.show() }
                             GlideApp.with(mAboutDeveloperActivity).load(R.drawable.wechatpay).dontAnimate().into(
                                     imageView().lparams(dip(24), dip(24)) {
                                         gravity = Gravity.CENTER_VERTICAL
@@ -200,7 +200,7 @@ class AboutDeveloperActivityUIComponent(private val mAboutDeveloperActivity: Abo
                         frameLayout {
                             backgroundColor = blueGray
                             foreground = createTouchFeedbackBorderless(context)
-                            setOnClickListener { mReceiptCompleteScaleImageView.showByCoroutines(1) }
+                            setOnClickListener { mReceiptCompleteScaleImageView.show(1) }
                             GlideApp.with(mAboutDeveloperActivity).load(R.drawable.alipay).dontAnimate().into(
                                     imageView().lparams(dip(24), dip(24)) {
                                         gravity = Gravity.CENTER_VERTICAL
@@ -307,12 +307,11 @@ class AboutDeveloperActivityUIComponent(private val mAboutDeveloperActivity: Abo
         mReceiptCompleteScaleImageView.recycler()
     }
 
-    private fun createCompleteScaleImageView(list: MutableList<String>, requestCode: Int): CompleteScaleImageView {
-        val completeScaleImageView = CompleteScaleImageView(mAboutDeveloperActivity, GlideDownloader, requestCode)
-        completeScaleImageView.isDownloaderEnable = true
-        completeScaleImageView.mUrls = list
-        return completeScaleImageView
-    }
+    private fun createCompleteScaleImageView(list: MutableList<String>, requestCode: Int): CompleteScaleImageView =
+            CompleteScaleImageView(mAboutDeveloperActivity, GlideDownloader, requestCode).apply {
+                isDownloaderEnable = true
+                mUrls = list
+            }
 
     private fun copyToClipBoard(view: View, content: String, address: String) {
         val cmb = mAboutDeveloperActivity.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager

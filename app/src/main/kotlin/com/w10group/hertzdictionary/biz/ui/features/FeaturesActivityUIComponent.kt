@@ -182,7 +182,7 @@ class FeaturesActivityUIComponent(private val mFeatureActivity: FeaturesActivity
                             frameLayout {
                                 backgroundColorResource = R.color.blueGray
                                 foreground = createTouchFeedbackBorderless(context)
-                                setOnClickListener { mCompleteScaleImageView.showByCoroutines() }
+                                setOnClickListener { mCompleteScaleImageView.show() }
                                 GlideApp.with(mFeatureActivity).load(R.drawable.wechat).dontAnimate().into(
                                         imageView().lparams(dip(24), dip(24)) {
                                             gravity = Gravity.CENTER_VERTICAL
@@ -289,8 +289,7 @@ class FeaturesActivityUIComponent(private val mFeatureActivity: FeaturesActivity
     override fun init() = with(mFeatureActivity) {
         setSupportActionBar(mToolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        Unit
-    }
+    } ?: Unit
 
     override fun recycler() = mCompleteScaleImageView.recycler()
 

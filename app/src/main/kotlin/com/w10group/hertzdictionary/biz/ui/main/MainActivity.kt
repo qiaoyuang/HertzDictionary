@@ -41,6 +41,8 @@ class MainActivity : CoroutineScopeActivity<MainActivity>() {
 
     override val uiComponent = MainActivityUIComponent(this)
     override val implementer = this
+
+    init { lifecycle.addObserver(uiComponent) }
     
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -133,8 +135,8 @@ class MainActivity : CoroutineScopeActivity<MainActivity>() {
         return super.onCreateOptionsMenu(menu)
     }
 
-    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
-        when (item?.itemId) {
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
             R.id.move_to_Bottom -> uiComponent.scrollToBottom()
             R.id.move_to_top -> uiComponent.scrollToTop()
         }

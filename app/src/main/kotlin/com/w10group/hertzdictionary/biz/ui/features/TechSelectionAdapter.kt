@@ -27,7 +27,7 @@ class TechSelectionAdapter(private val mContext: Context,
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): KVViewHolder =
-            KVViewHolder(AnkoContext.create(mContext).apply {
+            KVViewHolder(mContext.UI {
                 frameLayout {
                     lparams(matchParent, wrapContent) {
                         topMargin = dip(2)

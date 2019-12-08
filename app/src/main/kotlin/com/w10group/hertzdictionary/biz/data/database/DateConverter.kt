@@ -1,6 +1,7 @@
 package com.w10group.hertzdictionary.biz.data.database
 
 import androidx.room.TypeConverter
+import kotlinx.serialization.UnstableDefault
 import kotlinx.serialization.internal.LongSerializer
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.list
@@ -10,6 +11,7 @@ import kotlinx.serialization.list
  * @author Qiao
  */
 
+@UseExperimental(UnstableDefault::class)
 class DateConverter {
 
     private val serializer = LongSerializer.list

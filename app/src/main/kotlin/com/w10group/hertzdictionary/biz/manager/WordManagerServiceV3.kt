@@ -46,10 +46,6 @@ object WordManagerServiceV3 {
     @Suppress("DEPRECATION")
     fun inquire(word: String, view: View) {
         networkJob = GlobalScope.launch(Dispatchers.Main) {
-            if (!NetworkUtil.checkNetwork(view.context)) {
-                view.snackbar(R.string.no_network)
-                return@launch
-            }
             val progressDialog = view.context.progressDialog(title = R.string.wait, message = R.string.getting_word) {
                 setProgressStyle(0)
                 setOnDismissListener { networkJob?.cancel() }

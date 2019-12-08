@@ -32,7 +32,7 @@ class OSLAdapter(private val mContext: Context, private val mData: List<KV>) : A
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): KVViewHolder =
-            KVViewHolder(AnkoContext.create(mContext).apply {
+            KVViewHolder(mContext.UI {
                 verticalLayout {
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                         isClickable = true

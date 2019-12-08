@@ -53,7 +53,7 @@ class WordListAdapter(private val mContext: Context,
     override fun getItemCount(): Int = mData.size
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): WordListViewHolder =
-            WordListViewHolder(AnkoContext.create(mContext).apply {
+            WordListViewHolder(mContext.UI {
                 cardView {
                     lparams(matchParent, wrapContent) {
                         topMargin = dip(4)

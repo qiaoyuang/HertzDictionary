@@ -22,6 +22,8 @@ class FeaturesActivity : CoroutineScopeActivity<FeaturesActivity>() {
     override val uiComponent = FeaturesActivityUIComponent(this)
     override val implementer = this
 
+    init { lifecycle.addObserver(uiComponent) }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         launch {

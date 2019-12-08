@@ -1,9 +1,8 @@
 package com.w10group.hertzdictionary.core
 
-import android.content.Context
-import android.net.ConnectivityManager
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import com.w10group.hertzdictionary.biz.manager.NetworkService
+import kotlinx.serialization.UnstableDefault
 import kotlinx.serialization.json.Json
 import okhttp3.MediaType.Companion.toMediaType
 import retrofit2.Retrofit
@@ -19,6 +18,7 @@ object NetworkUtil {
     private const val BASE_URL = "http://translate.google.cn/"
     private const val MEDIA_TYPE_JSON = "application/json"
 
+    @UseExperimental(UnstableDefault::class)
     private val mRetrofit: Retrofit = Retrofit.Builder()
             .baseUrl(BASE_URL)
             .addConverterFactory(Json.nonstrict.asConverterFactory(MEDIA_TYPE_JSON.toMediaType()))
@@ -34,11 +34,5 @@ object NetworkUtil {
         }
 
     private fun initInstanceSoftReference() = SoftReference(mRetrofit.create(NetworkService::class.java))
-
-    fun checkNetwork(context: Context): Boolean {
-        val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
-        val networkInfo = connectivityManager.activeNetworkInfo
-        return networkInfo != null && networkInfo.isConnected
-    }
 
 }

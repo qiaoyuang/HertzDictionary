@@ -46,7 +46,7 @@ class OtherMeanAdapter(private val mContext: Context,
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): OtherMeanViewHolder =
-            OtherMeanViewHolder(AnkoContext.create(mContext).apply {
+            OtherMeanViewHolder(mContext.UI {
                 verticalLayout {
                     lparams(matchParent, wrapContent)
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
