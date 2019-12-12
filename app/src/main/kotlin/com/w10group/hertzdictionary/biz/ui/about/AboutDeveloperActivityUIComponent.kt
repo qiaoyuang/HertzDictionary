@@ -12,6 +12,9 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleObserver
+import androidx.lifecycle.OnLifecycleEvent
 import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.appbar.AppBarLayout.LayoutParams.SCROLL_FLAG_EXIT_UNTIL_COLLAPSED
 import com.google.android.material.appbar.AppBarLayout.LayoutParams.SCROLL_FLAG_SCROLL
@@ -22,7 +25,6 @@ import com.w10group.hertzdictionary.biz.manager.ImageManagerService
 import com.w10group.hertzdictionary.biz.ui.features.FeaturesActivity
 import com.w10group.hertzdictionary.core.GlideApp
 import com.w10group.hertzdictionary.core.GlideDownloader
-import com.w10group.hertzdictionary.core.architecture.UIComponent
 import com.w10group.hertzdictionary.core.image.CompleteScaleImageView
 import com.w10group.hertzdictionary.core.view.circleImageView
 import com.w10group.hertzdictionary.core.view.createTouchFeedbackBorderless
@@ -43,7 +45,7 @@ import java.util.*
  */
 
 class AboutDeveloperActivityUIComponent(private val mAboutDeveloperActivity: AboutDeveloperActivity)
-    : UIComponent<AboutDeveloperActivity>() {
+    : AnkoComponent<AboutDeveloperActivity>, LifecycleObserver {
 
     private companion object {
         const val DEVELOPER_NAME = "Raidriar"
@@ -297,12 +299,14 @@ class AboutDeveloperActivityUIComponent(private val mAboutDeveloperActivity: Abo
         }
     }.view
 
-    override fun init() {
+    @OnLifecycleEvent(Lifecycle.Event.ON_CREATE)
+    private fun init() {
         mAboutDeveloperActivity.setSupportActionBar(mToolbar)
         mAboutDeveloperActivity.supportActionBar?.setDisplayHomeAsUpEnabled(true)
     }
 
-    override fun recycler() {
+    @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
+    private fun recycler() {
         mCompleteScaleImageView.recycler()
         mReceiptCompleteScaleImageView.recycler()
     }

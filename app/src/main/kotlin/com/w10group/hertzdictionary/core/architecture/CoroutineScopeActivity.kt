@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
+import org.jetbrains.anko.AnkoComponent
 import org.jetbrains.anko.setContentView
 import kotlin.coroutines.CoroutineContext
 
@@ -15,7 +16,7 @@ import kotlin.coroutines.CoroutineContext
 
 abstract class CoroutineScopeActivity<T : CoroutineScopeActivity<T>> : AppCompatActivity(), CoroutineScope {
 
-    abstract val uiComponent: UIComponent<T>
+    abstract val uiComponent: AnkoComponent<T>
 
     abstract val implementer: T
 

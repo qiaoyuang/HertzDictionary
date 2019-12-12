@@ -8,6 +8,9 @@ import android.view.View
 import android.widget.TextView
 import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleObserver
+import androidx.lifecycle.OnLifecycleEvent
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.appbar.AppBarLayout
@@ -16,7 +19,6 @@ import com.w10group.hertzdictionary.R
 import com.w10group.hertzdictionary.biz.manager.KV
 import com.w10group.hertzdictionary.core.GlideApp
 import com.w10group.hertzdictionary.core.GlideDownloader
-import com.w10group.hertzdictionary.core.architecture.UIComponent
 import com.w10group.hertzdictionary.core.image.CompleteScaleImageView
 import com.w10group.hertzdictionary.core.view.createTouchFeedbackBorderless
 import com.w10group.hertzdictionary.core.view.getActionBarSize
@@ -34,7 +36,7 @@ import org.jetbrains.anko.support.v4.nestedScrollView
  * @author Qiao
  */
 
-class FeaturesActivityUIComponent(private val mFeatureActivity: FeaturesActivity) : UIComponent<FeaturesActivity>() {
+class FeaturesActivityUIComponent(private val mFeatureActivity: FeaturesActivity) : AnkoComponent<FeaturesActivity>, LifecycleObserver {
 
     private companion object {
         const val MY_EMAIL = "qiaoyuang2012@gmail.com"
@@ -286,12 +288,14 @@ class FeaturesActivityUIComponent(private val mFeatureActivity: FeaturesActivity
         }
     }.view
 
-    override fun init() = with(mFeatureActivity) {
+    @OnLifecycleEvent(Lifecycle.Event.ON_CREATE)
+    private fun init() = with(mFeatureActivity) {
         setSupportActionBar(mToolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
     } ?: Unit
 
-    override fun recycler() = mCompleteScaleImageView.recycler()
+    @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
+    private fun recycler() = mCompleteScaleImageView.recycler()
 
     fun updateTextView(result: List<String>) {
         if (result.size > 4) {

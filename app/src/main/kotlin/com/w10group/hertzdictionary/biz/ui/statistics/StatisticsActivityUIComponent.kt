@@ -6,11 +6,13 @@ import android.widget.AdapterView
 import android.widget.TextView
 import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleObserver
+import androidx.lifecycle.OnLifecycleEvent
 import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.appbar.AppBarLayout.LayoutParams.*
 import com.w10group.hertzdictionary.R
 import com.w10group.hertzdictionary.biz.ui.main.DateSpinnerAdapter
-import com.w10group.hertzdictionary.core.architecture.UIComponent
 import com.w10group.hertzdictionary.core.view.*
 import org.jetbrains.anko.*
 import org.jetbrains.anko.appcompat.v7.toolbar
@@ -24,7 +26,7 @@ import org.jetbrains.anko.support.v4.nestedScrollView
  * @author Qiao
  */
 
-class StatisticsActivityUIComponent(private val mStatisticsActivity: StatisticsActivity) : UIComponent<StatisticsActivity>() {
+class StatisticsActivityUIComponent(private val mStatisticsActivity: StatisticsActivity) : AnkoComponent<StatisticsActivity>, LifecycleObserver {
 
     private lateinit var mToolbar: Toolbar
     private lateinit var mCurveView: CurveView
@@ -133,7 +135,8 @@ class StatisticsActivityUIComponent(private val mStatisticsActivity: StatisticsA
         mCurveView.setData(timeList, valueList)
     }
 
-    override fun init() {
+    @OnLifecycleEvent(Lifecycle.Event.ON_CREATE)
+    private fun init() {
         mStatisticsActivity.setSupportActionBar(mToolbar)
         mStatisticsActivity.supportActionBar?.setDisplayHomeAsUpEnabled(true)
     }

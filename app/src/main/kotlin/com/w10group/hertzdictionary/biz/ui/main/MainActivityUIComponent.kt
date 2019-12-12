@@ -18,6 +18,9 @@ import androidx.cardview.widget.CardView
 import androidx.core.content.ContextCompat
 import androidx.core.widget.NestedScrollView
 import androidx.drawerlayout.widget.DrawerLayout
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleObserver
+import androidx.lifecycle.OnLifecycleEvent
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -34,7 +37,6 @@ import com.w10group.hertzdictionary.biz.ui.features.FeaturesActivity
 import com.w10group.hertzdictionary.biz.ui.licence.LicenceActivity
 import com.w10group.hertzdictionary.biz.manager.ImageManagerService
 import com.w10group.hertzdictionary.biz.ui.statistics.StatisticsActivity
-import com.w10group.hertzdictionary.core.architecture.UIComponent
 import com.w10group.hertzdictionary.core.view.*
 import org.jetbrains.anko.*
 import org.jetbrains.anko.appcompat.v7.toolbar
@@ -49,7 +51,7 @@ import org.jetbrains.anko.support.v4.nestedScrollView
  * @author Qiao
  */
 
-class MainActivityUIComponent(private val mMainActivity: MainActivity) : UIComponent<MainActivity>() {
+class MainActivityUIComponent(private val mMainActivity: MainActivity) : AnkoComponent<MainActivity>, LifecycleObserver {
 
     private lateinit var mDrawerLayout: DrawerLayout
     private lateinit var mAppBarLayout: AppBarLayout
@@ -350,7 +352,8 @@ class MainActivityUIComponent(private val mMainActivity: MainActivity) : UICompo
         }
     }.view
 
-    override fun init() {
+    @OnLifecycleEvent(Lifecycle.Event.ON_CREATE)
+    private fun init() {
         mMainActivity.setSupportActionBar(mToolBar)
         val toggle = ActionBarDrawerToggle(mMainActivity, mDrawerLayout, mToolBar, R.string.navigation_drawer_open, R.string.navigation_drawer_close)
         mDrawerLayout.addDrawerListener(toggle)

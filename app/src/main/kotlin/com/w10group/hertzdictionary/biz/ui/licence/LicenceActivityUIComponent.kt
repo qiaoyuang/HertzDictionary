@@ -2,13 +2,15 @@ package com.w10group.hertzdictionary.biz.ui.licence
 
 import android.view.View
 import androidx.appcompat.widget.Toolbar
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleObserver
+import androidx.lifecycle.OnLifecycleEvent
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.appbar.AppBarLayout.LayoutParams.*
 import com.w10group.hertzdictionary.R
-import com.w10group.hertzdictionary.core.architecture.UIComponent
 import com.w10group.hertzdictionary.core.view.getActionBarSize
 import org.jetbrains.anko.*
 import org.jetbrains.anko.appcompat.v7.toolbar
@@ -21,7 +23,7 @@ import org.jetbrains.anko.recyclerview.v7.recyclerView
  * @author Qiao
  */
 
-class LicenceActivityUIComponent(private val mLicenceActivity: LicenceActivity) : UIComponent<LicenceActivity>() {
+class LicenceActivityUIComponent(private val mLicenceActivity: LicenceActivity) : AnkoComponent<LicenceActivity>, LifecycleObserver {
 
     private lateinit var mToolbar: Toolbar
 
@@ -49,7 +51,8 @@ class LicenceActivityUIComponent(private val mLicenceActivity: LicenceActivity) 
         }
     }.view
 
-    override fun init() = with(mLicenceActivity) {
+    @OnLifecycleEvent(Lifecycle.Event.ON_CREATE)
+    private fun init() = with(mLicenceActivity) {
         setSupportActionBar(mToolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         Unit

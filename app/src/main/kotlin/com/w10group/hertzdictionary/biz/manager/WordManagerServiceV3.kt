@@ -106,6 +106,7 @@ object WordManagerServiceV3 {
                 word = localWord
                 localWord.count++
                 localWord reSort index
+                return@forEachIndexed
             }
         }
         suspend fun sendWord(localWord: LocalWord) {
