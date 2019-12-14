@@ -14,7 +14,7 @@ import kotlinx.coroutines.launch
 class LicenceActivity : CoroutineScopeActivity<LicenceActivity>() {
 
     private companion object {
-        const val OPEN_SOURCE_FILE_NAME = "open_source.txt"
+        const val OPEN_SOURCE_FILE_NAME = "licence.txt"
     }
 
     override val uiComponent = LicenceActivityUIComponent(this)
