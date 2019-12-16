@@ -16,15 +16,21 @@ android {
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         renderscriptTargetApi 29
         renderscriptSupportModeEnabled true
+        javaCompileOptions {
+            annotationProcessorOptions {
+                arguments = [
+                        "room.schemaLocation":"$projectDir/schemas".toString(),
+                        "room.incremental":"true",
+                        "room.expandProjection":"true"]
+            }
+        }
     }
     sourceSets {
         main.java.srcDirs += 'src/main/kotlin'
     }
     packagingOptions {
-        exclude 'META-INF/LGPL2.1'
-        exclude 'META-INF/LICENSE'
-        exclude 'META-INF/NOTICE'
-        exclude 'META-INF/atomicfu.kotlin_module'
+        exclude 'META-INF/kotlinx-coroutines-core.kotlin_module'
+        exclude 'META-INF/kotlinx-serialization-runtime.kotlin_module'
     }
     buildTypes {
         release {
@@ -46,10 +52,16 @@ dependencies {
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutines_version"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutines_version"
     implementation "org.jetbrains.kotlinx:kotlinx-serialization-runtime:0.14.0"
-    //implementation "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
-    //implementation "org.jetbrains.kotlinx:kotlinx-io-jvm:0.1.13"
+    // implementation "org.jetbrains.kotlinx:kotlinx-io-jvm:0.1.16"
+    // implementation "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
 
-    // Android 支持包
+    // Ktor
+    implementation "io.ktor:ktor-client-android:$ktor_version"
+    implementation "io.ktor:ktor-client-okhttp:$ktor_version"
+    implementation "io.ktor:ktor-client-serialization-jvm:$ktor_version"
+    // implementation "io.ktor:ktor-client-cio:$ktor_version"
+
+    // androidx
     implementation "androidx.legacy:legacy-support-v4:1.0.0"
     implementation "androidx.appcompat:appcompat:1.1.0"
     implementation "com.google.android.material:material:1.2.0-alpha02"
@@ -62,9 +74,7 @@ dependencies {
     implementation "androidx.room:room-ktx:$room_version"
     kapt "androidx.room:room-compiler:$room_version"
 
-    // Retrofit
-    implementation 'com.squareup.retrofit2:retrofit:2.6.2'
-    implementation 'com.jakewharton.retrofit:retrofit2-kotlinx-serialization-converter:0.4.0'
+    // Square
     implementation 'com.squareup.okio:okio:2.4.1'
     implementation 'com.squareup.okhttp3:okhttp:4.2.2'
 

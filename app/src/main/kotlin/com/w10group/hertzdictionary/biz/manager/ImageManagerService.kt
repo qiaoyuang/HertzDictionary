@@ -3,8 +3,9 @@ package com.w10group.hertzdictionary.biz.manager
 import android.content.Context
 import android.content.SharedPreferences
 import android.widget.ImageView
+import com.w10group.hertzdictionary.core.CLIENT
 import com.w10group.hertzdictionary.core.GlideApp
-import com.w10group.hertzdictionary.core.NetworkUtil
+import io.ktor.client.request.get
 import java.io.IOException
 import java.util.*
 
@@ -44,13 +45,12 @@ object ImageManagerService {
     }
 
     private suspend fun getURLOnInternetByCoroutines(context: Context, imageView: ImageView, sharedPreferences: SharedPreferences) {
-        val requestBody = try {
-            NetworkUtil.instance.getImageURLByCoroutinesAsync(GET_URL)
+        val url = try {
+            CLIENT.get<String>(GET_URL)
         } catch (e: IOException) {
             e.printStackTrace()
             return
         }
-        val url = requestBody.charStream().readText()
         if (url != todayURL) {
             todayURL = url
             GlideApp.with(context).load(todayURL).dontAnimate().into(imageView)

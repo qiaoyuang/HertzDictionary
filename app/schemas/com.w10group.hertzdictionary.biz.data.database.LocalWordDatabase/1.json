@@ -1,0 +1,52 @@
+{
+  "formatVersion": 1,
+  "database": {
+    "version": 1,
+    "identityHash": "204c3d3d3094756e30142ae113eb3e3e",
+    "entities": [
+      {
+        "tableName": "LocalWord",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`en` TEXT NOT NULL, `ch` TEXT NOT NULL, `count` INTEGER NOT NULL, `timeList` TEXT NOT NULL, PRIMARY KEY(`en`))",
+        "fields": [
+          {
+            "fieldPath": "en",
+            "columnName": "en",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "ch",
+            "columnName": "ch",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "count",
+            "columnName": "count",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "timeList",
+            "columnName": "timeList",
+            "affinity": "TEXT",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "en"
+          ],
+          "autoGenerate": false
+        },
+        "indices": [],
+        "foreignKeys": []
+      }
+    ],
+    "views": [],
+    "setupQueries": [
+      "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '204c3d3d3094756e30142ae113eb3e3e')"
+    ]
+  }
+}

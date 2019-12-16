@@ -6,7 +6,9 @@ import com.w10group.hertzdictionary.R
 import com.w10group.hertzdictionary.biz.data.InquireResult
 import com.w10group.hertzdictionary.biz.data.database.LocalWord
 import com.w10group.hertzdictionary.biz.data.database.LocalWordDatabase
-import com.w10group.hertzdictionary.core.NetworkUtil
+import com.w10group.hertzdictionary.core.CLIENT
+import io.ktor.client.request.get
+import io.ktor.client.request.parameter
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.Channel
 import org.jetbrains.anko.design.snackbar
@@ -19,6 +21,8 @@ import java.util.concurrent.CopyOnWriteArrayList
  */
 
 object WordManagerServiceV3 {
+
+    private const val BASE_URL = "http://translate.google.cn/translate_a/single"
 
     val inquireResultChannel = Channel<Pair<InquireResult, String>>(1)
 
@@ -52,7 +56,19 @@ object WordManagerServiceV3 {
             }
             progressDialog.show()
             val inquireResult = try {
-                NetworkUtil.instance.inquireWordByCoroutinesAsync(word)
+                CLIENT.get<InquireResult>(BASE_URL) {
+                    parameter("q", word)
+                    parameter("dj", 1)
+                    parameter("client", "gtx")
+                    parameter("sl", "en")
+                    parameter("tl", "zh-CN")
+                    parameter("ie", "UTF-8")
+                    parameter("dt", "t")
+                    parameter("dt", "at")
+                    parameter("dt", "rw")
+                    parameter("dt", "bd")
+                    parameter("dt", "rm")
+                }
             } catch (e: Exception) {
                 e.printStackTrace()
                 progressDialog.dismiss()

@@ -1,38 +1,42 @@
 package com.w10group.hertzdictionary.core
 
-import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
-import com.w10group.hertzdictionary.biz.manager.NetworkService
+import io.ktor.client.HttpClient
+import io.ktor.client.HttpClientConfig
+import io.ktor.client.engine.HttpClientEngineConfig
+import io.ktor.client.engine.okhttp.OkHttp
+import io.ktor.client.features.json.JsonFeature
+import io.ktor.client.features.json.serializer.KotlinxSerializer
 import kotlinx.serialization.UnstableDefault
 import kotlinx.serialization.json.Json
-import okhttp3.MediaType.Companion.toMediaType
-import retrofit2.Retrofit
-import java.lang.ref.SoftReference
 
 /**
  * Created by Administrator on 2018/2/6 0006.
- * 网络工具类
+ * Ktor HttpClient
  */
 
-object NetworkUtil {
+val CLIENT = okHttp()
 
-    private const val BASE_URL = "http://translate.google.cn/"
-    private const val MEDIA_TYPE_JSON = "application/json"
-
-    @UseExperimental(UnstableDefault::class)
-    private val mRetrofit: Retrofit = Retrofit.Builder()
-            .baseUrl(BASE_URL)
-            .addConverterFactory(Json.nonstrict.asConverterFactory(MEDIA_TYPE_JSON.toMediaType()))
-            .build()
-
-    private var mInstanceSoftReference = initInstanceSoftReference()
-
-    val instance: NetworkService
-        get() {
-            if (mInstanceSoftReference.get() == null)
-                mInstanceSoftReference = initInstanceSoftReference()
-            return mInstanceSoftReference.get()!!
-        }
-
-    private fun initInstanceSoftReference() = SoftReference(mRetrofit.create(NetworkService::class.java))
-
+private fun okHttp(): HttpClient = HttpClient(OkHttp) {
+    configJson()
 }
+
+/*@UseExperimental(KtorExperimentalAPI::class)
+private fun cio(): HttpClient = HttpClient(CIO) {
+    engine {
+        maxConnectionsCount = 1000
+        endpoint {
+            maxConnectionsPerRoute = 100
+            pipelineMaxSize = 20
+            keepAliveTime = 5000
+            connectTimeout = 5000
+            connectRetryAttempts = 5
+        }
+    }
+    configJson()
+}*/
+
+@UseExperimental(UnstableDefault::class)
+private fun <T : HttpClientEngineConfig> HttpClientConfig<T>.configJson() =
+        install(JsonFeature) {
+            serializer = KotlinxSerializer(Json.nonstrict)
+        }
