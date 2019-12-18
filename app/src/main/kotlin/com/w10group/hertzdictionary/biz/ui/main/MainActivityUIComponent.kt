@@ -491,11 +491,11 @@ class MainActivityUIComponent(private val mMainActivity: MainActivity) : AnkoCom
         }
     }
 
-    infix fun displayOtherTranslation(words: String)
-            = mTVOtherTranslation.setWords(mMainActivity.getString(R.string.other_translation), words)
+    infix fun displayOtherTranslation(words: String) =
+            mTVOtherTranslation.setWords(mMainActivity.getString(R.string.other_translation), words)
 
-    infix fun displayRelatedWords(words: String)
-            = mTVRelatedWords.setWords(mMainActivity.getString(R.string.related_words), words)
+    infix fun displayRelatedWords(words: String) =
+            mTVRelatedWords.setWords(mMainActivity.getString(R.string.related_words), words)
 
     fun updateCurveView(timeList: List<Long>, valueList: List<Int>) = mCurveView.setData(timeList, valueList)
 

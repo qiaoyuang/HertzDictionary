@@ -3,6 +3,7 @@ package com.w10group.hertzdictionary.biz.manager
 import android.content.Context
 import android.content.SharedPreferences
 import android.widget.ImageView
+import androidx.core.content.edit
 import com.w10group.hertzdictionary.core.CLIENT
 import com.w10group.hertzdictionary.core.GlideApp
 import io.ktor.client.request.get
@@ -24,10 +25,10 @@ object ImageManagerService {
     private const val AVATAR_HD_URL = "https://upload-images.jianshu.io/upload_images/12354730-135b08eece7d74e3.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"
 
     val urlList by lazy {
-        val list = LinkedList<String>()
-        list.add(AVATAR_HD_URL)
-        list.add(todayURL)
-        list
+        LinkedList<String>().apply {
+            add(AVATAR_HD_URL)
+            add(todayURL)
+        }
     }
 
     private lateinit var todayURL: String
@@ -54,9 +55,7 @@ object ImageManagerService {
         if (url != todayURL) {
             todayURL = url
             GlideApp.with(context).load(todayURL).dontAnimate().into(imageView)
-            val edit = sharedPreferences.edit()
-            edit.putString(KEY_URL, todayURL)
-            edit.apply()
+            sharedPreferences.edit { putString(KEY_URL, todayURL) }
         }
     }
 
