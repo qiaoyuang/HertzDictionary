@@ -81,7 +81,7 @@ dependencies {
 
     // Square
     implementation 'com.squareup.okio:okio:2.4.3'
-    implementation 'com.squareup.okhttp3:okhttp:4.3.0'
+    implementation 'com.squareup.okhttp3:okhttp:4.3.1'
 
     // 大图查看器 & 圆形 ImageView
     implementation 'com.davemorrissey.labs:subsampling-scale-image-view:3.10.0'
