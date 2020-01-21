@@ -87,7 +87,7 @@ object WordManagerServiceV3 {
     private suspend fun getOtherTranslationAndRelateWords(
             inquireResult: InquireResult): Pair<String, String> = coroutineScope {
             // 拼接其它义项
-            val otherTranslationDeferred = inquireResult.alternativeTranslations?.get(0)?.words?.let {
+            val otherTranslationDeferred = inquireResult.alternativeTranslations?.first()?.words?.let {
                 async {
                     StringBuilder().apply {
                         val last = it.size - 1
@@ -156,18 +156,20 @@ object WordManagerServiceV3 {
                 val start = index - 1
                 for (i in start downTo 0) {
                     val word = allLocalWords[i]
-                    if (word.count >= count) {
-                        allLocalWords.removeAt(index)
-                        val newIndex = i + 1
-                        allLocalWords.add(newIndex, this)
-                        coordinate[0] = index
-                        coordinate[1] = newIndex
-                        return
-                    } else if (i == 0 && word.count < count) {
-                        allLocalWords.removeAt(index)
-                        allLocalWords.add(i, this)
-                        coordinate[0] = index
-                        coordinate[1] = i
+                    when {
+                        word.count >= count -> {
+                            allLocalWords.removeAt(index)
+                            val newIndex = i + 1
+                            allLocalWords.add(newIndex, this)
+                            coordinate[0] = index
+                            coordinate[1] = newIndex
+                        }
+                        i == 0 -> {
+                            allLocalWords.removeAt(index)
+                            allLocalWords.add(i, this)
+                            coordinate[0] = index
+                            coordinate[1] = i
+                        }
                     }
                 }
             }

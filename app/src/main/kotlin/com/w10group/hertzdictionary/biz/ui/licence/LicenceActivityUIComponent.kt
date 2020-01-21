@@ -51,6 +51,7 @@ class LicenceActivityUIComponent(private val mLicenceActivity: LicenceActivity) 
         }
     }.view
 
+    @Suppress("unused")
     @OnLifecycleEvent(Lifecycle.Event.ON_CREATE)
     private fun init() = with(mLicenceActivity) {
         setSupportActionBar(mToolbar)

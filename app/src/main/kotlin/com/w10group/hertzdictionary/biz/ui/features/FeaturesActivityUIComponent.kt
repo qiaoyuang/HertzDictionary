@@ -288,12 +288,14 @@ class FeaturesActivityUIComponent(private val mFeatureActivity: FeaturesActivity
         }
     }.view
 
+    @Suppress("unused")
     @OnLifecycleEvent(Lifecycle.Event.ON_CREATE)
     private fun init() = with(mFeatureActivity) {
         setSupportActionBar(mToolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
     } ?: Unit
 
+    @Suppress("unused")
     @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
     private fun recycler() = mCompleteScaleImageView.recycler()
 

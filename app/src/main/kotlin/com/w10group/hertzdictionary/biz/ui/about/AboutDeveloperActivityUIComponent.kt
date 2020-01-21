@@ -299,12 +299,14 @@ class AboutDeveloperActivityUIComponent(private val mAboutDeveloperActivity: Abo
         }
     }.view
 
+    @Suppress("unused")
     @OnLifecycleEvent(Lifecycle.Event.ON_CREATE)
     private fun init() {
         mAboutDeveloperActivity.setSupportActionBar(mToolbar)
         mAboutDeveloperActivity.supportActionBar?.setDisplayHomeAsUpEnabled(true)
     }
 
+    @Suppress("unused")
     @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
     private fun recycler() {
         mCompleteScaleImageView.recycler()

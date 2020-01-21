@@ -352,6 +352,7 @@ class MainActivityUIComponent(private val mMainActivity: MainActivity) : AnkoCom
         }
     }.view
 
+    @Suppress("unused")
     @OnLifecycleEvent(Lifecycle.Event.ON_CREATE)
     private fun init() {
         mMainActivity.setSupportActionBar(mToolBar)
@@ -404,8 +405,7 @@ class MainActivityUIComponent(private val mMainActivity: MainActivity) : AnkoCom
         if (view != null && view == mETInput) {
             val l = intArrayOf(0, 0)
             view.getLocationInWindow(l)
-            val left = l[0]
-            val top = l[1]
+            val (left, top) = l
             val right = left + view.width
             val bottom = top + view.height
             return !(event.x > left && event.x < right && event.y > top && event.y < bottom)
