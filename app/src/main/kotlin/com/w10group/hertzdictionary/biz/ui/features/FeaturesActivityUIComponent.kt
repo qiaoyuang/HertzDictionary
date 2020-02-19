@@ -7,6 +7,7 @@ import android.view.Gravity
 import android.view.View
 import android.widget.TextView
 import androidx.appcompat.widget.Toolbar
+import androidx.cardview.widget.CardView
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleObserver
@@ -267,6 +268,7 @@ class FeaturesActivityUIComponent(private val mFeatureActivity: FeaturesActivity
                         mRVTechSelection = recyclerView {
                             layoutManager = LinearLayoutManager(context)
                             overScrollMode = RecyclerView.OVER_SCROLL_NEVER
+                            setOnTouchListener { _, event -> this@cardView.onTouchEvent(event) }
                         }.lparams(matchParent, wrapContent) {
                             marginStart = dip(16)
                             marginEnd = dip(16)
