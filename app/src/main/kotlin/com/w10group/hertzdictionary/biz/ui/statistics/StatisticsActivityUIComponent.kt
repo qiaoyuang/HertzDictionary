@@ -135,6 +135,7 @@ class StatisticsActivityUIComponent(private val mStatisticsActivity: StatisticsA
         mCurveView.setData(timeList, valueList)
     }
 
+    @Suppress("unused")
     @OnLifecycleEvent(Lifecycle.Event.ON_CREATE)
     private fun init() {
         mStatisticsActivity.setSupportActionBar(mToolbar)

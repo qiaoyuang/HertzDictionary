@@ -169,7 +169,7 @@ class CurveView : View {
 
     // 第一步：绘制 X 轴坐标参数（时间）
     private fun Canvas.drawXText() {
-        val time1 = time[0].fmtMonthDay()
+        val time1 = time.first().fmtMonthDay()
         val time4 = time.last().fmtMonthDay()
         val position = time.size / 3
         val time2 = time[position].fmtMonthDay()
@@ -307,7 +307,7 @@ class CurveView : View {
     }
 
     // 给出 index，返回该 index 对应数据在图表中的坐标
-    private fun valueToCoordinate(index: Int): Pair<Float, Float> {
+    private fun valueToCoordinate(index: Int): FloatArray {
         // 计算时间
         val diff = time[index] - time.first()
         val maxDiff = time.last() - time.first()
@@ -319,7 +319,7 @@ class CurveView : View {
         val max = value.max()!!.toFloat()
         val baseHeight = height.toFloat() / 5
         val y = if (max == 0f) baseHeight * 4 else (max - value[index]) / max * (baseHeight * 3) + baseHeight
-        return x to y
+        return floatArrayOf(x, y)
     }
 
     // 给定横坐标 X，计算出对应的时间与值的 index
@@ -348,13 +348,5 @@ class CurveView : View {
         invalidate()
         return true
     }
-
-    private external fun nativeValueToCoordinate(index: Int,
-                                            time: LongArray,
-                                            value: IntArray,
-                                            width: Int,
-                                            height: Int): FloatArray
-
-    private external fun nativeGetTimeTemp(time: LongArray, width: Int, touchX: Float): Int
 
 }
