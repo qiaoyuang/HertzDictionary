@@ -389,7 +389,7 @@ class MainActivityUIComponent(private val mMainActivity: MainActivity) : AnkoCom
         }
     }.view
 
-    // 标记位，当值为true时，RecyclerView滑动到顶部或底部才会有弹窗。
+    // 标记位，当值为 true 时，RecyclerView 滑动到顶部或底部才会有弹窗。
     private var mScrollFlag = false
 
     private fun TextView.setWords(tips: String, words: String) {
