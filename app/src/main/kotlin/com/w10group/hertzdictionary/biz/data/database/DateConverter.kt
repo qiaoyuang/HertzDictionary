@@ -1,25 +1,24 @@
 package com.w10group.hertzdictionary.biz.data.database
 
 import androidx.room.TypeConverter
+import com.w10group.hertzdictionary.core.KJson
 import kotlinx.serialization.UnstableDefault
-import kotlinx.serialization.internal.LongSerializer
-import kotlinx.serialization.json.Json
-import kotlinx.serialization.list
-
+import kotlinx.serialization.builtins.list
+import kotlinx.serialization.builtins.serializer
 /**
  * 转换器，用于序列化以及反序列化时间 List
  * @author Qiao
  */
 
-@UseExperimental(UnstableDefault::class)
+@OptIn(UnstableDefault::class)
 class DateConverter {
 
-    private val serializer = LongSerializer.list
+    private val serializer = Long.serializer().list
 
     @TypeConverter
-    fun serialization(list: MutableList<Long>): String = Json.nonstrict.stringify(serializer, list)
+    fun serialization(list: MutableList<Long>): String = KJson.stringify(serializer, list)
 
     @TypeConverter
-    fun deserialization(str: String): MutableList<Long> = Json.nonstrict.parse(serializer, str).toMutableList()
+    fun deserialization(str: String): MutableList<Long> = KJson.parse(serializer, str).toMutableList()
 
 }

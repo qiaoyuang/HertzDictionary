@@ -8,14 +8,12 @@ import io.ktor.client.features.json.JsonFeature
 import io.ktor.client.features.json.serializer.KotlinxSerializer
 import kotlinx.serialization.UnstableDefault
 import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.JsonConfiguration
 
 /**
  * Created by Administrator on 2018/2/6 0006.
  * Ktor HttpClient
  */
-
-val CLIENT = okHttp()
-
 private fun okHttp(): HttpClient = HttpClient(OkHttp) {
     configJson()
 }
@@ -35,8 +33,17 @@ private fun cio(): HttpClient = HttpClient(CIO) {
     configJson()
 }*/
 
-@UseExperimental(UnstableDefault::class)
 private fun <T : HttpClientEngineConfig> HttpClientConfig<T>.configJson() =
         install(JsonFeature) {
-            serializer = KotlinxSerializer(Json.nonstrict)
+            serializer = KotlinxSerializer(KJson)
         }
+
+@OptIn(UnstableDefault::class)
+val KJson = Json(JsonConfiguration(
+        isLenient = true,
+        ignoreUnknownKeys = true,
+        serializeSpecialFloatingPointValues = true,
+        useArrayPolymorphism = true
+))
+
+val CLIENT = okHttp()
