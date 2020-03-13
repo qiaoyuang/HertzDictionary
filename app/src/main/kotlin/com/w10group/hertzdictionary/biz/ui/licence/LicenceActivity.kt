@@ -2,9 +2,8 @@ package com.w10group.hertzdictionary.biz.ui.licence
 
 import android.os.Bundle
 import android.view.MenuItem
-import com.w10group.hertzdictionary.biz.manager.readFileToKV
+import androidx.lifecycle.Observer
 import com.w10group.hertzdictionary.core.architecture.CoroutineScopeActivity
-import kotlinx.coroutines.launch
 
 /**
  * Created by Administrator on 2018/6/26.
@@ -13,10 +12,6 @@ import kotlinx.coroutines.launch
 
 class LicenceActivity : CoroutineScopeActivity<LicenceActivity>() {
 
-    private companion object {
-        const val OPEN_SOURCE_FILE_NAME = "licence.txt"
-    }
-
     override val uiComponent = LicenceActivityUIComponent(this)
     override val implementer = this
 
@@ -24,9 +19,11 @@ class LicenceActivity : CoroutineScopeActivity<LicenceActivity>() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        launch {
-            val data = readFileToKV(this@LicenceActivity, OPEN_SOURCE_FILE_NAME)
-            uiComponent.setAdapter(OSLAdapter(this@LicenceActivity, data))
+        getAndroidViewModel<LicenceViewModel> {
+            kvList.observe(implementer, Observer {
+                uiComponent.setAdapter(OSLAdapter(implementer, it))
+            })
+            updateData()
         }
     }
 

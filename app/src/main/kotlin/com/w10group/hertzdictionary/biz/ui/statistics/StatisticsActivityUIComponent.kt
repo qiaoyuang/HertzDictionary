@@ -124,11 +124,7 @@ class StatisticsActivityUIComponent(private val mStatisticsActivity: StatisticsA
         }
     }.view
 
-    fun updateUI(totalCountText: String,
-                 averageCountText: String,
-                 mostWordText: String,
-                 timeList: List<Long>,
-                 valueList: List<Int>) {
+    fun updateUI(data: UIUpdateData) = with(data) {
         tvTotalCount.text = totalCountText
         tvAverageCount.text = averageCountText
         tvMostWord.text = mostWordText

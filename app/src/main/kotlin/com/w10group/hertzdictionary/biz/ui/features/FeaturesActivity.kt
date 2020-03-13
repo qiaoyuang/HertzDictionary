@@ -3,7 +3,6 @@ package com.w10group.hertzdictionary.biz.ui.features
 import android.os.Bundle
 import android.view.MenuItem
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
 import com.w10group.hertzdictionary.core.architecture.CoroutineScopeActivity
 
 /**
@@ -20,8 +19,7 @@ class FeaturesActivity : CoroutineScopeActivity<FeaturesActivity>() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val factory = ViewModelProvider.AndroidViewModelFactory(application)
-        ViewModelProvider(implementer, factory)[FeaturesViewModel::class.java].run  {
+        getAndroidViewModel<FeaturesViewModel> {
             textList.observe(implementer, Observer {
                 uiComponent.updateTextView(it)
             })

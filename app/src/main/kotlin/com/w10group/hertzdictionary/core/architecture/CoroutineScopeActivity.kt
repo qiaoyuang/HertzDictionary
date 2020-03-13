@@ -2,6 +2,10 @@ package com.w10group.hertzdictionary.core.architecture
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -40,5 +44,15 @@ abstract class CoroutineScopeActivity<T : CoroutineScopeActivity<T>> : AppCompat
         super.onStop()
         job.cancel()
     }
+
+    protected inline fun <reified T : ViewModel> getViewModel(configLiveData: T.() -> Unit): T =
+            ViewModelProvider(implementer)[T::class.java].apply {
+                configLiveData()
+            }
+
+    protected inline fun <reified T : AndroidViewModel> getAndroidViewModel(configLiveData: T.() -> Unit): T =
+            ViewModelProvider(implementer, AndroidViewModelFactory(application))[T::class.java].apply {
+                configLiveData()
+            }
 
 }

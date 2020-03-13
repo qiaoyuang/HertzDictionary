@@ -2,8 +2,9 @@ package com.w10group.hertzdictionary.biz.ui.about
 
 import android.os.Bundle
 import android.view.MenuItem
+import androidx.lifecycle.Observer
+import androidx.lifecycle.lifecycleScope
 import com.w10group.hertzdictionary.biz.manager.ImageManagerService
-import com.w10group.hertzdictionary.biz.manager.readFileToString
 import com.w10group.hertzdictionary.core.architecture.CoroutineScopeActivity
 import kotlinx.coroutines.launch
 
@@ -14,10 +15,6 @@ import kotlinx.coroutines.launch
 
 class AboutDeveloperActivity : CoroutineScopeActivity<AboutDeveloperActivity>() {
 
-    private companion object {
-        const val ABOUT_ME_FILE_NAME = "about_me.txt"
-    }
-
     override val uiComponent = AboutDeveloperActivityUIComponent(this)
     override val implementer = this
 
@@ -25,12 +22,14 @@ class AboutDeveloperActivity : CoroutineScopeActivity<AboutDeveloperActivity>() 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        launch {
+        lifecycleScope.launch {
             ImageManagerService.loadBackground(implementer, uiComponent.mIMBackground)
         }
-        launch {
-            val list = readFileToString(implementer, ABOUT_ME_FILE_NAME)
-            uiComponent.updateTextView(list)
+        getAndroidViewModel<AboutDeveloperViewModel> {
+            textList.observe(implementer, Observer {
+                uiComponent.updateTextView(it)
+            })
+            updateData()
         }
         ImageManagerService.loadAvatar(this, uiComponent.mIMAvatar)
     }
