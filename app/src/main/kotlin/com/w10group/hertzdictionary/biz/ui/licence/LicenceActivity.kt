@@ -3,14 +3,14 @@ package com.w10group.hertzdictionary.biz.ui.licence
 import android.os.Bundle
 import android.view.MenuItem
 import androidx.lifecycle.Observer
-import com.w10group.hertzdictionary.core.architecture.CoroutineScopeActivity
+import com.w10group.hertzdictionary.core.architecture.BaseActivity
 
 /**
  * Created by Administrator on 2018/6/26.
  * 开源许可证Activity
  */
 
-class LicenceActivity : CoroutineScopeActivity<LicenceActivity>() {
+class LicenceActivity : BaseActivity<LicenceActivity>() {
 
     override val uiComponent = LicenceActivityUIComponent(this)
     override val implementer = this

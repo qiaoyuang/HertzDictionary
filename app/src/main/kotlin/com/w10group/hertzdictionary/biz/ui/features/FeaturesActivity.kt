@@ -3,14 +3,14 @@ package com.w10group.hertzdictionary.biz.ui.features
 import android.os.Bundle
 import android.view.MenuItem
 import androidx.lifecycle.Observer
-import com.w10group.hertzdictionary.core.architecture.CoroutineScopeActivity
+import com.w10group.hertzdictionary.core.architecture.BaseActivity
 
 /**
  * Created by Administrator on 2018/6/25.
  * 未来新功能 Activity
  */
 
-class FeaturesActivity : CoroutineScopeActivity<FeaturesActivity>() {
+class FeaturesActivity : BaseActivity<FeaturesActivity>() {
 
     override val uiComponent = FeaturesActivityUIComponent(this)
     override val implementer = this

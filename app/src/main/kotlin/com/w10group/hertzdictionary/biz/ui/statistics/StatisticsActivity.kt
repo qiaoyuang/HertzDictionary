@@ -3,14 +3,14 @@ package com.w10group.hertzdictionary.biz.ui.statistics
 import android.os.Bundle
 import android.view.MenuItem
 import androidx.lifecycle.Observer
-import com.w10group.hertzdictionary.core.architecture.CoroutineScopeActivity
+import com.w10group.hertzdictionary.core.architecture.BaseActivity
 
 /**
  * 统计 Activity
  * @author Qiao
  */
 
-class StatisticsActivity : CoroutineScopeActivity<StatisticsActivity>() {
+class StatisticsActivity : BaseActivity<StatisticsActivity>() {
 
     override val uiComponent = StatisticsActivityUIComponent(this)
     override val implementer = this

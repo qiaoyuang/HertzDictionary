@@ -5,7 +5,7 @@ import android.view.MenuItem
 import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import com.w10group.hertzdictionary.biz.manager.ImageManagerService
-import com.w10group.hertzdictionary.core.architecture.CoroutineScopeActivity
+import com.w10group.hertzdictionary.core.architecture.BaseActivity
 import kotlinx.coroutines.launch
 
 /**
@@ -13,7 +13,7 @@ import kotlinx.coroutines.launch
  * 关于开发者Activity
  */
 
-class AboutDeveloperActivity : CoroutineScopeActivity<AboutDeveloperActivity>() {
+class AboutDeveloperActivity : BaseActivity<AboutDeveloperActivity>() {
 
     override val uiComponent = AboutDeveloperActivityUIComponent(this)
     override val implementer = this

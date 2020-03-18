@@ -4,10 +4,11 @@ import android.content.Context
 import android.os.Bundle
 import android.view.*
 import android.view.inputmethod.InputMethodManager
+import androidx.lifecycle.lifecycleScope
 import com.w10group.hertzdictionary.R
 import com.w10group.hertzdictionary.biz.manager.DateManagerService
 import com.w10group.hertzdictionary.biz.manager.WordManagerServiceV3
-import com.w10group.hertzdictionary.core.architecture.CoroutineScopeActivity
+import com.w10group.hertzdictionary.core.architecture.BaseActivity
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -17,7 +18,7 @@ import kotlinx.coroutines.withContext
  * 主界面 Activity
  */
 
-class MainActivity : CoroutineScopeActivity<MainActivity>() {
+class MainActivity : BaseActivity<MainActivity>() {
 
     companion object {
         // 标记当前词典的状态是否是查询状态
@@ -46,7 +47,7 @@ class MainActivity : CoroutineScopeActivity<MainActivity>() {
     
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        launch(Dispatchers.IO) {
+        lifecycleScope.launch(Dispatchers.IO) {
             mAdapter = WordListAdapter(implementer, WordManagerServiceV3
                     .getAllLocalWord(this@MainActivity)) {
                 uiComponent.setWordText(it)
@@ -64,14 +65,14 @@ class MainActivity : CoroutineScopeActivity<MainActivity>() {
     override fun onStart() {
         super.onStart()
         // 获取查询结果
-        launch {
+        lifecycleScope.launch {
             for (element in WordManagerServiceV3.inquireResultChannel) {
                 val (inquireResult, word) = element
                 uiComponent.displayInquireResult(inquireResult, word)
             }
         }
         // 获取其它义项以及相关词组
-        launch {
+        lifecycleScope.launch {
             for (element in WordManagerServiceV3.OTRWChannel) {
                 val (otherTranslation, relatedWords) = element
                 uiComponent displayOtherTranslation otherTranslation
@@ -79,7 +80,7 @@ class MainActivity : CoroutineScopeActivity<MainActivity>() {
             }
         }
         // 获取更新曲线图的信号
-        launch {
+        lifecycleScope.launch {
             for (element in WordManagerServiceV3.curveChannel) {
                 mAdapter.sumCount++
                 createCurveData()
@@ -94,7 +95,7 @@ class MainActivity : CoroutineScopeActivity<MainActivity>() {
 
     fun inquire(word: String) = WordManagerServiceV3.inquire(word, uiComponent.snackBarView)
 
-    fun refreshRecyclerView() = launch {
+    fun refreshRecyclerView() = lifecycleScope.launch {
         val (front, next) = WordManagerServiceV3.coordinate
         if (front != -10) {
             if (front > 0) {
@@ -113,7 +114,7 @@ class MainActivity : CoroutineScopeActivity<MainActivity>() {
         when (curveStatus) {
             CURVE_STATUS_WEEK -> {
                 WordManagerServiceV3.currentLocalWord?.let {
-                    launch(Dispatchers.Default) {
+                    lifecycleScope.launch(Dispatchers.Default) {
                         val (timeList, valueList) = DateManagerService.createWeekValue(it)
                         withContext(Dispatchers.Main) { uiComponent.updateCurveView(timeList, valueList) }
                     }
@@ -121,7 +122,7 @@ class MainActivity : CoroutineScopeActivity<MainActivity>() {
             }
             CURVE_STATUS_MONTH -> {
                 WordManagerServiceV3.currentLocalWord?.let {
-                    launch(Dispatchers.Default) {
+                    lifecycleScope.launch(Dispatchers.Default) {
                         val (timeList, valueList) = DateManagerService.createMonthValue(it)
                         withContext(Dispatchers.Main) { uiComponent.updateCurveView(timeList, valueList) }
                     }
