@@ -28,6 +28,14 @@ android {
         main.java.srcDirs += 'src/main/kotlin'
     }
     packagingOptions {
+        exclude 'META-INF/ktor-http-cio.kotlin_module'
+        exclude 'META-INF/ktor-io.kotlin_module'
+        exclude 'META-INF/ktor-utils.kotlin_module'
+        exclude 'META-INF/ktor-http.kotlin_module'
+        exclude 'META-INF/ktor-client-serialization.kotlin_module'
+        exclude 'META-INF/ktor-client-json.kotlin_module'
+        exclude 'META-INF/ktor-client-core.kotlin_module'
+
         exclude 'META-INF/kotlinx-coroutines-core.kotlin_module'
         exclude 'META-INF/kotlinx-serialization-runtime.kotlin_module'
     }
@@ -48,12 +56,13 @@ android {
 
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
+    implementation project(path: ':data')
 
     // Kotlin 扩展类库
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutines_version"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutines_version"
-    implementation "org.jetbrains.kotlinx:kotlinx-serialization-runtime:0.20.0"
+    implementation "org.jetbrains.kotlinx:kotlinx-serialization-runtime:$serialization_version"
     // implementation "org.jetbrains.kotlinx:kotlinx-io-jvm:0.1.16"
     // implementation "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
 

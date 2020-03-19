@@ -3,10 +3,11 @@ package com.w10group.hertzdictionary.biz.manager
 import android.content.Context
 import android.view.View
 import com.w10group.hertzdictionary.R
-import com.w10group.hertzdictionary.biz.data.InquireResult
+
 import com.w10group.hertzdictionary.biz.data.database.LocalWord
 import com.w10group.hertzdictionary.biz.data.database.LocalWordDatabase
 import com.w10group.hertzdictionary.core.CLIENT
+import com.w10group.hertzdictionary.data.InquireResult
 import io.ktor.client.request.get
 import io.ktor.client.request.parameter
 import kotlinx.coroutines.*

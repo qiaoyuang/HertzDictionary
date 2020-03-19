@@ -9,7 +9,7 @@ import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView.Adapter
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.w10group.hertzdictionary.R
-import com.w10group.hertzdictionary.biz.data.DictInfo
+import com.w10group.hertzdictionary.data.DictInfo
 import com.w10group.hertzdictionary.biz.ui.main.OtherMeanAdapter.OtherMeanViewHolder
 import com.w10group.hertzdictionary.core.view.createTouchFeedback
 import org.jetbrains.anko.*

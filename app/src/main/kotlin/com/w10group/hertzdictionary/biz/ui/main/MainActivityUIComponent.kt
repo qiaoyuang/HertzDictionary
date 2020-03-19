@@ -32,12 +32,13 @@ import com.google.android.material.appbar.CollapsingToolbarLayout.LayoutParams.C
 import com.google.android.material.appbar.CollapsingToolbarLayout.LayoutParams.COLLAPSE_MODE_PIN
 import com.w10group.hertzdictionary.R
 import com.w10group.hertzdictionary.biz.ui.about.AboutDeveloperActivity
-import com.w10group.hertzdictionary.biz.data.InquireResult
+import com.w10group.hertzdictionary.data.InquireResult
 import com.w10group.hertzdictionary.biz.ui.features.FeaturesActivity
 import com.w10group.hertzdictionary.biz.ui.licence.LicenceActivity
 import com.w10group.hertzdictionary.biz.manager.ImageManagerService
 import com.w10group.hertzdictionary.biz.ui.statistics.StatisticsActivity
 import com.w10group.hertzdictionary.core.view.*
+import com.w10group.hertzdictionary.data.Dict
 import org.jetbrains.anko.*
 import org.jetbrains.anko.appcompat.v7.toolbar
 import org.jetbrains.anko.cardview.v7.cardView
@@ -464,7 +465,7 @@ class MainActivityUIComponent(private val mMainActivity: MainActivity) : AnkoCom
         mOtherMeanLayout.removeAllViews()
         mOtherMeanCard.visibility = if (inquireResult.dict == null) View.GONE
         else {
-            inquireResult.dict.forEach { dict ->
+            (inquireResult.dict as List<Dict>).forEach { dict ->
                 with<_LinearLayout, Unit>(mOtherMeanLayout as _LinearLayout) {
                     textView {
                         textSize = 16f

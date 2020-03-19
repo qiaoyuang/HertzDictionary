@@ -3,7 +3,6 @@ package com.w10group.hertzdictionary.core
 import io.ktor.client.HttpClient
 import io.ktor.client.HttpClientConfig
 import io.ktor.client.engine.HttpClientEngineConfig
-import io.ktor.client.engine.okhttp.OkHttp
 import io.ktor.client.features.json.JsonFeature
 import io.ktor.client.features.json.serializer.KotlinxSerializer
 import kotlinx.serialization.UnstableDefault
@@ -14,9 +13,6 @@ import kotlinx.serialization.json.JsonConfiguration
  * Created by Administrator on 2018/2/6 0006.
  * Ktor HttpClient
  */
-private fun okHttp(): HttpClient = HttpClient(OkHttp) {
-    configJson()
-}
 
 /*@UseExperimental(KtorExperimentalAPI::class)
 private fun cio(): HttpClient = HttpClient(CIO) {
@@ -33,7 +29,7 @@ private fun cio(): HttpClient = HttpClient(CIO) {
     configJson()
 }*/
 
-private fun <T : HttpClientEngineConfig> HttpClientConfig<T>.configJson() =
+fun <T : HttpClientEngineConfig> HttpClientConfig<T>.configJson() =
         install(JsonFeature) {
             serializer = KotlinxSerializer(KJson)
         }
@@ -46,4 +42,4 @@ val KJson = Json(JsonConfiguration(
         useArrayPolymorphism = true
 ))
 
-val CLIENT = okHttp()
+expect val CLIENT: HttpClient
