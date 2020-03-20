@@ -1,6 +1,7 @@
 plugins {
     id 'org.jetbrains.kotlin.multiplatform'
     id 'org.jetbrains.kotlin.plugin.serialization'
+    id 'kotlin-android-extensions'
     id 'com.android.library'
 }
 repositories {
@@ -25,7 +26,15 @@ android {
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     sourceSets {
-        main.java.srcDirs += 'src/androidMain/kotlin'
+        main {
+            manifest.srcFile 'src/androidMain/AndroidManifest.xml'
+            java.srcDirs += 'src/androidMain/kotlin'
+            res.srcDirs += 'src/androidMain/res'
+        }
+        androidTest {
+            java.srcDirs += 'src/androidTest/kotlin'
+            res.srcDirs += 'src/androidTest/res'
+        }
     }
     buildTypes {
         release {
@@ -40,7 +49,7 @@ android {
 }
 
 kotlin {
-    android()
+    android("android")
     // This is for iPhone simulator
     // Switch here to iosArm64 (or iosArm32) to build library for iPhone device
     iosX64("ios") {
