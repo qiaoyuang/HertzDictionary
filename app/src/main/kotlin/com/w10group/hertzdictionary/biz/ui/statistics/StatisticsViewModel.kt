@@ -5,10 +5,9 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.liveData
 import androidx.lifecycle.viewModelScope
 import com.w10group.hertzdictionary.R
-import com.w10group.hertzdictionary.biz.data.database.LocalWord
-import com.w10group.hertzdictionary.biz.manager.CurveValue
-import com.w10group.hertzdictionary.biz.manager.DateManagerService
-import com.w10group.hertzdictionary.biz.manager.MostValue
+import com.w10group.hertzdictionary.manager.CurveValue
+import com.w10group.hertzdictionary.manager.DateManagerService
+import com.w10group.hertzdictionary.manager.MostValue
 import com.w10group.hertzdictionary.biz.manager.WordManagerServiceV3
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel

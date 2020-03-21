@@ -1,4 +1,4 @@
-package com.w10group.hertzdictionary.biz.data.database
+package com.w10group.hertzdictionary.database
 
 import android.content.Context
 import androidx.room.Database
@@ -13,7 +13,7 @@ import androidx.room.TypeConverters
 
 @Database(entities = [LocalWord::class], version = 1)
 @TypeConverters(DateConverter::class)
-abstract class LocalWordDatabase : RoomDatabase() {
+internal abstract class LocalWordDatabase : RoomDatabase() {
 
     abstract fun localWordDAO(): LocalWordDAO
 
@@ -27,7 +27,8 @@ abstract class LocalWordDatabase : RoomDatabase() {
             if (!this::dao.isInitialized)
                 dao = Room.databaseBuilder(context,
                         LocalWordDatabase::class.java,
-                        DATABASE_NAME).build().localWordDAO()
+                    DATABASE_NAME
+                ).build().localWordDAO()
             return dao
         }
 

@@ -1,4 +1,4 @@
-package com.w10group.hertzdictionary.biz.data.database
+package com.w10group.hertzdictionary.database
 
 import androidx.room.*
 
@@ -8,7 +8,7 @@ import androidx.room.*
  */
 
 @Dao
-interface LocalWordDAO {
+internal interface LocalWordDAO {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(vararg localWord: LocalWord)

@@ -11,8 +11,7 @@ import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView.Adapter
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.w10group.hertzdictionary.R
-import com.w10group.hertzdictionary.biz.data.database.LocalWord
-import com.w10group.hertzdictionary.biz.data.database.LocalWordDatabase
+import com.w10group.hertzdictionary.database.LocalWordDatabase
 import com.w10group.hertzdictionary.biz.manager.WordManagerServiceV3
 import org.jetbrains.anko.*
 import org.jetbrains.anko.cardview.v7.cardView

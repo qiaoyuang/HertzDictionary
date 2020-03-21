@@ -1,7 +1,7 @@
-package com.w10group.hertzdictionary.biz.manager
+package com.w10group.hertzdictionary.manager
 
-import com.w10group.hertzdictionary.biz.data.database.LocalWord
-import java.util.*
+import com.w10group.hertzdictionary.core.todayTimestamp
+import com.w10group.hertzdictionary.database.LocalWord
 import kotlin.collections.ArrayList
 import kotlin.collections.HashMap
 
@@ -48,25 +48,19 @@ object DateManagerService {
 
     // 获取最近一周的时间戳
     private inline val weekTimestampList
-        get() = getTimestampList(7)
+        get() = getTimestampList(
+            7
+        )
 
     // 获取最近一个月的时间戳
     private inline val monthTimestampList
-        get() = getTimestampList(30)
-
-    // 获取当前时间戳
-    inline val currentTimestamp
-        get() = System.currentTimeMillis()
+        get() = getTimestampList(
+            30
+        )
 
     // 获取时间戳列表
     private fun getTimestampList(count: Int): List<Long> = ArrayList<Long>().apply {
-        var timestamp = Calendar.getInstance().apply {
-            timeInMillis = currentTimestamp
-            set(Calendar.HOUR_OF_DAY, 0)
-            set(Calendar.MINUTE, 0)
-            set(Calendar.SECOND, 0)
-            set(Calendar.MILLISECOND, 0)
-        }.timeInMillis
+        var timestamp = todayTimestamp
         add(timestamp)
         repeat(count - 1) {
             val frontTimestamp = timestamp - ONE_DAY

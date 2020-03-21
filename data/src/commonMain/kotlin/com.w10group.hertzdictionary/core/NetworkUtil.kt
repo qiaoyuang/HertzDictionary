@@ -29,7 +29,7 @@ private fun cio(): HttpClient = HttpClient(CIO) {
     configJson()
 }*/
 
-fun <T : HttpClientEngineConfig> HttpClientConfig<T>.configJson() =
+internal fun <T : HttpClientEngineConfig> HttpClientConfig<T>.configJson() =
         install(JsonFeature) {
             serializer = KotlinxSerializer(KJson)
         }

@@ -1,17 +1,18 @@
-package com.w10group.hertzdictionary.biz.data.database
+package com.w10group.hertzdictionary.database
 
 import androidx.room.TypeConverter
 import com.w10group.hertzdictionary.core.KJson
 import kotlinx.serialization.UnstableDefault
 import kotlinx.serialization.builtins.list
 import kotlinx.serialization.builtins.serializer
+
 /**
  * 转换器，用于序列化以及反序列化时间 List
  * @author Qiao
  */
 
 @OptIn(UnstableDefault::class)
-class DateConverter {
+internal class DateConverter {
 
     private val serializer = Long.serializer().list
 

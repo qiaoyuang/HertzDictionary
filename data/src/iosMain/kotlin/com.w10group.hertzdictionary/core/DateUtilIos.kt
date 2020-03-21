@@ -11,3 +11,11 @@ actual fun Long.fmtDateNormal(): String = ""
 actual fun Long.fmtDateAll(): String = ""
 
 actual fun Long.fmtHourMinutes(): String = ""
+
+// 获取当前时间戳
+actual inline val currentTimestamp
+    get() = 0L
+
+// 获取今天 0 时的时间戳
+actual inline val todayTimestamp
+    get() = 0L

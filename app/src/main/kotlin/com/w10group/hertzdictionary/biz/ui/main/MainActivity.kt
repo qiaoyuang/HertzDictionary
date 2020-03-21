@@ -6,7 +6,7 @@ import android.view.*
 import android.view.inputmethod.InputMethodManager
 import androidx.lifecycle.lifecycleScope
 import com.w10group.hertzdictionary.R
-import com.w10group.hertzdictionary.biz.manager.DateManagerService
+import com.w10group.hertzdictionary.manager.DateManagerService
 import com.w10group.hertzdictionary.biz.manager.WordManagerServiceV3
 import com.w10group.hertzdictionary.core.architecture.BaseActivity
 import kotlinx.coroutines.Dispatchers
