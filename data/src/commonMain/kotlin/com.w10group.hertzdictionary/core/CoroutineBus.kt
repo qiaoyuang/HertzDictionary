@@ -32,7 +32,7 @@ object CoroutineBus {
     inline fun <reified T : Any> register(observer: OnWorkListener<T>,
                                           capacity: Int = 0) = register(T::class, observer, capacity)
 
-    fun <T : Any> unRegister(clazz: KClass<T>, observer: OnWorkListener<T>) = get(clazz).let { list ->
+    fun <T : Any> unRegister(clazz: KClass<T>, observer: OnWorkListener<T>) = get(clazz)?.let { list ->
         list.find { it === observer }.let { list.remove(it) }
         if (list.isEmpty())
             map.remove(clazz)
@@ -41,7 +41,7 @@ object CoroutineBus {
     inline fun <reified T : Any> unRegister(observer: OnWorkListener<T>) = unRegister(T::class, observer)
 
      suspend fun <T : Any> post(clazz: KClass<T>, event: T) = coroutineScope {
-         get(clazz).forEach {
+         get(clazz)?.forEach {
              val (onWorkListener, channel) = it
              launch(Dispatchers.Default) {
                  val deferred = async(Dispatchers.Default) { channel.receive() }

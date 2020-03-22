@@ -7,7 +7,7 @@ import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 
 /**
- * Localword 数据库
+ * LocalWord 数据库
  * @author Qiao
  */
 
@@ -15,20 +15,20 @@ import androidx.room.TypeConverters
 @TypeConverters(DateConverter::class)
 internal abstract class LocalWordDatabase : RoomDatabase() {
 
-    abstract fun localWordDAO(): LocalWordDAO
+    abstract fun localWordDAORoom(): LocalWordDAORoom
 
     companion object {
 
         private const val DATABASE_NAME = "WordStore"
 
-        private lateinit var dao: LocalWordDAO
+        private lateinit var dao: LocalWordDAORoom
 
-        fun getDAO(context: Context): LocalWordDAO {
+        fun getDAO(context: Context): LocalWordDAORoom {
             if (!this::dao.isInitialized)
                 dao = Room.databaseBuilder(context,
                         LocalWordDatabase::class.java,
                     DATABASE_NAME
-                ).build().localWordDAO()
+                ).build().localWordDAORoom()
             return dao
         }
 
