@@ -11,6 +11,7 @@ import kotlinx.coroutines.launch
  * 开源许可 ViewModel
  * @author Qiao
  */
+
 class LicenceViewModel : ViewModel() {
 
     private val updateChannel = Channel<Unit>()

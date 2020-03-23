@@ -11,13 +11,14 @@ import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView.Adapter
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.w10group.hertzdictionary.app.R
-import com.w10group.hertzdictionary.app.biz.manager.WordManagerServiceV3
 import org.jetbrains.anko.*
 import org.jetbrains.anko.cardview.v7.cardView
 import com.w10group.hertzdictionary.app.biz.ui.main.WordListAdapter.WordListViewHolder
 import com.w10group.hertzdictionary.app.core.view.createTouchFeedbackBorderless
 import com.w10group.hertzdictionary.database.LocalWord
 import com.w10group.hertzdictionary.database.LocalWordDAO
+import com.w10group.hertzdictionary.manager.WordManagerService
+import com.w10group.hertzdictionary.manager.WordManagerService.sumCount
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -28,6 +29,7 @@ import java.text.NumberFormat
  * Created by Administrator on 2018/4/20 0020
  * MainFragment中单词RecyclerView的Adapter.
  */
+
 class WordListAdapter(private val mContext: Context,
                       private val mData: MutableList<LocalWord>,
                       private val itemOnClickListener: (String) -> Unit) : Adapter<WordListViewHolder>() {
@@ -45,8 +47,6 @@ class WordListAdapter(private val mContext: Context,
     private val mFormat = NumberFormat.getPercentInstance().apply {
         maximumFractionDigits = 2
     }
-
-    var sumCount = mData.sumBy { it.count }
 
     override fun getItemCount(): Int = mData.size
 
@@ -141,7 +141,7 @@ class WordListAdapter(private val mContext: Context,
                     sumCount = 0
                     notifyDataSetChanged()
                     GlobalScope.launch(Dispatchers.IO) {
-                        LocalWordDAO.delete(*WordManagerServiceV3.getAllLocalWord().toTypedArray())
+                        LocalWordDAO.delete(*WordManagerService.getAllLocalWord().toTypedArray())
                     }
                     alertDialog.dismiss()
                 }

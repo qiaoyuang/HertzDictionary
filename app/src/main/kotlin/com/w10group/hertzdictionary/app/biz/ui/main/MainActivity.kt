@@ -1,24 +1,27 @@
 package com.w10group.hertzdictionary.app.biz.ui.main
 
+import android.app.ProgressDialog
 import android.content.Context
 import android.os.Bundle
 import android.view.*
 import android.view.inputmethod.InputMethodManager
+import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import com.w10group.hertzdictionary.app.R
-import com.w10group.hertzdictionary.manager.DateManagerService
-import com.w10group.hertzdictionary.app.biz.manager.WordManagerServiceV3
 import com.w10group.hertzdictionary.core.DataModule
 import com.w10group.hertzdictionary.app.core.architecture.BaseActivity
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import org.jetbrains.anko.design.snackbar
+import org.jetbrains.anko.progressDialog
 
 /**
  * Created by Administrator on 2018/6/15.
  * 主界面 Activity
  */
 
+@Suppress("DEPRECATION")
 class MainActivity : BaseActivity<MainActivity>() {
 
     companion object {
@@ -34,7 +37,7 @@ class MainActivity : BaseActivity<MainActivity>() {
     var curveStatus = CURVE_STATUS_WEEK
         set(value) {
             field = value
-            createCurveData()
+            viewModel.updateCurveData(value)
         }
 
     var status = STATUS_INQUIRED_NOT
@@ -44,61 +47,80 @@ class MainActivity : BaseActivity<MainActivity>() {
     override val uiComponent = MainActivityUIComponent(this)
     override val implementer = this
 
+    private lateinit var viewModel: MainViewModel
+
+    private lateinit var progressDialog: ProgressDialog
+
+    private val coordinate = intArrayOf(-1, -1)
+
+    private var networkJob: Job? = null
+
     init { lifecycle.addObserver(uiComponent) }
     
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         DataModule.init(applicationContext)
-        lifecycleScope.launch(Dispatchers.IO) {
-            mAdapter = WordListAdapter(implementer, WordManagerServiceV3
-                    .getAllLocalWord()) {
-                uiComponent.setWordText(it)
-                inquire(it)
-            }
-            withContext(Dispatchers.Main) {
+        viewModel = getViewModel {
+            allWordList.observe(implementer, Observer {
                 with(uiComponent) {
+                    lifecycleScope.launch { loadBackgroundImageView() }
+                    mAdapter = WordListAdapter(implementer, it) { word ->
+                        uiComponent.setWordText(word)
+                        inquire(word)
+                    }
                     setAdapter(mAdapter)
-                    loadBackgroundImageView()
                 }
-            }
+            })
+
+            inquireResult.observe(implementer, Observer {
+                when (it) {
+                    is InquireResponseSuccess -> uiComponent.displayInquireResult(it.inquireResult, it.word)
+                    is InquireResponseError -> {
+                        progressDialog.dismiss()
+                        uiComponent.snackBarView.snackbar(R.string.network_error)
+                    }
+                }
+
+            })
+
+            otherTranslationAndRelateWords.observe(implementer, Observer {
+                it?.let {
+                    val (otherTranslation, relatedWords) = it
+                    uiComponent displayOtherTranslation otherTranslation
+                    uiComponent displayRelatedWords relatedWords
+                    progressDialog.dismiss()
+                }
+            })
+
+            recyclerViewAdjustmentCoordinate.observe(implementer, Observer {
+                it?.let {
+                    coordinate[0] = it[0]
+                    coordinate[1] = it[1]
+                    viewModel.updateCurveData(curveStatus)
+                }
+            })
+
+            curveData.observe(implementer, Observer {
+                val (timeList, valueList) = it
+                uiComponent.updateCurveView(timeList, valueList)
+            })
+
+            updateAllWordList()
         }
     }
 
-    override fun onStart() {
-        super.onStart()
-        // 获取查询结果
-        lifecycleScope.launch {
-            for (element in WordManagerServiceV3.inquireResultChannel) {
-                val (inquireResult, word) = element
-                uiComponent.displayInquireResult(inquireResult, word)
+    fun inquire(word: String) {
+        if (!::progressDialog.isInitialized)
+            progressDialog = progressDialog(title = R.string.wait, message = R.string.getting_word) {
+                setProgressStyle(0)
+                setOnDismissListener { networkJob?.cancel() }
             }
-        }
-        // 获取其它义项以及相关词组
-        lifecycleScope.launch {
-            for (element in WordManagerServiceV3.OTRWChannel) {
-                val (otherTranslation, relatedWords) = element
-                uiComponent displayOtherTranslation otherTranslation
-                uiComponent displayRelatedWords relatedWords
-            }
-        }
-        // 获取更新曲线图的信号
-        lifecycleScope.launch {
-            for (element in WordManagerServiceV3.curveChannel) {
-                mAdapter.sumCount++
-                createCurveData()
-            }
-        }
+        progressDialog.show()
+        networkJob = viewModel.inquire(word)
     }
-
-    override fun onStop() {
-        super.onStop()
-        WordManagerServiceV3.networkJob?.cancel()
-    }
-
-    fun inquire(word: String) = WordManagerServiceV3.inquire(word, uiComponent.snackBarView)
 
     fun refreshRecyclerView() = lifecycleScope.launch {
-        val (front, next) = WordManagerServiceV3.coordinate
+        val (front, next) = coordinate
         if (front != -10) {
             if (front > 0) {
                 mAdapter.notifyItemRemoved(front)
@@ -109,27 +131,6 @@ class MainActivity : BaseActivity<MainActivity>() {
             val index = mAdapter.itemCount
             mAdapter.notifyItemRangeChanged(0, index)
             mAdapter.notifyItemInserted(index)
-        }
-    }
-
-    private fun createCurveData() {
-        when (curveStatus) {
-            CURVE_STATUS_WEEK -> {
-                WordManagerServiceV3.currentLocalWord?.let {
-                    lifecycleScope.launch(Dispatchers.Default) {
-                        val (timeList, valueList) = DateManagerService.createWeekValue(it)
-                        withContext(Dispatchers.Main) { uiComponent.updateCurveView(timeList, valueList) }
-                    }
-                }
-            }
-            CURVE_STATUS_MONTH -> {
-                WordManagerServiceV3.currentLocalWord?.let {
-                    lifecycleScope.launch(Dispatchers.Default) {
-                        val (timeList, valueList) = DateManagerService.createMonthValue(it)
-                        withContext(Dispatchers.Main) { uiComponent.updateCurveView(timeList, valueList) }
-                    }
-                }
-            }
         }
     }
 

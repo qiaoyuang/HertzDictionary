@@ -8,8 +8,8 @@ import com.w10group.hertzdictionary.app.R
 import com.w10group.hertzdictionary.manager.CurveValue
 import com.w10group.hertzdictionary.manager.DateManagerService
 import com.w10group.hertzdictionary.manager.MostValue
-import com.w10group.hertzdictionary.app.biz.manager.WordManagerServiceV3
 import com.w10group.hertzdictionary.database.LocalWord
+import com.w10group.hertzdictionary.manager.WordManagerService
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.launch
@@ -34,7 +34,7 @@ class StatisticsViewModel(application: Application) : AndroidViewModel(applicati
 
     private suspend inline fun selected(count: Int, crossinline create: (Array<LocalWord>) -> CurveValue): UIUpdateData = withContext(Dispatchers.Default) {
         val context = getApplication<Application>()
-        val (timeList, valueList, mostResult) = create(WordManagerServiceV3.getAllLocalWord().toTypedArray())
+        val (timeList, valueList, mostResult) = create(WordManagerService.getAllLocalWord().toTypedArray())
         val totalCount = valueList.sum()
         val totalCountText = context.getString(R.string.last_required, count, totalCount)
         val averageCount = totalCount / count

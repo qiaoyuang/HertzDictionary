@@ -5,7 +5,7 @@ package com.w10group.hertzdictionary.database
  * 本地单词类，用于本地数据库存储
  */
 
-expect class LocalWord {
+expect class LocalWord() {
     var en: String
     var ch: String
     var count: Int
