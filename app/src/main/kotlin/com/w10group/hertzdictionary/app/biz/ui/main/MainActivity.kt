@@ -10,7 +10,6 @@ import androidx.lifecycle.lifecycleScope
 import com.w10group.hertzdictionary.app.R
 import com.w10group.hertzdictionary.core.DataModule
 import com.w10group.hertzdictionary.app.core.architecture.BaseActivity
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import org.jetbrains.anko.design.snackbar

@@ -1,6 +1,7 @@
 package com.w10group.hertzdictionary.app.biz.ui.main
 
 import androidx.lifecycle.*
+import com.w10group.hertzdictionary.app.biz.ui.main.MainActivity.Companion.CURVE_STATUS_MONTH
 import com.w10group.hertzdictionary.app.biz.ui.main.MainActivity.Companion.CURVE_STATUS_WEEK
 import com.w10group.hertzdictionary.manager.DateManagerService
 import com.w10group.hertzdictionary.manager.WordManagerService
@@ -75,8 +76,11 @@ class MainViewModel : ViewModel() {
     val curveData = liveData {
         for (msg in curveUpdateChannel) WordManagerService.currentLocalWord?.let {
             withContext(Dispatchers.Default) {
-                val curveValue = if (msg == CURVE_STATUS_WEEK) DateManagerService.createWeekValue(it)
-                else DateManagerService.createMonthValue(it)
+                val curveValue = when (msg) {
+                    CURVE_STATUS_WEEK -> DateManagerService.createWeekValue(it)
+                    CURVE_STATUS_MONTH -> DateManagerService.createMonthValue(it)
+                    else -> throw IllegalStateException("参数传入错误")
+                }
                 emit(curveValue)
             }
         }

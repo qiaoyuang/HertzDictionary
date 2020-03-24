@@ -2,6 +2,7 @@ package com.w10group.hertzdictionary.manager
 
 import com.w10group.hertzdictionary.core.CLIENT
 import com.w10group.hertzdictionary.core.IODispatcher
+import com.w10group.hertzdictionary.core.SafeListConstructor
 import com.w10group.hertzdictionary.core.currentTimestamp
 import com.w10group.hertzdictionary.data.InquireResult
 import com.w10group.hertzdictionary.database.LocalWord
@@ -21,7 +22,7 @@ object WordManagerService {
 
     private const val BASE_URL = "http://translate.google.cn/translate_a/single"
 
-    private lateinit var allLocalWords: ArrayList<LocalWord>
+    private lateinit var allLocalWords: MutableList<LocalWord>
 
     var currentLocalWord: LocalWord? = null
         private set
@@ -31,7 +32,7 @@ object WordManagerService {
     suspend fun getAllLocalWord(): MutableList<LocalWord> =
         if (this::allLocalWords.isInitialized)
             allLocalWords
-        else ArrayList<LocalWord>().also {
+        else SafeListConstructor().also {
             it.addAll(LocalWordDAO.queryAll())
             allLocalWords = it
             sumCount = it.sumBy { word -> word.count }
