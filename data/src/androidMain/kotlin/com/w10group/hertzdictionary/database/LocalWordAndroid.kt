@@ -9,7 +9,7 @@ import androidx.room.PrimaryKey
  */
 
 @Entity
-actual data class LocalWord(@PrimaryKey actual var en: String = "",
-                            actual var ch: String = "",
-                            actual var count: Int = 1,
-                            actual var timeList: MutableList<Long> = mutableListOf())
+actual data class LocalWord actual constructor(@PrimaryKey actual var en: String,
+                                               actual var ch: String,
+                                               actual var count: Int,
+                                               actual var timeList: MutableList<Long>)

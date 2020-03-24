@@ -10,12 +10,10 @@ import kotlinx.coroutines.withContext
 
 internal actual suspend fun readFileToString(fileName: String): List<String> = withContext(Dispatchers.Default) {
     // TODO
-    listOf()
+    listOf<String>()
 }
-
-typealias KV = Pair<String, String>
 
 internal actual suspend fun readFileToKV( fileName: String): List<KV> = withContext(Dispatchers.Default) {
     // TODO
-    listOf()
+    listOf<KV>()
 }

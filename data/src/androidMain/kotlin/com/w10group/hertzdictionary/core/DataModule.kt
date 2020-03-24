@@ -1,5 +1,6 @@
 package com.w10group.hertzdictionary.core
 
+import android.app.Application
 import android.content.Context
 
 /**
@@ -11,8 +12,8 @@ object DataModule {
 
     internal lateinit var appContext: Context
 
-    fun init(context: Context) {
-        appContext = context
+    fun init(application: Application) {
+        appContext = application.applicationContext
     }
 
 }

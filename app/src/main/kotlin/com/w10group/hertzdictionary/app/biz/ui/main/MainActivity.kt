@@ -59,7 +59,7 @@ class MainActivity : BaseActivity<MainActivity>() {
     
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        DataModule.init(applicationContext)
+        DataModule.init(application)
         viewModel = getViewModel {
             allWordList.observe(implementer, Observer {
                 with(uiComponent) {
@@ -78,6 +78,7 @@ class MainActivity : BaseActivity<MainActivity>() {
                     is InquireResponseError -> {
                         progressDialog.dismiss()
                         uiComponent.snackBarView.snackbar(R.string.network_error)
+                        it.exception.printStackTrace()
                     }
                 }
 

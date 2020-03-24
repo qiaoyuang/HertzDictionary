@@ -8,7 +8,7 @@ import io.ktor.client.engine.ios.Ios
  * @author qiaoyuang
  */
 
-actual val CLIENT = nsUrlSession()
+internal actual val CLIENT = nsUrlSession()
 
 private fun nsUrlSession(): HttpClient = HttpClient(Ios) {
     configJson()

@@ -5,7 +5,7 @@ package com.w10group.hertzdictionary.database
  * 本地单词类，用于本地数据库存储
  */
 
-actual data class LocalWord(actual var en: String = "",
-                            actual var ch: String = "",
-                            actual var count: Int = 1,
-                            actual var timeList: MutableList<Long> = mutableListOf())
+actual data class LocalWord actual constructor(actual var en: String,
+                                               actual var ch: String,
+                                               actual var count: Int,
+                                               actual var timeList: MutableList<Long>)

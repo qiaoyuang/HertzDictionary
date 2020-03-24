@@ -1,13 +1,13 @@
 package com.w10group.hertzdictionary.manager
 
 import com.w10group.hertzdictionary.core.CLIENT
+import com.w10group.hertzdictionary.core.IODispatcher
 import com.w10group.hertzdictionary.core.currentTimestamp
 import com.w10group.hertzdictionary.data.InquireResult
 import com.w10group.hertzdictionary.database.LocalWord
 import com.w10group.hertzdictionary.database.LocalWordDAO
 import io.ktor.client.request.get
 import io.ktor.client.request.parameter
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.withContext
@@ -100,18 +100,16 @@ object WordManagerService {
             sumCount++
         }
         // 如果 word 没有初始化表示 word 不存在于 mData 中，所以创建新 word
-        if (word == null) LocalWord().let {
-            it.ch = orig.ch
-            it.en = orig.en
+        if (word == null) LocalWord(ch = orig.ch, en = orig.en).let {
             coordinate[0] = -10
             it.timeList.add(currentTimestamp)
             allLocalWords.add(it)
             sendWord(it)
-            withContext(Dispatchers.IO) { LocalWordDAO.insert(it) }
+            withContext(IODispatcher) { LocalWordDAO.insert(it) }
         } else word!!.let {
             it.timeList.add(currentTimestamp)
             sendWord(it)
-            withContext(Dispatchers.IO) { LocalWordDAO.update(it) }
+            withContext(IODispatcher) { LocalWordDAO.update(it) }
         }
         return coordinate
     }

@@ -42,4 +42,4 @@ val KJson = Json(JsonConfiguration(
         useArrayPolymorphism = true
 ))
 
-expect val CLIENT: HttpClient
+internal expect val CLIENT: HttpClient

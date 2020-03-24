@@ -8,7 +8,7 @@ import io.ktor.client.engine.okhttp.OkHttp
  * @author qiaoyuang
  */
 
-actual val CLIENT = okHttp()
+internal actual val CLIENT = okHttp()
 
 private fun okHttp(): HttpClient = HttpClient(OkHttp) {
     configJson()
