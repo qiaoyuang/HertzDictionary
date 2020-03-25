@@ -88,7 +88,6 @@ class MainActivity : BaseActivity<MainActivity>() {
                     val (otherTranslation, relatedWords) = it
                     uiComponent displayOtherTranslation otherTranslation
                     uiComponent displayRelatedWords relatedWords
-                    progressDialog.dismiss()
                 }
             })
 
@@ -103,6 +102,7 @@ class MainActivity : BaseActivity<MainActivity>() {
             curveData.observe(implementer, Observer {
                 val (timeList, valueList) = it
                 uiComponent.updateCurveView(timeList, valueList)
+                progressDialog.dismiss()
             })
 
             updateAllWordList()

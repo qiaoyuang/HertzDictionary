@@ -33,7 +33,9 @@ object WordManagerService {
         if (this::allLocalWords.isInitialized)
             allLocalWords
         else SafeListConstructor().also {
-            it.addAll(LocalWordDAO.queryAll())
+            withContext(IODispatcher) {
+                it.addAll(LocalWordDAO.queryAll())
+            }
             allLocalWords = it
             sumCount = it.sumBy { word -> word.count }
         }

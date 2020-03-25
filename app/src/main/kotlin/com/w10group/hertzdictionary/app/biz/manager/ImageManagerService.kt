@@ -6,6 +6,8 @@ import android.widget.ImageView
 import androidx.core.content.edit
 import com.w10group.hertzdictionary.app.core.GlideApp
 import com.w10group.hertzdictionary.manager.getBackgroundUrl
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import java.io.IOException
 import java.util.*
 
@@ -43,16 +45,20 @@ object ImageManagerService {
         getURLOnInternetByCoroutines(context, imageView, sharedPreferences)
     }
 
-    private suspend fun getURLOnInternetByCoroutines(context: Context, imageView: ImageView, sharedPreferences: SharedPreferences) {
+    private suspend fun getURLOnInternetByCoroutines(context: Context,
+                                                     imageView: ImageView,
+                                                     sharedPreferences: SharedPreferences) = withContext(Dispatchers.IO) {
         val url = try {
             getBackgroundUrl()
         } catch (e: IOException) {
             e.printStackTrace()
-            return
+            return@withContext
         }
         if (url != todayURL) {
+            withContext(Dispatchers.Main) {
+                GlideApp.with(context).load(url).dontAnimate().into(imageView)
+            }
             todayURL = url
-            GlideApp.with(context).load(todayURL).dontAnimate().into(imageView)
             sharedPreferences.edit { putString(KEY_URL, todayURL) }
         }
     }

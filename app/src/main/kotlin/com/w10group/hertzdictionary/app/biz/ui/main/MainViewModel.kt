@@ -26,9 +26,7 @@ class MainViewModel : ViewModel() {
 
     val allWordList = liveData {
         for (msg in allWordListChannel) {
-            val wordList = withContext(Dispatchers.IO) {
-                WordManagerService.getAllLocalWord()
-            }
+            val wordList = WordManagerService.getAllLocalWord()
             emit(wordList)
         }
     }
