@@ -128,7 +128,7 @@ class WordListAdapter(private val mContext: Context,
                     mData.removeAt(index)
                     sumCount -= localWord.count
                     notifyItemRemoved(index)
-                    notifyItemRangeChanged(0, mData.size)
+                    notifyItemRangeChanged(0, mData.size, Unit)
                     GlobalScope.launch(Dispatchers.IO) { LocalWordDAO.delete(localWord) }
                     alertDialog.dismiss()
                 }

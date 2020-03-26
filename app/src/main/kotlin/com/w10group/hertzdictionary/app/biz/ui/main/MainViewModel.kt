@@ -65,7 +65,7 @@ class MainViewModel : ViewModel() {
     }.buffer().flowOn(Dispatchers.Default).asLiveData(viewModelScope.coroutineContext)
 
 
-    fun inquire(word: String) = viewModelScope.launch {
+    fun sendInquireMsg(word: String) = viewModelScope.launch {
         inquireResultChannel.send(word)
     }
 

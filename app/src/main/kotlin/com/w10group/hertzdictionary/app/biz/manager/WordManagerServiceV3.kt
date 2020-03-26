@@ -2,8 +2,8 @@ package com.w10group.hertzdictionary.app.biz.manager
 
 import android.view.View
 import com.w10group.hertzdictionary.app.R
-
-/*import com.w10group.hertzdictionary.core.CLIENT
+/*
+import com.w10group.hertzdictionary.core.CLIENT
 import com.w10group.hertzdictionary.data.InquireResult
 import com.w10group.hertzdictionary.database.LocalWord
 import com.w10group.hertzdictionary.database.LocalWordDAO

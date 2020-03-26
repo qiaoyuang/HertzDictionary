@@ -86,7 +86,7 @@ object WordManagerService {
 
     // 刷新 RecyclerView 的词序
     suspend fun updateRecyclerViewData(inquireResult: InquireResult): IntArray {
-        val orig = inquireResult.word!![0]
+        val orig = inquireResult.word!!.first()
         var word: LocalWord? = null
         val coordinate = intArrayOf(-1, -1)
         // 在 mData 中查找 word 是否存在，如果存在则找到它并记录其 index
@@ -94,55 +94,43 @@ object WordManagerService {
             if (localWord.en == orig.en) {
                 word = localWord
                 localWord.count++
+                // 第一个数字为负 -1 的时候表示未移动过，-10 的时候表示是第一次查询，非负时表示移动前的位置，第二个数表示移动后的位置
                 localWord.reSort(index, coordinate)
                 return@forEachIndexed
             }
         }
-        fun sendWord(localWord: LocalWord) {
-            currentLocalWord = localWord
-            sumCount++
-        }
         // 如果 word 没有初始化表示 word 不存在于 mData 中，所以创建新 word
-        if (word == null) LocalWord(ch = orig.ch, en = orig.en).let {
+        currentLocalWord = if (word == null) LocalWord(ch = orig.ch, en = orig.en).also {
             coordinate[0] = -10
             it.timeList.add(currentTimestamp)
             allLocalWords.add(it)
-            sendWord(it)
             withContext(IODispatcher) { LocalWordDAO.insert(it) }
-        } else word!!.let {
+        } else word!!.also {
             it.timeList.add(currentTimestamp)
-            sendWord(it)
             withContext(IODispatcher) { LocalWordDAO.update(it) }
         }
+        sumCount++
         return coordinate
     }
 
     // 调整 LocalWord 在 mData 中的位置，并返回链表是否被调整过
-    private fun LocalWord.reSort(index: Int, coordinate: IntArray) {
-        // 第一个数字为负 -1 的时候表示未移动过，-10 的时候表示是第一次查询，非负时表示移动前的位置，第二个数表示移动后的位置
-        coordinate[0] = -1
-        when {
-            index == 0 -> return
-            allLocalWords[index - 1].count >= count -> return
-            else -> {
-                val start = index - 1
-                for (i in start downTo 0) {
-                    val word = allLocalWords[i]
-                    when {
-                        word.count >= count -> {
-                            allLocalWords.removeAt(index)
-                            val newIndex = i + 1
-                            allLocalWords.add(newIndex, this)
-                            coordinate[0] = index
-                            coordinate[1] = newIndex
-                        }
-                        i == 0 -> {
-                            allLocalWords.removeAt(index)
-                            allLocalWords.add(i, this)
-                            coordinate[0] = index
-                            coordinate[1] = i
-                        }
-                    }
+    private fun LocalWord.reSort(index: Int, coordinate: IntArray) = when {
+        index == 0 -> Unit
+        allLocalWords[index - 1].count >= count -> Unit
+        else -> loop@ for (i in index - 1 downTo 0) {
+            val word = allLocalWords[i]
+            when {
+                word.count >= count -> {
+                    val newIndex = i + 1
+                    allLocalWords.add(newIndex, allLocalWords.removeAt(index))
+                    coordinate[0] = index
+                    coordinate[1] = newIndex
+                    break@loop
+                }
+                i == 0 -> {
+                    allLocalWords.add(i, allLocalWords.removeAt(index))
+                    coordinate[0] = index
+                    coordinate[1] = i
                 }
             }
         }

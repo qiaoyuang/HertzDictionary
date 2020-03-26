@@ -116,20 +116,20 @@ class MainActivity : BaseActivity<MainActivity>() {
                 setOnDismissListener { networkJob?.cancel() }
             }
         progressDialog.show()
-        networkJob = viewModel.inquire(word)
+        networkJob = viewModel.sendInquireMsg(word)
     }
 
-    fun refreshRecyclerView() = lifecycleScope.launch {
+    fun refreshRecyclerView() {
         val (front, next) = coordinate
         if (front != -10) {
             if (front > 0) {
                 mAdapter.notifyItemRemoved(front)
                 mAdapter.notifyItemInserted(next)
             }
-            mAdapter.notifyItemRangeChanged(0, mAdapter.itemCount)
+            mAdapter.notifyItemRangeChanged(0, mAdapter.itemCount, Unit)
         } else {
             val index = mAdapter.itemCount
-            mAdapter.notifyItemRangeChanged(0, index)
+            mAdapter.notifyItemRangeChanged(0, index, Unit)
             mAdapter.notifyItemInserted(index)
         }
     }
