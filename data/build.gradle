@@ -65,6 +65,7 @@ kotlin {
     iosX64("ios") {
         binaries {
             framework {
+                freeCompilerArgs += '-Xobjc-generics'
                 isStatic = true
             }
         }
