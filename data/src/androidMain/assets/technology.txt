@@ -2,9 +2,9 @@
 &
 Kotlin
 *
-线程调度
+异步并发
 &
-Coroutines
+kotlinx.coroutines
 *
 序列化
 &
@@ -16,11 +16,16 @@ Anko-Layout
 *
 基础函数库封装
 &
-Anko-Common
+Anko-Common、KTX
+*
+业务架构
+&
+Lifecycle、ViewModel、LiveData
+*
 *
 数据库操作
 &
-Room(Jetpack)
+Room
 *
 文件 IO
 &
