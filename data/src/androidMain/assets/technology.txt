@@ -22,7 +22,6 @@ Anko-Common、KTX
 &
 Lifecycle、ViewModel、LiveData
 *
-*
 数据库操作
 &
 Room
