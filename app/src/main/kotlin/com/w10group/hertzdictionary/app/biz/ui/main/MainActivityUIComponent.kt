@@ -379,6 +379,8 @@ class MainActivityUIComponent(private val mMainActivity: MainActivity) : AnkoCom
             }
     }
 
+
+
     private fun createHeaderView() = mMainActivity.UI {
         mBackgroundImageView = imageView {
             layoutParams = ViewGroup.LayoutParams(matchParent, dip(176))

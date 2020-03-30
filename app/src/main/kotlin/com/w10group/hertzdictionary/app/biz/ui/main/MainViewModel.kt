@@ -47,7 +47,7 @@ class MainViewModel : ViewModel() {
             }
             emit(inquireResult)
         }
-    }
+    }.distinctUntilChanged()
 
     val otherTranslationAndRelateWords = inquireResult.asFlow().map {
         when (it) {

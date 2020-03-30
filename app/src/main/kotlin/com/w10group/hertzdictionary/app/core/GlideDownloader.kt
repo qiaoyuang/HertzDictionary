@@ -7,7 +7,7 @@ import java.io.File
 
 /**
  * Created by Administrator on 2018/7/9.
- * Glide实现的图片下载器
+ * Glide 实现的图片下载器
  */
 
 object GlideDownloader : ImageDownloader {
