@@ -77,10 +77,8 @@ class MainActivity : BaseActivity<MainActivity>() {
                     is InquireResponseError -> {
                         progressDialog.dismiss()
                         uiComponent.snackBarView.snackbar(R.string.network_error)
-                        it.exception.printStackTrace()
                     }
                 }
-
             })
 
             otherTranslationAndRelateWords.observe(implementer, Observer {
