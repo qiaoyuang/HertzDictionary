@@ -37,7 +37,7 @@ class MainViewModel : ViewModel() {
 
     private val inquireResultChannel = Channel<String>()
 
-    val inquireResult = liveData {
+    val inquireResult = liveData(Dispatchers.Default) {
         for (word in inquireResultChannel) {
             val inquireResult = try {
                 InquireResponseSuccess(WordManagerService.inquire(word), word)
@@ -46,12 +46,14 @@ class MainViewModel : ViewModel() {
                 InquireResponseError(e)
             }
             emit(inquireResult)
+            emit(InquireResponseEmpty())
         }
-    }.distinctUntilChanged()
+    }
 
     val otherTranslationAndRelateWords = inquireResult.asFlow().map {
         when (it) {
             is InquireResponseSuccess -> WordManagerService.getOtherTranslationAndRelateWords(it.inquireResult)
+            is InquireResponseEmpty -> null
             is InquireResponseError -> null
         }
     }.buffer().flowOn(Dispatchers.Default).asLiveData(viewModelScope.coroutineContext)
@@ -60,6 +62,7 @@ class MainViewModel : ViewModel() {
     val recyclerViewAdjustmentCoordinate = inquireResult.asFlow().map {
         when (it) {
             is InquireResponseSuccess -> WordManagerService.updateRecyclerViewData(it.inquireResult)
+            is InquireResponseEmpty -> null
             is InquireResponseError -> null
         }
     }.buffer().flowOn(Dispatchers.Default).asLiveData(viewModelScope.coroutineContext)
