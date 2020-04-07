@@ -10,9 +10,9 @@ import androidx.lifecycle.lifecycleScope
 import com.w10group.hertzdictionary.app.R
 import com.w10group.hertzdictionary.core.DataModule
 import com.w10group.hertzdictionary.app.core.architecture.BaseActivity
+import com.w10group.hertzdictionary.manager.WordManagerService
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
-import org.jetbrains.anko.design.snackbar
 import org.jetbrains.anko.progressDialog
 
 /**
@@ -50,7 +50,7 @@ class MainActivity : BaseActivity<MainActivity>() {
 
     private lateinit var progressDialog: ProgressDialog
 
-    private val coordinate = intArrayOf(-1, -1)
+    private val coordinate = intArrayOf(WordManagerService.NO_MOVE, WordManagerService.NO_MOVE)
 
     private var networkJob: Job? = null
 
@@ -76,7 +76,7 @@ class MainActivity : BaseActivity<MainActivity>() {
                     is InquireResponseSuccess -> uiComponent.displayInquireResult(it.inquireResult, it.word)
                     is InquireResponseError -> {
                         progressDialog.dismiss()
-                        uiComponent.snackBarView.snackbar(R.string.network_error)
+                        uiComponent.snackBar(R.string.network_error)
                     }
                 }
             })
@@ -117,18 +117,18 @@ class MainActivity : BaseActivity<MainActivity>() {
         networkJob = viewModel.sendInquireMsg(word)
     }
 
-    fun refreshRecyclerView() {
+    fun refreshRecyclerView() = with(mAdapter) {
         val (front, next) = coordinate
-        if (front != -10) {
+        if (front != WordManagerService.FIRST_INQUIRE) {
             if (front > 0) {
-                mAdapter.notifyItemRemoved(front)
-                mAdapter.notifyItemInserted(next)
+                notifyItemRemoved(front)
+                notifyItemInserted(next)
             }
-            mAdapter.notifyItemRangeChanged(0, mAdapter.itemCount, Unit)
+            notifyItemRangeChanged(0, itemCount, Unit)
         } else {
-            val index = mAdapter.itemCount
-            mAdapter.notifyItemRangeChanged(0, index, Unit)
-            mAdapter.notifyItemInserted(index)
+            val index = itemCount
+            notifyItemRangeChanged(0, index, Unit)
+            notifyItemInserted(index)
         }
     }
 

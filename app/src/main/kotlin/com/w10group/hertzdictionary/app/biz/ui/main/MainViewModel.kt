@@ -46,7 +46,7 @@ class MainViewModel : ViewModel() {
                 InquireResponseError(e)
             }
             emit(inquireResult)
-            emit(InquireResponseEmpty())
+            emit(InquireResponseEmpty)
         }
     }
 

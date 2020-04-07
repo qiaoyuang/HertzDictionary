@@ -84,24 +84,27 @@ object WordManagerService {
         otherTranslation to relatedWords
     }
 
+    // 第一个数字为负 -1 的时候表示未移动过，-10 的时候表示是第一次查询，非负时表示移动前的位置，第二个数表示移动后的位置
+    const val NO_MOVE = -1
+    const val FIRST_INQUIRE = -10
+
     // 刷新 RecyclerView 的词序
     suspend fun updateRecyclerViewData(inquireResult: InquireResult): IntArray {
         val orig = inquireResult.word!!.first()
         var word: LocalWord? = null
-        val coordinate = intArrayOf(-1, -1)
+        val coordinate = intArrayOf(NO_MOVE, NO_MOVE)
         // 在 mData 中查找 word 是否存在，如果存在则找到它并记录其 index
         allLocalWords.forEachIndexed { index, localWord ->
             if (localWord.en == orig.en) {
                 word = localWord
                 localWord.count++
-                // 第一个数字为负 -1 的时候表示未移动过，-10 的时候表示是第一次查询，非负时表示移动前的位置，第二个数表示移动后的位置
                 localWord.reSort(index, coordinate)
                 return@forEachIndexed
             }
         }
         // 如果 word 没有初始化表示 word 不存在于 mData 中，所以创建新 word
         currentLocalWord = if (word == null) LocalWord(ch = orig.ch, en = orig.en).also {
-            coordinate[0] = -10
+            coordinate[0] = FIRST_INQUIRE
             it.timeList.add(currentTimestamp)
             allLocalWords.add(it)
             withContext(IODispatcher) { LocalWordDAO.insert(it) }
