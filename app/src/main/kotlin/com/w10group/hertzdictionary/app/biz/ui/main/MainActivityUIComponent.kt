@@ -12,6 +12,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import android.widget.*
+import androidx.annotation.StringRes
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.widget.Toolbar
 import androidx.cardview.widget.CardView
@@ -46,6 +47,7 @@ import org.jetbrains.anko.design.*
 import org.jetbrains.anko.recyclerview.v7.recyclerView
 import org.jetbrains.anko.support.v4.drawerLayout
 import org.jetbrains.anko.support.v4.nestedScrollView
+import kotlin.system.measureTimeMillis
 
 /**
  * MainActivity 的 Anko UI
@@ -61,9 +63,6 @@ class MainActivityUIComponent(private val mMainActivity: MainActivity) : AnkoCom
     private lateinit var mNestedScrollView: NestedScrollView
 
     private lateinit var mRecyclerView: RecyclerView
-
-    val snackBarView: View
-        get() = mRecyclerView
 
     private lateinit var mBackgroundImageView: ImageView
     private lateinit var mOtherMeanCard: CardView
@@ -499,5 +498,7 @@ class MainActivityUIComponent(private val mMainActivity: MainActivity) : AnkoCom
             mTVRelatedWords.setWords(mMainActivity.getString(R.string.related_words), words)
 
     fun updateCurveView(timeList: List<Long>, valueList: List<Int>) = mCurveView.setData(timeList, valueList)
+
+    fun snackBar(@StringRes msg: Int) = mRecyclerView.snackbar(msg)
 
 }
