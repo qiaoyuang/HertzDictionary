@@ -18,6 +18,7 @@ import kotlin.math.abs
  * 查询频数曲线自定义 View
  * @author Qiao
  */
+
 class CurveView : View {
 
     constructor(context: Context) : super(context)
@@ -173,7 +174,7 @@ class CurveView : View {
         val time4 = time.last().fmtMonthDay()
         val position = time.size / 3
         val time2 = time[position].fmtMonthDay()
-        val time3 = time[position * 2].fmtMonthDay()
+        val time3 = time[position shl 1].fmtMonthDay()
         val y = (height * 9 / 10).toFloat()
         val fWidth = width.toFloat()
         val x1 = fWidth / 10
@@ -263,48 +264,46 @@ class CurveView : View {
     }
 
     // 第六步：绘制触摸点以及弹窗
-    private fun Canvas.drawWindow() {
-        if (touchX > 0 && touchY > 0) {
-            // 获取与触摸点最近的有值的点在 time 和 value 中的 index
-            val index = getTimeTemp()
-            if (index >= 0) {
-                // 获取要绘制竖线的 x 与 y 坐标
-                val (x, y) = valueToCoordinate(index)
-                val radius = dp4
-                val startY = height / 5 - radius
-                val endY = height.toFloat() / 5 * 4
+    private fun Canvas.drawWindow() = if (touchX > 0 && touchY > 0) {
+        // 获取与触摸点最近的有值的点在 time 和 value 中的 index
+        val index = getTimeTemp()
+        if (index >= 0) {
+            // 获取要绘制竖线的 x 与 y 坐标
+            val (x, y) = valueToCoordinate(index)
+            val radius = dp4
+            val startY = height / 5 - radius
+            val endY = height.toFloat() / 5 * 4
 
-                // 绘制弹窗
-                val touchDiaPowerText = context.getString(R.string.curve_view_count, "${value[index]}$mDefaultUnit")
-                val touchTimeText = time[index].fmtDateNormal()
-                val windowWidth = dp96
-                val offset = dp16
-                val windowHeight = dp48
-                val binaryOffset = offset / 2
-                val windowX = if (x < width / 2) x + binaryOffset else x - windowWidth - offset
-                val windowY = if (y < height / 2) y + binaryOffset else y - windowHeight - offset
+            // 绘制弹窗
+            val touchDiaPowerText = context.getString(R.string.curve_view_count, "${value[index]}$mDefaultUnit")
+            val touchTimeText = time[index].fmtDateNormal()
+            val windowWidth = dp96
+            val offset = dp16
+            val windowHeight = dp48
+            val binaryOffset = offset / 2
+            val windowX = if (x < width shr 1) x + binaryOffset else x - windowWidth - offset
+            val windowY = if (y < height shr 1) y + binaryOffset else y - windowHeight - offset
 
-                // 画竖线
-                drawLine(x, startY, x, endY, mVerticalLinePaint)
-                // 绘制白边蓝心圆
-                mTouchPaint.color = white
-                drawCircle(x, y, radius * 1.5f, mTouchPaint)
-                mTouchPaint.color = darkBlue
-                drawCircle(x, y, radius, mTouchPaint)
+            // 画竖线
+            drawLine(x, startY, x, endY, mVerticalLinePaint)
+            // 绘制白边蓝心圆
+            mTouchPaint.color = white
+            drawCircle(x, y, radius * 1.5f, mTouchPaint)
+            mTouchPaint.color = darkBlue
+            drawCircle(x, y, radius, mTouchPaint)
 
-                // 绘制深色背景
-                mTouchPaint.color = windowBackground
-                drawRoundRect(windowX, windowY, windowX + windowWidth, windowY + windowHeight, dp4, dp4, mTouchPaint)
-                // 绘制时间文字
-                mTouchPaint.color = white
-                val drawX = windowX + offset / 2
-                val drawY = windowY + offset
-                drawText(touchTimeText, drawX, drawY, mTouchPaint)
-                // 绘制查询频数值文字
-                drawText(touchDiaPowerText, drawX, drawY + windowHeight / 2, mTouchPaint)
-            }
-        }
-    }
+            // 绘制深色背景
+            mTouchPaint.color = windowBackground
+            drawRoundRect(windowX, windowY, windowX + windowWidth, windowY + windowHeight, dp4, dp4, mTouchPaint)
+            // 绘制时间文字
+            mTouchPaint.color = white
+            val drawX = windowX + offset / 2
+            val drawY = windowY + offset
+            drawText(touchTimeText, drawX, drawY, mTouchPaint)
+            // 绘制查询频数值文字
+            drawText(touchDiaPowerText, drawX, drawY + windowHeight / 2, mTouchPaint)
+        } else Unit
+    } else Unit
 
     // 给出 index，返回该 index 对应数据在图表中的坐标
     private fun valueToCoordinate(index: Int): FloatArray {

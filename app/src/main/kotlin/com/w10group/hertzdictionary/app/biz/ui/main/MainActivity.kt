@@ -105,14 +105,13 @@ class MainActivity : BaseActivity<MainActivity>() {
 
             updateAllWordList()
         }
+        progressDialog = progressDialog(title = R.string.wait, message = R.string.getting_word) {
+            setProgressStyle(0)
+            setOnDismissListener { networkJob?.cancel() }
+        }
     }
 
     fun inquire(word: String) {
-        if (!::progressDialog.isInitialized)
-            progressDialog = progressDialog(title = R.string.wait, message = R.string.getting_word) {
-                setProgressStyle(0)
-                setOnDismissListener { networkJob?.cancel() }
-            }
         progressDialog.show()
         networkJob = viewModel.sendInquireMsg(word)
     }
