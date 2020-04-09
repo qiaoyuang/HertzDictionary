@@ -48,7 +48,7 @@ class MainActivity : BaseActivity<MainActivity>() {
 
     private lateinit var viewModel: MainViewModel
 
-    private lateinit var progressDialog: ProgressDialog
+    private var progressDialog: ProgressDialog? = null
 
     private val coordinate = intArrayOf(WordManagerService.NO_MOVE, WordManagerService.NO_MOVE)
 
@@ -75,7 +75,7 @@ class MainActivity : BaseActivity<MainActivity>() {
                 when (it) {
                     is InquireResponseSuccess -> uiComponent.displayInquireResult(it.inquireResult, it.word)
                     is InquireResponseError -> {
-                        progressDialog.dismiss()
+                        progressDialog!!.dismiss()
                         uiComponent.snackBar(R.string.network_error)
                     }
                 }
@@ -100,19 +100,20 @@ class MainActivity : BaseActivity<MainActivity>() {
             curveData.observe(implementer, Observer {
                 val (timeList, valueList) = it
                 uiComponent.updateCurveView(timeList, valueList)
-                progressDialog.dismiss()
+                progressDialog?.dismiss()
             })
 
             updateAllWordList()
         }
-        progressDialog = progressDialog(title = R.string.wait, message = R.string.getting_word) {
-            setProgressStyle(0)
-            setOnDismissListener { networkJob?.cancel() }
-        }
     }
 
     fun inquire(word: String) {
-        progressDialog.show()
+        if (progressDialog == null)
+            progressDialog = progressDialog(title = R.string.wait, message = R.string.getting_word) {
+                setProgressStyle(0)
+                setOnDismissListener { networkJob?.cancel() }
+            }
+        else progressDialog!!.show()
         networkJob = viewModel.sendInquireMsg(word)
     }
 
