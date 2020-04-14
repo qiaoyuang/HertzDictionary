@@ -5,7 +5,6 @@ import android.content.ClipboardManager
 import android.content.Context
 import android.content.pm.PackageManager
 import android.graphics.Color
-import android.os.Build
 import android.view.Gravity
 import android.view.View
 import android.widget.ImageView
@@ -105,8 +104,7 @@ class AboutDeveloperActivityUIComponent(private val mAboutDeveloperActivity: Abo
                     mIMBackground = imageView {
                         fitsSystemWindows = true
                         scaleType = ImageView.ScaleType.CENTER_CROP
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
-                            foreground = createTouchFeedbackBorderless(context)
+                        foreground = createTouchFeedbackBorderless(context)
                         setOnClickListener {  mCompleteScaleImageView.show(1) }
                     }.lparams(matchParent, matchParent) {
                         collapseMode = COLLAPSE_MODE_PARALLAX
@@ -116,8 +114,7 @@ class AboutDeveloperActivityUIComponent(private val mAboutDeveloperActivity: Abo
                         scaleType = ImageView.ScaleType.CENTER_CROP
                         borderWidth = dip(2)
                         borderColor = Color.WHITE
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
-                            foreground = createTouchFeedbackBorderless(context)
+                        foreground = createTouchFeedbackBorderless(context)
                         setOnClickListener { mCompleteScaleImageView.show() }
                     }.lparams(dip(80), dip(80)) {
                         gravity = Gravity.CENTER_HORIZONTAL or Gravity.TOP

@@ -2,7 +2,6 @@ package com.w10group.hertzdictionary.app.biz.ui.main
 
 import android.animation.LayoutTransition
 import android.graphics.Color
-import android.os.Build
 import android.text.Editable
 import android.text.InputType
 import android.text.TextWatcher
@@ -47,7 +46,6 @@ import org.jetbrains.anko.design.*
 import org.jetbrains.anko.recyclerview.v7.recyclerView
 import org.jetbrains.anko.support.v4.drawerLayout
 import org.jetbrains.anko.support.v4.nestedScrollView
-import kotlin.system.measureTimeMillis
 
 /**
  * MainActivity 的 Anko UI
@@ -384,8 +382,7 @@ class MainActivityUIComponent(private val mMainActivity: MainActivity) : AnkoCom
             scaleType = ImageView.ScaleType.CENTER_CROP
             backgroundColor = blue1
             isClickable = true
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
-                foreground = createTouchFeedbackBorderless(context)
+            foreground = createTouchFeedbackBorderless(context)
         }
     }.view
 

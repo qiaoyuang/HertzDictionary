@@ -1,7 +1,6 @@
 package com.w10group.hertzdictionary.app.biz.ui.main
 
 import android.content.Context
-import android.os.Build
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
@@ -49,10 +48,8 @@ class OtherMeanAdapter(private val mContext: Context,
             OtherMeanViewHolder(mContext.UI {
                 verticalLayout {
                     lparams(matchParent, wrapContent)
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                        isClickable = true
-                        foreground = createTouchFeedback(context)
-                    }
+                    isClickable = true
+                    foreground = createTouchFeedback(context)
                     textView {
                         id = WORD
                         textColor = black

@@ -1,7 +1,6 @@
 package com.w10group.hertzdictionary.app.biz.ui.licence
 
 import android.content.Context
-import android.os.Build
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView.Adapter
@@ -23,21 +22,17 @@ class OSLAdapter(private val mContext: Context, private val mData: List<KV>) : A
 
     override fun getItemCount(): Int = mData.size
 
-    override fun onBindViewHolder(holder: KVViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: KVViewHolder, position: Int) = with(holder) {
         val data = mData[position]
-        holder.apply {
-            tvTitle.text = data.first
-            tvContent.text = data.second
-        }
+        tvTitle.text = data.first
+        tvContent.text = data.second
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): KVViewHolder =
             KVViewHolder(mContext.UI {
                 verticalLayout {
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                        isClickable = true
-                        foreground = createTouchFeedbackBorderless(context)
-                    }
+                    isClickable = true
+                    foreground = createTouchFeedbackBorderless(context)
                     textView {
                         id = TITLE_ID
                         textSize = 22f
