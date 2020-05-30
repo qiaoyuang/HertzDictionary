@@ -36,19 +36,19 @@ class CurveView : View {
     /**
      * dp 以及 sp 值
      */
-    private val dp1 = 1.initDPValue()
-    private val dp2 = 2.initDPValue()
-    private val dp4 = 4.initDPValue()
-    private val dp6 = 6.initDPValue()
-    private val dp12 = 12.initDPValue()
-    private val dp16 = 16.initDPValue()
-    private val dp24 = 24.initDPValue()
-    private val dp28 = 28.initDPValue()
-    private val dp32 = 32.initDPValue()
-    private val dp48 = 48.initDPValue()
-    private val dp96 = 96.initDPValue()
-    private val sp10 = 10.initSPValue()
-    private val sp12 = 12.initSPValue()
+    private val dp1 = 1.dp
+    private val dp2 = 2.dp
+    private val dp4 = 4.dp
+    private val dp6 = 6.dp
+    private val dp12 = 12.dp
+    private val dp16 = 16.dp
+    private val dp24 = 24.dp
+    private val dp28 = 28.dp
+    private val dp32 = 32.dp
+    private val dp48 = 48.dp
+    private val dp96 = 96.dp
+    private val sp10 = 10.sp
+    private val sp12 = 12.sp
 
     /**
      * 画笔
@@ -336,8 +336,11 @@ class CurveView : View {
         return if (realTime != null) time.indexOf(realTime) else -1
     }
 
-    private fun Int.initDPValue(): Float = context.dip(this).toFloat()
-    private fun Int.initSPValue(): Float = context.sp(this).toFloat()
+    private inline val Int.dp
+        get() = dip(this).toFloat()
+
+    private inline val Int.sp
+        get() = sp(this).toFloat()
 
     @Suppress("ClickableViewAccessibility")
     override fun onTouchEvent(event: MotionEvent): Boolean {

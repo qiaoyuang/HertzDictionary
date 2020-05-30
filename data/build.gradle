@@ -119,7 +119,7 @@ kotlin {
 
                 // Square
                 implementation 'com.squareup.okio:okio:2.6.0'
-                implementation 'com.squareup.okhttp3:okhttp:4.6.0'
+                implementation 'com.squareup.okhttp3:okhttp:4.7.2'
             }
         }
         androidTest {
