@@ -9,10 +9,10 @@
       <module fileurl="file://$PROJECT_DIR$/data/com.w10group.hertzdictionary.data.iosMain.iml" filepath="$PROJECT_DIR$/data/com.w10group.hertzdictionary.data.iosMain.iml" />
       <module fileurl="file://$PROJECT_DIR$/data/com.w10group.hertzdictionary.data.iosTest.iml" filepath="$PROJECT_DIR$/data/com.w10group.hertzdictionary.data.iosTest.iml" />
       <module fileurl="file://$PROJECT_DIR$/data/data.iml" filepath="$PROJECT_DIR$/data/data.iml" group="HertzDictionary/data" />
-      <module fileurl="file://$PROJECT_DIR$/data/data_commonMain.iml" filepath="$PROJECT_DIR$/data/data_commonMain.iml" group="data" />
-      <module fileurl="file://$PROJECT_DIR$/data/data_commonTest.iml" filepath="$PROJECT_DIR$/data/data_commonTest.iml" group="data" />
-      <module fileurl="file://$PROJECT_DIR$/data/data_iosMain.iml" filepath="$PROJECT_DIR$/data/data_iosMain.iml" group="data" />
-      <module fileurl="file://$PROJECT_DIR$/data/data_iosTest.iml" filepath="$PROJECT_DIR$/data/data_iosTest.iml" group="data" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/data/data_commonMain.iml" filepath="$PROJECT_DIR$/.idea/modules/data/data_commonMain.iml" group="data" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/data/data_commonTest.iml" filepath="$PROJECT_DIR$/.idea/modules/data/data_commonTest.iml" group="data" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/data/data_iosMain.iml" filepath="$PROJECT_DIR$/.idea/modules/data/data_iosMain.iml" group="data" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/data/data_iosTest.iml" filepath="$PROJECT_DIR$/.idea/modules/data/data_iosTest.iml" group="data" />
       <module fileurl="file://$PROJECT_DIR$/project.HertzDictionary.iml" filepath="$PROJECT_DIR$/project.HertzDictionary.iml" group="HertzDictionary" />
     </modules>
   </component>
