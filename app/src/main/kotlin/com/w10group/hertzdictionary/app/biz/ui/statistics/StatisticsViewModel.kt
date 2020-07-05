@@ -39,7 +39,7 @@ class StatisticsViewModel(application: Application) : AndroidViewModel(applicati
         val totalCountText = context.getString(R.string.last_required, count, totalCount)
         val averageCount = totalCount / count
         val averageCountText = context.getString(R.string.average_required, averageCount)
-        val mostWordText = mostResult.toText()
+        val mostWordText = if (totalCount == 0) "" else mostResult.toText()
         UIUpdateData(totalCountText, averageCountText, mostWordText, timeList, valueList)
     }
 
