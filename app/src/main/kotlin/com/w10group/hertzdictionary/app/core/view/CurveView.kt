@@ -157,15 +157,18 @@ class CurveView : View {
         invalidate()
     }
 
-    override fun onDraw(canvas: Canvas) {
-        if (time.isNotEmpty() && value.isNotEmpty()) with(canvas) {
-            drawXText()
-            drawYText()
-            drawUnit()
-            drawDottedLine()
-            drawCurve()
-            drawWindow()
-        }
+    override fun onDraw(canvas: Canvas) = canvas whenTimeAndValueNotEmpty {
+        drawXText()
+        drawYText()
+        drawUnit()
+        drawDottedLine()
+        drawCurve()
+        drawWindow()
+    }
+
+    private inline infix fun Canvas.whenTimeAndValueNotEmpty(block: Canvas.() -> Unit) {
+        if (time.isNotEmpty() && value.isNotEmpty())
+            block()
     }
 
     // 第一步：绘制 X 轴坐标参数（时间）
@@ -181,10 +184,11 @@ class CurveView : View {
         val x2 = x1 * 4 - dp16
         val x3 = x1 * 7 - dp24
         val x4 = fWidth - dp32
-        drawText(time1, x1, y, mTextPaint)
-        drawText(time2, x2, y, mTextPaint)
-        drawText(time3, x3, y, mTextPaint)
-        drawText(time4, x4, y, mTextPaint)
+        infix fun String.drawTextX(x: Float) = drawText(this, x, y, mTextPaint)
+        time1 drawTextX x1
+        time2 drawTextX x2
+        time3 drawTextX x3
+        time4 drawTextX x4
     }
 
     // 第二步：绘制 Y 轴坐标参数（查询频数）
@@ -201,10 +205,11 @@ class CurveView : View {
         val y2 = y1 * 2
         val y3 = y1 * 3
         val y4 = y1 * 4
-        drawText(value4, x, y1, mTextPaint)
-        drawText(value3, x, y2, mTextPaint)
-        drawText(value2, x, y3, mTextPaint)
-        drawText(value1, x, y4, mTextPaint)
+        infix fun String.drawTextY(y: Float) = drawText(this, x, y, mTextPaint)
+        value4 drawTextY y1
+        value3 drawTextY y2
+        value2 drawTextY y3
+        value1 drawTextY y4
     }
 
     // 第三步：绘制右上角查询频数单位
@@ -284,7 +289,7 @@ class CurveView : View {
             val windowX = if (x < width shr 1) x + binaryOffset else x - windowWidth - offset
             val windowY = if (y < height shr 1) y + binaryOffset else y - windowHeight - offset
 
-            // 画竖线
+            // 绘制竖线
             drawLine(x, startY, x, endY, mVerticalLinePaint)
             // 绘制白边蓝心圆
             mTouchPaint.color = white
