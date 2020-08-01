@@ -22,12 +22,9 @@ import com.google.android.material.appbar.CollapsingToolbarLayout.LayoutParams.C
 import com.w10group.hertzdictionary.app.R
 import com.w10group.hertzdictionary.app.biz.manager.ImageManagerService
 import com.w10group.hertzdictionary.app.biz.ui.features.FeaturesActivity
-import com.w10group.hertzdictionary.app.core.GlideApp
-import com.w10group.hertzdictionary.app.core.GlideDownloader
+import com.w10group.hertzdictionary.app.core.CoilDownloader
 import com.w10group.hertzdictionary.app.core.image.CompleteScaleImageView
-import com.w10group.hertzdictionary.app.core.view.circleImageView
-import com.w10group.hertzdictionary.app.core.view.createTouchFeedbackBorderless
-import com.w10group.hertzdictionary.app.core.view.getActionBarSize
+import com.w10group.hertzdictionary.app.core.view.*
 import org.jetbrains.anko.*
 import org.jetbrains.anko.appcompat.v7.toolbar
 import org.jetbrains.anko.cardview.v7.cardView
@@ -176,13 +173,12 @@ class AboutDeveloperActivityUIComponent(private val mAboutDeveloperActivity: Abo
                             backgroundColor = blueGray
                             foreground = createTouchFeedbackBorderless(context)
                             setOnClickListener { mReceiptCompleteScaleImageView.show() }
-                            GlideApp.with(mAboutDeveloperActivity).load(R.drawable.wechatpay).dontAnimate().into(
-                                    imageView().lparams(dip(24), dip(24)) {
-                                        gravity = Gravity.CENTER_VERTICAL
-                                        marginStart = dip(32)
-                                        topMargin = dip(16)
-                                        bottomMargin = dip(16)
-                                    })
+                            imageView().lparams(dip(24), dip(24)) {x
+                                gravity = Gravity.CENTER_VERTICAL
+                                marginStart = dip(32)
+                                topMargin = dip(16)
+                                bottomMargin = dip(16)
+                            }.loadResId(R.drawable.wechatpay, mAboutDeveloperActivity.lifecycle)
                             textView {
                                 setText(R.string.wechat_receive_code)
                                 textSize = 16f
@@ -200,13 +196,12 @@ class AboutDeveloperActivityUIComponent(private val mAboutDeveloperActivity: Abo
                             backgroundColor = blueGray
                             foreground = createTouchFeedbackBorderless(context)
                             setOnClickListener { mReceiptCompleteScaleImageView.show(1) }
-                            GlideApp.with(mAboutDeveloperActivity).load(R.drawable.alipay).dontAnimate().into(
-                                    imageView().lparams(dip(24), dip(24)) {
-                                        gravity = Gravity.CENTER_VERTICAL
-                                        marginStart = dip(32)
-                                        topMargin = dip(16)
-                                        bottomMargin = dip(16)
-                                    })
+                            imageView().lparams(dip(24), dip(24)) {
+                                gravity = Gravity.CENTER_VERTICAL
+                                marginStart = dip(32)
+                                topMargin = dip(16)
+                                bottomMargin = dip(16)
+                            }.loadResId(R.drawable.alipay, mAboutDeveloperActivity.lifecycle)
                             textView {
                                 setText(R.string.alipay_receive_code)
                                 textSize = 16f
@@ -233,13 +228,12 @@ class AboutDeveloperActivityUIComponent(private val mAboutDeveloperActivity: Abo
                             foreground = createTouchFeedbackBorderless(context)
                             val content = context.getString(R.string.btc_address)
                             setOnClickListener { copyToClipBoard(it, content, BTC_ADDRESS) }
-                            GlideApp.with(mAboutDeveloperActivity).load(R.drawable.btc).dontAnimate().into(
-                                    imageView().lparams(dip(24), dip(24)) {
-                                        gravity = Gravity.CENTER_VERTICAL
-                                        marginStart = dip(32)
-                                        topMargin = dip(16)
-                                        bottomMargin = dip(16)
-                                    })
+                            imageView().lparams(dip(24), dip(24)) {
+                                gravity = Gravity.CENTER_VERTICAL
+                                marginStart = dip(32)
+                                topMargin = dip(16)
+                                bottomMargin = dip(16)
+                            }.loadResId(R.drawable.btc, mAboutDeveloperActivity.lifecycle)
                             textView {
                                 text = content
                                 textSize = 16f
@@ -258,13 +252,12 @@ class AboutDeveloperActivityUIComponent(private val mAboutDeveloperActivity: Abo
                             foreground = createTouchFeedbackBorderless(context)
                             val content = context.getString(R.string.eth_address)
                             setOnClickListener { copyToClipBoard(it, content, ETH_ADDRESS) }
-                            GlideApp.with(mAboutDeveloperActivity).load(R.drawable.eth).dontAnimate().into(
-                                    imageView().lparams(dip(24), dip(24)) {
-                                        gravity = Gravity.CENTER_VERTICAL
-                                        marginStart = dip(32)
-                                        topMargin = dip(16)
-                                        bottomMargin = dip(16)
-                                    })
+                            imageView().lparams(dip(24), dip(24)) {
+                                gravity = Gravity.CENTER_VERTICAL
+                                marginStart = dip(32)
+                                topMargin = dip(16)
+                                bottomMargin = dip(16)
+                            }.loadResId(R.drawable.eth, mAboutDeveloperActivity.lifecycle)
                             textView {
                                 text = content
                                 textSize = 16f
@@ -311,7 +304,7 @@ class AboutDeveloperActivityUIComponent(private val mAboutDeveloperActivity: Abo
     }
 
     private fun createCompleteScaleImageView(list: MutableList<String>, requestCode: Int): CompleteScaleImageView =
-            CompleteScaleImageView(mAboutDeveloperActivity, GlideDownloader, requestCode).apply {
+            CompleteScaleImageView(mAboutDeveloperActivity, CoilDownloader, requestCode).apply {
                 isDownloaderEnable = true
                 mUrls = list
             }

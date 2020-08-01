@@ -1,14 +1,24 @@
 package com.w10group.hertzdictionary.app.core.view
 
 import android.content.Context
+import android.graphics.Bitmap
 import android.graphics.drawable.Drawable
 import android.util.TypedValue
 import android.view.ViewManager
+import android.widget.ImageView
+import androidx.annotation.DrawableRes
 import androidx.appcompat.widget.AppCompatSpinner
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.Lifecycle
+import coil.api.load
+import coil.request.CachePolicy
+import coil.request.LoadRequestBuilder
+import coil.request.RequestDisposable
+import coil.size.Scale
 import com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView
 import com.w10group.hertzdictionary.app.R
 import de.hdodenhof.circleimageview.CircleImageView
+import kotlinx.coroutines.Dispatchers
 import org.jetbrains.anko.attr
 import org.jetbrains.anko.custom.ankoView
 
@@ -58,3 +68,22 @@ fun getStatusBarSize(context: Context): Int {
     val resourceId = context.resources.getIdentifier("status_bar_height", "dimen", "android")
     return context.resources.getDimensionPixelSize(resourceId)
 }
+
+fun getDefaultCoilBuilder(lifecycle: Lifecycle): LoadRequestBuilder.() -> Unit = {
+    crossfade(true)
+    lifecycle(lifecycle)
+    dispatcher(Dispatchers.IO)
+    allowHardware(true)
+    allowRgb565(true)
+    bitmapConfig(Bitmap.Config.RGB_565)
+    memoryCachePolicy(CachePolicy.ENABLED)
+    diskCachePolicy(CachePolicy.ENABLED)
+    networkCachePolicy(CachePolicy.ENABLED)
+    scale(Scale.FILL)
+}
+
+fun ImageView.loadResId(@DrawableRes resId: Int, lifecycle: Lifecycle): RequestDisposable =
+    load(drawableResId = resId, builder = getDefaultCoilBuilder(lifecycle))
+
+fun ImageView.loadURL(url: String, lifecycle: Lifecycle): RequestDisposable =
+    load(uri = url, builder = getDefaultCoilBuilder(lifecycle))

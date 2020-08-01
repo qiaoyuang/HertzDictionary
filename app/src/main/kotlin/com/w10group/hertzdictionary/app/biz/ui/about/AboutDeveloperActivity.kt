@@ -6,6 +6,7 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import com.w10group.hertzdictionary.app.biz.manager.ImageManagerService
 import com.w10group.hertzdictionary.app.core.architecture.BaseActivity
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 /**
@@ -23,7 +24,10 @@ class AboutDeveloperActivity : BaseActivity<AboutDeveloperActivity>() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         lifecycleScope.launch {
-            ImageManagerService.loadBackground(implementer, uiComponent.mIMBackground)
+            ImageManagerService.loadBackground(uiComponent.mIMBackground, lifecycle)
+            ImageManagerService.loadAvatar(uiComponent.mIMAvatar, lifecycle)
+            delay(500)
+            uiComponent.mIMAvatar.invalidate()
         }
         getViewModel<AboutDeveloperViewModel> {
             textList.observe(implementer, Observer {
@@ -31,7 +35,6 @@ class AboutDeveloperActivity : BaseActivity<AboutDeveloperActivity>() {
             })
             updateData()
         }
-        ImageManagerService.loadAvatar(this, uiComponent.mIMAvatar)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {

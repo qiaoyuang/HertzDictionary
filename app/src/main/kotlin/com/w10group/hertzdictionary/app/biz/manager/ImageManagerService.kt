@@ -4,7 +4,9 @@ import android.content.Context
 import android.content.SharedPreferences
 import android.widget.ImageView
 import androidx.core.content.edit
-import com.w10group.hertzdictionary.app.core.GlideApp
+import androidx.lifecycle.Lifecycle
+import coil.annotation.ExperimentalCoilApi
+import com.w10group.hertzdictionary.app.core.view.loadURL
 import com.w10group.hertzdictionary.manager.getBackgroundUrl
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -33,21 +35,22 @@ object ImageManagerService {
 
     private lateinit var todayURL: String
 
-    fun loadAvatar(context: Context, imageView: ImageView) {
-        GlideApp.with(context).load(AVATAR_URL).dontAnimate().into(imageView)
+    @OptIn(ExperimentalCoilApi::class)
+    suspend fun loadAvatar(imageView: ImageView, lifecycle: Lifecycle) {
+        imageView.loadURL(AVATAR_URL, lifecycle).await()
     }
 
-    suspend fun loadBackground(context: Context, imageView: ImageView) {
-        val sharedPreferences = context.getSharedPreferences(FILE_NAME, Context.MODE_PRIVATE)
+    suspend fun loadBackground(imageView: ImageView, lifecycle: Lifecycle) {
+        val sharedPreferences = imageView.context.getSharedPreferences(FILE_NAME, Context.MODE_PRIVATE)
         if (!::todayURL.isInitialized)
             todayURL = sharedPreferences.getString(KEY_URL, DEFAULT_VALUE)!!
-        GlideApp.with(context).load(todayURL).dontAnimate().into(imageView)
-        getURLOnInternetByCoroutines(context, imageView, sharedPreferences)
+        imageView.loadURL(todayURL, lifecycle)
+        getURLOnInternetByCoroutines(imageView, sharedPreferences, lifecycle)
     }
 
-    private suspend fun getURLOnInternetByCoroutines(context: Context,
-                                                     imageView: ImageView,
-                                                     sharedPreferences: SharedPreferences) = withContext(Dispatchers.IO) {
+    private suspend fun getURLOnInternetByCoroutines(imageView: ImageView,
+                                                     sharedPreferences: SharedPreferences,
+                                                     lifecycle: Lifecycle) = withContext(Dispatchers.IO) {
         val url = try {
             getBackgroundUrl()
         } catch (e: IOException) {
@@ -56,7 +59,7 @@ object ImageManagerService {
         }
         if (url != todayURL) {
             withContext(Dispatchers.Main) {
-                GlideApp.with(context).load(url).dontAnimate().into(imageView)
+                imageView.loadURL(url, lifecycle)
             }
             todayURL = url
             sharedPreferences.edit { putString(KEY_URL, todayURL) }

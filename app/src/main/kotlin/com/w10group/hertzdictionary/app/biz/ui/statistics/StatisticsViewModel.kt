@@ -28,7 +28,7 @@ class StatisticsViewModel(application: Application) : AndroidViewModel(applicati
         for (count in updateChannel) emit(when (count) {
             7 -> selected(7) { DateManagerService.createWeekValue(*it) }
             30 -> selected(30) { DateManagerService.createMonthValue(*it) }
-            else -> throw IllegalArgumentException("参数传入错误")
+            else -> throw IllegalArgumentException("Error Param")
         })
     }
 

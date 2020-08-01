@@ -17,11 +17,11 @@ import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.appbar.AppBarLayout.LayoutParams.*
 import com.w10group.hertzdictionary.app.R
 import com.w10group.hertzdictionary.manager.KV
-import com.w10group.hertzdictionary.app.core.GlideApp
-import com.w10group.hertzdictionary.app.core.GlideDownloader
+import com.w10group.hertzdictionary.app.core.CoilDownloader
 import com.w10group.hertzdictionary.app.core.image.CompleteScaleImageView
 import com.w10group.hertzdictionary.app.core.view.createTouchFeedbackBorderless
 import com.w10group.hertzdictionary.app.core.view.getActionBarSize
+import com.w10group.hertzdictionary.app.core.view.loadResId
 import org.jetbrains.anko.*
 import org.jetbrains.anko.appcompat.v7.toolbar
 import org.jetbrains.anko.cardview.v7.cardView
@@ -46,7 +46,7 @@ class FeaturesActivityUIComponent(private val mFeatureActivity: FeaturesActivity
 
     private val mRequestCode = 1
     private val mCompleteScaleImageView by lazy {
-        CompleteScaleImageView(mFeatureActivity, GlideDownloader, mRequestCode).apply {
+        CompleteScaleImageView(mFeatureActivity, CoilDownloader, mRequestCode).apply {
             isDownloaderEnable = true
             mUrls = arrayListOf(WECHAT_CODE)
         }
@@ -185,13 +185,12 @@ class FeaturesActivityUIComponent(private val mFeatureActivity: FeaturesActivity
                                 backgroundColorResource = R.color.blueGray
                                 foreground = createTouchFeedbackBorderless(context)
                                 setOnClickListener { mCompleteScaleImageView.show() }
-                                GlideApp.with(mFeatureActivity).load(R.drawable.wechat).dontAnimate().into(
-                                        imageView().lparams(dip(24), dip(24)) {
-                                            gravity = Gravity.CENTER_VERTICAL
-                                            marginStart = dip(64)
-                                            topMargin = dip(16)
-                                            bottomMargin = dip(16)
-                                        })
+                                imageView().lparams(dip(24), dip(24)) {
+                                    gravity = Gravity.CENTER_VERTICAL
+                                    marginStart = dip(64)
+                                    topMargin = dip(16)
+                                    bottomMargin = dip(16)
+                                }.loadResId(R.drawable.wechat, mFeatureActivity.lifecycle)
                                 textView {
                                     setText(R.string.my_wechat)
                                     textSize = 16f

@@ -359,7 +359,7 @@ class MainActivityUIComponent(private val mMainActivity: MainActivity) : AnkoCom
         toggle.syncState()
     }
 
-    suspend fun loadBackgroundImageView() = ImageManagerService.loadBackground(mMainActivity, mBackgroundImageView)
+    suspend fun loadBackgroundImageView() = ImageManagerService.loadBackground(mBackgroundImageView, mMainActivity.lifecycle)
 
     fun scrollToTop() {
         if (mMainActivity.status == MainActivity.STATUS_INQUIRED_NOT) {

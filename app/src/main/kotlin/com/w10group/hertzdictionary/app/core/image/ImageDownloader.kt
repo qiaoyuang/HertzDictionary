@@ -9,5 +9,5 @@ import java.io.File
  */
 
 interface ImageDownloader {
-    fun download(url: String, context: Context): File
+    suspend fun download(url: String, context: Context): File
 }
