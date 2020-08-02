@@ -8,6 +8,7 @@ import coil.request.CachePolicy
 import coil.request.GetRequest
 import coil.size.Scale
 import com.w10group.hertzdictionary.app.core.image.ImageDownloader
+import com.w10group.hertzdictionary.app.core.view.getCoilDefaultConfig
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.io.BufferedOutputStream
@@ -25,14 +26,7 @@ object CoilDownloader : ImageDownloader {
     override suspend fun download(url: String, context: Context): File = withContext(Dispatchers.IO) {
         val getRequest = GetRequest
             .Builder(context)
-            .dispatcher(Dispatchers.IO)
-            .allowHardware(true)
-            .allowRgb565(true)
-            .bitmapConfig(Bitmap.Config.RGB_565)
-            .memoryCachePolicy(CachePolicy.ENABLED)
-            .diskCachePolicy(CachePolicy.ENABLED)
-            .networkCachePolicy(CachePolicy.ENABLED)
-            .scale(Scale.FILL)
+            .getCoilDefaultConfig()
             .data(url)
             .build()
         File(context.cacheDir, "${System.currentTimeMillis()}.jpg").also { file ->
