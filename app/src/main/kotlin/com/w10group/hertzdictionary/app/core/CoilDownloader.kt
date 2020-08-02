@@ -4,9 +4,7 @@ import android.content.Context
 import android.graphics.Bitmap
 import androidx.core.graphics.drawable.toBitmap
 import coil.Coil
-import coil.request.CachePolicy
 import coil.request.GetRequest
-import coil.size.Scale
 import com.w10group.hertzdictionary.app.core.image.ImageDownloader
 import com.w10group.hertzdictionary.app.core.view.getCoilDefaultConfig
 import kotlinx.coroutines.Dispatchers
