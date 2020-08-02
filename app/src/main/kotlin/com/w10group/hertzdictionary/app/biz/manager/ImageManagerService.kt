@@ -5,7 +5,9 @@ import android.content.SharedPreferences
 import android.widget.ImageView
 import androidx.core.content.edit
 import androidx.lifecycle.Lifecycle
-import coil.annotation.ExperimentalCoilApi
+import coil.Coil
+import coil.request.GetRequest
+import com.w10group.hertzdictionary.app.core.view.getCoilDefaultConfig
 import com.w10group.hertzdictionary.app.core.view.loadURL
 import com.w10group.hertzdictionary.manager.getBackgroundUrl
 import kotlinx.coroutines.Dispatchers
@@ -35,9 +37,16 @@ object ImageManagerService {
 
     private lateinit var todayURL: String
 
-    @OptIn(ExperimentalCoilApi::class)
-    suspend fun loadAvatar(imageView: ImageView, lifecycle: Lifecycle) {
-        imageView.loadURL(AVATAR_URL, lifecycle).await()
+    suspend fun loadAvatar(imageView: ImageView) {
+        val getRequest = GetRequest
+            .Builder(imageView.context)
+            .getCoilDefaultConfig()
+            .data(AVATAR_URL)
+            .build()
+        Coil.imageLoader(imageView.context)
+            .execute(getRequest)
+            .drawable
+            ?.let { imageView.setImageDrawable(it) }
     }
 
     suspend fun loadBackground(imageView: ImageView, lifecycle: Lifecycle) {

@@ -13,6 +13,7 @@ import androidx.lifecycle.Lifecycle
 import coil.api.load
 import coil.request.CachePolicy
 import coil.request.LoadRequestBuilder
+import coil.request.RequestBuilder
 import coil.request.RequestDisposable
 import coil.size.Scale
 import com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView
@@ -69,9 +70,7 @@ fun getStatusBarSize(context: Context): Int {
     return context.resources.getDimensionPixelSize(resourceId)
 }
 
-fun getDefaultCoilBuilder(lifecycle: Lifecycle): LoadRequestBuilder.() -> Unit = {
-    crossfade(true)
-    lifecycle(lifecycle)
+fun <T : RequestBuilder<T>> RequestBuilder<T>.getCoilDefaultConfig(): RequestBuilder<T> {
     dispatcher(Dispatchers.IO)
     allowHardware(true)
     allowRgb565(true)
@@ -80,6 +79,13 @@ fun getDefaultCoilBuilder(lifecycle: Lifecycle): LoadRequestBuilder.() -> Unit =
     diskCachePolicy(CachePolicy.ENABLED)
     networkCachePolicy(CachePolicy.ENABLED)
     scale(Scale.FILL)
+    return this
+}
+
+fun getDefaultCoilBuilder(lifecycle: Lifecycle): LoadRequestBuilder.() -> Unit = {
+    crossfade(true)
+    lifecycle(lifecycle)
+    getCoilDefaultConfig()
 }
 
 fun ImageView.loadResId(@DrawableRes resId: Int, lifecycle: Lifecycle): RequestDisposable =

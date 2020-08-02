@@ -6,7 +6,6 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import com.w10group.hertzdictionary.app.biz.manager.ImageManagerService
 import com.w10group.hertzdictionary.app.core.architecture.BaseActivity
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 /**
@@ -25,9 +24,7 @@ class AboutDeveloperActivity : BaseActivity<AboutDeveloperActivity>() {
         super.onCreate(savedInstanceState)
         lifecycleScope.launch {
             ImageManagerService.loadBackground(uiComponent.mIMBackground, lifecycle)
-            ImageManagerService.loadAvatar(uiComponent.mIMAvatar, lifecycle)
-            delay(500)
-            uiComponent.mIMAvatar.invalidate()
+            ImageManagerService.loadAvatar(uiComponent.mIMAvatar)
         }
         getViewModel<AboutDeveloperViewModel> {
             textList.observe(implementer, Observer {

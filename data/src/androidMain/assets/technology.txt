@@ -36,5 +36,5 @@ Ktor
 *
 图片加载
 &
-Glide
+Coil
 *
