@@ -8,9 +8,11 @@ import android.view.inputmethod.InputMethodManager
 import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import com.w10group.hertzdictionary.app.R
+import com.w10group.hertzdictionary.app.core.CoilDownloader
 import com.w10group.hertzdictionary.core.DataModule
 import com.w10group.hertzdictionary.app.core.architecture.BaseActivity
 import com.w10group.hertzdictionary.manager.WordManagerService
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import org.jetbrains.anko.progressDialog
@@ -59,6 +61,9 @@ class MainActivity : BaseActivity<MainActivity>() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         DataModule.init(application)
+        lifecycleScope.launch(Dispatchers.IO) {
+            CoilDownloader checkCacheAndClear application
+        }
         viewModel = getViewModel {
             allWordList.observe(implementer, Observer {
                 with(uiComponent) {

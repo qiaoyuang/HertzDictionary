@@ -173,12 +173,14 @@ class AboutDeveloperActivityUIComponent(private val mAboutDeveloperActivity: Abo
                             backgroundColor = blueGray
                             foreground = createTouchFeedbackBorderless(context)
                             setOnClickListener { mReceiptCompleteScaleImageView.show() }
-                            imageView().lparams(dip(24), dip(24)) {x
+                            imageView {
+                                imageResource = R.drawable.wechatpay
+                            }.lparams(dip(24), dip(24)) {x
                                 gravity = Gravity.CENTER_VERTICAL
                                 marginStart = dip(32)
                                 topMargin = dip(16)
                                 bottomMargin = dip(16)
-                            }.loadResId(R.drawable.wechatpay, mAboutDeveloperActivity.lifecycle)
+                            }
                             textView {
                                 setText(R.string.wechat_receive_code)
                                 textSize = 16f
@@ -196,12 +198,14 @@ class AboutDeveloperActivityUIComponent(private val mAboutDeveloperActivity: Abo
                             backgroundColor = blueGray
                             foreground = createTouchFeedbackBorderless(context)
                             setOnClickListener { mReceiptCompleteScaleImageView.show(1) }
-                            imageView().lparams(dip(24), dip(24)) {
+                            imageView {
+                                imageResource = R.drawable.alipay
+                            }.lparams(dip(24), dip(24)) {
                                 gravity = Gravity.CENTER_VERTICAL
                                 marginStart = dip(32)
                                 topMargin = dip(16)
                                 bottomMargin = dip(16)
-                            }.loadResId(R.drawable.alipay, mAboutDeveloperActivity.lifecycle)
+                            }
                             textView {
                                 setText(R.string.alipay_receive_code)
                                 textSize = 16f
@@ -228,12 +232,14 @@ class AboutDeveloperActivityUIComponent(private val mAboutDeveloperActivity: Abo
                             foreground = createTouchFeedbackBorderless(context)
                             val content = context.getString(R.string.btc_address)
                             setOnClickListener { copyToClipBoard(it, content, BTC_ADDRESS) }
-                            imageView().lparams(dip(24), dip(24)) {
+                            imageView {
+                                imageResource = R.drawable.btc
+                            }.lparams(dip(24), dip(24)) {
                                 gravity = Gravity.CENTER_VERTICAL
                                 marginStart = dip(32)
                                 topMargin = dip(16)
                                 bottomMargin = dip(16)
-                            }.loadResId(R.drawable.btc, mAboutDeveloperActivity.lifecycle)
+                            }
                             textView {
                                 text = content
                                 textSize = 16f
@@ -252,12 +258,14 @@ class AboutDeveloperActivityUIComponent(private val mAboutDeveloperActivity: Abo
                             foreground = createTouchFeedbackBorderless(context)
                             val content = context.getString(R.string.eth_address)
                             setOnClickListener { copyToClipBoard(it, content, ETH_ADDRESS) }
-                            imageView().lparams(dip(24), dip(24)) {
+                            imageView {
+                                imageResource = R.drawable.eth
+                            }.lparams(dip(24), dip(24)) {
                                 gravity = Gravity.CENTER_VERTICAL
                                 marginStart = dip(32)
                                 topMargin = dip(16)
                                 bottomMargin = dip(16)
-                            }.loadResId(R.drawable.eth, mAboutDeveloperActivity.lifecycle)
+                            }
                             textView {
                                 text = content
                                 textSize = 16f

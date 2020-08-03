@@ -37,7 +37,7 @@ object ImageManagerService {
 
     private lateinit var todayURL: String
 
-    suspend fun loadAvatar(imageView: ImageView) {
+    suspend infix fun loadAvatar(imageView: ImageView) {
         val getRequest = GetRequest
             .Builder(imageView.context)
             .getCoilDefaultConfig()
@@ -67,9 +67,7 @@ object ImageManagerService {
             return@withContext
         }
         if (url != todayURL) {
-            withContext(Dispatchers.Main) {
-                imageView.loadURL(url, lifecycle)
-            }
+            imageView.loadURL(url, lifecycle)
             todayURL = url
             sharedPreferences.edit { putString(KEY_URL, todayURL) }
         }

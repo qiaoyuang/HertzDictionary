@@ -80,7 +80,7 @@ class MainViewModel : ViewModel() {
                 val curveValue = when (msg) {
                     CURVE_STATUS_WEEK -> DateManagerService.createWeekValue(it)
                     CURVE_STATUS_MONTH -> DateManagerService.createMonthValue(it)
-                    else -> throw IllegalStateException("参数传入错误")
+                    else -> throw IllegalStateException("Error Params")
                 }
                 emit(curveValue)
             }

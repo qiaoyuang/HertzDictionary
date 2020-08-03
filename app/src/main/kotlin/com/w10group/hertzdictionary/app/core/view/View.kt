@@ -6,13 +6,11 @@ import android.graphics.drawable.Drawable
 import android.util.TypedValue
 import android.view.ViewManager
 import android.widget.ImageView
-import androidx.annotation.DrawableRes
 import androidx.appcompat.widget.AppCompatSpinner
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.Lifecycle
 import coil.api.load
 import coil.request.CachePolicy
-import coil.request.LoadRequestBuilder
 import coil.request.RequestBuilder
 import coil.request.RequestDisposable
 import coil.size.Scale
@@ -82,14 +80,8 @@ fun <T : RequestBuilder<T>> RequestBuilder<T>.getCoilDefaultConfig(): RequestBui
     return this
 }
 
-fun getDefaultCoilBuilder(lifecycle: Lifecycle): LoadRequestBuilder.() -> Unit = {
+fun ImageView.loadURL(url: String, lifecycle: Lifecycle): RequestDisposable = load(url) {
     crossfade(true)
     lifecycle(lifecycle)
     getCoilDefaultConfig()
 }
-
-fun ImageView.loadResId(@DrawableRes resId: Int, lifecycle: Lifecycle): RequestDisposable =
-    load(drawableResId = resId, builder = getDefaultCoilBuilder(lifecycle))
-
-fun ImageView.loadURL(url: String, lifecycle: Lifecycle): RequestDisposable =
-    load(uri = url, builder = getDefaultCoilBuilder(lifecycle))

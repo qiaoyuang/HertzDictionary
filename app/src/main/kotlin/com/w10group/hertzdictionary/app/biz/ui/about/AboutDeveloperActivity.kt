@@ -6,6 +6,7 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import com.w10group.hertzdictionary.app.biz.manager.ImageManagerService
 import com.w10group.hertzdictionary.app.core.architecture.BaseActivity
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 /**
@@ -22,9 +23,11 @@ class AboutDeveloperActivity : BaseActivity<AboutDeveloperActivity>() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        lifecycleScope.launch {
+        lifecycleScope.launch(Dispatchers.Default) {
             ImageManagerService.loadBackground(uiComponent.mIMBackground, lifecycle)
-            ImageManagerService.loadAvatar(uiComponent.mIMAvatar)
+        }
+        lifecycleScope.launch {
+            ImageManagerService loadAvatar uiComponent.mIMAvatar
         }
         getViewModel<AboutDeveloperViewModel> {
             textList.observe(implementer, Observer {
