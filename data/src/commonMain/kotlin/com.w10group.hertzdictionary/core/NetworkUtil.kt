@@ -5,9 +5,7 @@ import io.ktor.client.HttpClientConfig
 import io.ktor.client.engine.HttpClientEngineConfig
 import io.ktor.client.features.json.JsonFeature
 import io.ktor.client.features.json.serializer.KotlinxSerializer
-import kotlinx.serialization.UnstableDefault
 import kotlinx.serialization.json.Json
-import kotlinx.serialization.json.JsonConfiguration
 
 /**
  * Created by Administrator on 2018/2/6 0006.
@@ -34,12 +32,11 @@ internal fun <T : HttpClientEngineConfig> HttpClientConfig<T>.configJson() =
             serializer = KotlinxSerializer(KJson)
         }
 
-@OptIn(UnstableDefault::class)
-val KJson = Json(JsonConfiguration(
-        isLenient = true,
-        ignoreUnknownKeys = true,
-        serializeSpecialFloatingPointValues = true,
+val KJson = Json {
+        isLenient = true
+        ignoreUnknownKeys = true
+        allowSpecialFloatingPointValues = true
         useArrayPolymorphism = true
-))
+}
 
 internal expect val CLIENT: HttpClient
