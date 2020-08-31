@@ -5,10 +5,13 @@ import android.animation.ArgbEvaluator
 import android.animation.ObjectAnimator
 import android.app.Activity
 import android.app.Dialog
+import android.content.ContentValues
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Color
 import android.net.Uri
+import android.os.Build
+import android.os.Environment
 import android.provider.MediaStore
 import android.provider.Settings
 import android.view.Gravity
@@ -30,6 +33,7 @@ import org.jetbrains.anko.design.longSnackbar
 import org.jetbrains.anko.design.snackbar
 import org.jetbrains.anko.support.v4.viewPager
 import java.io.File
+import java.net.URLConnection
 import java.util.*
 import kotlin.coroutines.CoroutineContext
 
@@ -38,9 +42,11 @@ import kotlin.coroutines.CoroutineContext
  * 大图查看器封装（网络查看模式支持并发）
  */
 
-class CompleteScaleImageView(private val mActivity: Activity,
-                             private val mImageDownloader: ImageDownloader,
-                             private val mRequestCode: Int) : CoroutineScope {
+class CompleteScaleImageView(
+    private val mActivity: Activity,
+    private val mImageDownloader: ImageDownloader,
+    private val mRequestCode: Int
+) : CoroutineScope {
 
     private lateinit var mTotalJob: Job
 
@@ -98,7 +104,12 @@ class CompleteScaleImageView(private val mActivity: Activity,
                 mViews.clear()
         }
 
-    private val mAnim = ObjectAnimator.ofArgb(mTVImageCount, VALUE_TEXT_COLOR , Color.WHITE, Color.TRANSPARENT).apply {
+    private val mAnim = ObjectAnimator.ofArgb(
+        mTVImageCount,
+        VALUE_TEXT_COLOR,
+        Color.WHITE,
+        Color.TRANSPARENT
+    ).apply {
         duration = 1500
         interpolator = LinearInterpolator()
         setEvaluator(ArgbEvaluator())
@@ -177,11 +188,25 @@ class CompleteScaleImageView(private val mActivity: Activity,
     }.view
 
     // 保存图片
+    @Suppress("DEPRECATION")
     fun restoreImage() {
         val file = mDownloadFiles[mSelectedPosition]
-        MediaStore.Images.Media.insertImage(mActivity.contentResolver, file.absolutePath, file.name, mAlbumName)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            val uri = Uri.fromFile(file)
+            val contentValues = ContentValues().apply {
+                put(MediaStore.MediaColumns.DISPLAY_NAME, file.name)
+                put(MediaStore.MediaColumns.MIME_TYPE, file.mimeType)
+                put(MediaStore.MediaColumns.VOLUME_NAME, mAlbumName)
+                put(MediaStore.MediaColumns.RELATIVE_PATH, Environment.DIRECTORY_DCIM)
+            }
+            mActivity.contentResolver.insert(uri, contentValues)
+        } else
+            MediaStore.Images.Media.insertImage(mActivity.contentResolver, file.absolutePath, file.name, mAlbumName)
         mViewPager.snackbar(R.string.image_saved)
     }
+
+    private val File.mimeType
+        get() = URLConnection.getFileNameMap().getContentTypeFor(name)
 
     // 动态申请权限被拒绝后的回调
     fun permissionsRejectSnack() {

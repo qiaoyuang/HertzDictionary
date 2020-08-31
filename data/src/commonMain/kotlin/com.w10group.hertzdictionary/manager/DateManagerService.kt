@@ -38,7 +38,7 @@ object DateManagerService {
                 }
             }
         }
-        val biggestValue = wordAndCountMap.entries.maxBy { it.value }?.value ?: 0
+        val biggestValue = wordAndCountMap.entries.maxByOrNull { it.value }?.value ?: 0
         return Triple(timeList, valueList.toList(), wordAndCountMap.entries
                 .asSequence()
                 .filter { it.value == biggestValue }
@@ -48,15 +48,11 @@ object DateManagerService {
 
     // 获取最近一周的时间戳
     private inline val weekTimestampList
-        get() = getTimestampList(
-            7
-        )
+        get() = getTimestampList(7)
 
     // 获取最近一个月的时间戳
     private inline val monthTimestampList
-        get() = getTimestampList(
-            30
-        )
+        get() = getTimestampList(30)
 
     // 获取时间戳列表
     private fun getTimestampList(count: Int): List<Long> = ArrayList<Long>().apply {

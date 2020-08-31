@@ -12,8 +12,7 @@ import kotlinx.serialization.json.Json
  * Ktor HttpClient
  */
 
-/*@UseExperimental(KtorExperimentalAPI::class)
-private fun cio(): HttpClient = HttpClient(CIO) {
+/*private fun cio(): HttpClient = HttpClient(CIO) {
     engine {
         maxConnectionsCount = 1000
         endpoint {
