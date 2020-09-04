@@ -334,7 +334,7 @@ class AboutDeveloperActivityUIComponent(private val mAboutDeveloperActivity: Abo
         mReceiptRequestCode -> mReceiptCompleteScaleImageView
         else -> throw IllegalStateException("requestCode 不正确")
     }) {
-        if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED)
+        if (grantResults.isNotEmpty() && grantResults.first() == PackageManager.PERMISSION_GRANTED)
             restoreImage()
         else
             permissionsRejectSnack()

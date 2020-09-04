@@ -28,12 +28,14 @@ import com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView
 import com.w10group.hertzdictionary.app.R
 import com.w10group.hertzdictionary.app.core.view.subsamplingImageView
 import kotlinx.coroutines.*
+import okio.buffer
+import okio.sink
+import okio.source
 import org.jetbrains.anko.*
 import org.jetbrains.anko.design.longSnackbar
 import org.jetbrains.anko.design.snackbar
 import org.jetbrains.anko.support.v4.viewPager
 import java.io.File
-import java.net.URLConnection
 import java.util.*
 import kotlin.coroutines.CoroutineContext
 
@@ -190,23 +192,32 @@ class CompleteScaleImageView(
     // 保存图片
     @Suppress("DEPRECATION")
     fun restoreImage() {
-        val file = mDownloadFiles[mSelectedPosition]
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            val uri = Uri.fromFile(file)
-            val contentValues = ContentValues().apply {
-                put(MediaStore.MediaColumns.DISPLAY_NAME, file.name)
-                put(MediaStore.MediaColumns.MIME_TYPE, file.mimeType)
-                put(MediaStore.MediaColumns.VOLUME_NAME, mAlbumName)
-                put(MediaStore.MediaColumns.RELATIVE_PATH, Environment.DIRECTORY_DCIM)
+        launch(Dispatchers.IO) {
+            val file = mDownloadFiles[mSelectedPosition]
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                val contentValues = ContentValues().apply {
+                    put(MediaStore.MediaColumns.DISPLAY_NAME, file.name)
+                    put(MediaStore.MediaColumns.MIME_TYPE, "image/jpeg")
+                    put(MediaStore.MediaColumns.VOLUME_NAME, mAlbumName)
+                    put(MediaStore.MediaColumns.RELATIVE_PATH, Environment.DIRECTORY_DCIM)
+                }
+                mActivity.contentResolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues)?.let { uri ->
+                    mActivity.contentResolver.openOutputStream(uri)?.sink()?.buffer()?.use { bufferedSink ->
+                        file.source().buffer().use { bufferedSource ->
+                            val byteArray = ByteArray(4096)
+                            while (bufferedSource.read(byteArray) != -1)
+                                bufferedSink.write(byteArray)
+                            bufferedSink.flush()
+                        }
+                    }
+                }
+            } else
+                MediaStore.Images.Media.insertImage(mActivity.contentResolver, file.absolutePath, file.name, mAlbumName)
+            withContext(Dispatchers.Main.immediate) {
+                mViewPager.snackbar(R.string.image_saved)
             }
-            mActivity.contentResolver.insert(uri, contentValues)
-        } else
-            MediaStore.Images.Media.insertImage(mActivity.contentResolver, file.absolutePath, file.name, mAlbumName)
-        mViewPager.snackbar(R.string.image_saved)
+        }
     }
-
-    private val File.mimeType
-        get() = URLConnection.getFileNameMap().getContentTypeFor(name)
 
     // 动态申请权限被拒绝后的回调
     fun permissionsRejectSnack() {
@@ -252,34 +263,35 @@ class CompleteScaleImageView(
         }
 
     // 启动并展示图片
-    fun show(startPosition: Int = 0) =
-            if (mViews.isEmpty()) when (mStatus) {
-                URL -> mUrls?.let { urls ->
-                    mTotalJob = Job()
-                    repeat(urls.size) {
-                        val triple = createItemView()
-                        mViews.add(triple)
-                        val deferred = async(Dispatchers.IO) {
-                            val downloadFile = mImageDownloader.download(urls[it], mActivity)
-                            mDownloadFiles.add(downloadFile)
-                            downloadFile
-                        }
-                        launch {
-                            triple.second.setImage(ImageSource.uri(Uri.fromFile(deferred.await())))
-                            triple.third.visibility = View.INVISIBLE
-                        }
+    fun show(startPosition: Int = 0) {
+        mTotalJob = Job()
+        if (mViews.isEmpty()) when (mStatus) {
+            URL -> mUrls?.let { urls ->
+                repeat(urls.size) {
+                    val triple = createItemView()
+                    mViews.add(triple)
+                    val deferred = async(Dispatchers.IO) {
+                        val downloadFile = mImageDownloader.download(urls[it], mActivity)
+                        mDownloadFiles.add(downloadFile)
+                        downloadFile
                     }
-                    initShow(startPosition)
-                }
-                FILE -> mFiles?.let { files ->
-                    files.forEach {
-                        val triple = createItemView()
-                        mViews.add(triple)
-                        triple.second.setImage(ImageSource.uri(Uri.fromFile(it)))
+                    launch {
+                        triple.second.setImage(ImageSource.uri(Uri.fromFile(deferred.await())))
+                        triple.third.visibility = View.INVISIBLE
                     }
                 }
-                else -> Unit
-            } else showAgain(startPosition)
+                initShow(startPosition)
+            }
+            FILE -> mFiles?.let { files ->
+                files.forEach {
+                    val triple = createItemView()
+                    mViews.add(triple)
+                    triple.second.setImage(ImageSource.uri(Uri.fromFile(it)))
+                }
+            }
+            else -> Unit
+        } else showAgain(startPosition)
+    }
 
     private fun initShow(startPosition: Int) {
         mViewPager.adapter = mAdapter

@@ -316,7 +316,7 @@ class FeaturesActivityUIComponent(private val mFeatureActivity: FeaturesActivity
 
     fun requestPermissionsResult(requestCode: Int, grantResults: IntArray) {
         if (requestCode == mRequestCode)
-            if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED)
+            if (grantResults.isNotEmpty() && grantResults.first() == PackageManager.PERMISSION_GRANTED)
                 mCompleteScaleImageView.restoreImage()
             else
                 mCompleteScaleImageView.permissionsRejectSnack()

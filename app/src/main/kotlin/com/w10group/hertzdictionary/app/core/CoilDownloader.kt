@@ -29,7 +29,7 @@ object CoilDownloader : ImageDownloader {
     private const val FILE_EXPIRED_TIME = DateManagerService.ONE_DAY * 3
 
     override suspend fun download(url: String, context: Context): File = withContext(Dispatchers.IO) {
-        File(context.cacheDir, "${ImageDownloader.getDefaultFileName(url)}.webp").also { file ->
+        File(context.cacheDir, "${ImageDownloader.getDefaultFileName(url)}.jpeg").also { file ->
             try {
                 if (!file.exists()) {
                     file.createNewFile()
@@ -44,7 +44,7 @@ object CoilDownloader : ImageDownloader {
                         ?.toBitmap(config = Bitmap.Config.RGB_565)
                         ?.let {
                             val bos = BufferedOutputStream(FileOutputStream(file))
-                            it.compress(Bitmap.CompressFormat.WEBP, 100, bos)
+                            it.compress(Bitmap.CompressFormat.JPEG, 100, bos)
                         }
                 }
             } catch (e: Exception) {
