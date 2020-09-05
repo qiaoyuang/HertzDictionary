@@ -36,6 +36,7 @@ import org.jetbrains.anko.design.longSnackbar
 import org.jetbrains.anko.design.snackbar
 import org.jetbrains.anko.support.v4.viewPager
 import java.io.File
+import java.nio.ByteBuffer
 import java.util.*
 import kotlin.coroutines.CoroutineContext
 
@@ -198,15 +199,17 @@ class CompleteScaleImageView(
                 val contentValues = ContentValues().apply {
                     put(MediaStore.MediaColumns.DISPLAY_NAME, file.name)
                     put(MediaStore.MediaColumns.MIME_TYPE, "image/jpeg")
-                    put(MediaStore.MediaColumns.VOLUME_NAME, mAlbumName)
                     put(MediaStore.MediaColumns.RELATIVE_PATH, Environment.DIRECTORY_DCIM)
                 }
                 mActivity.contentResolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues)?.let { uri ->
                     mActivity.contentResolver.openOutputStream(uri)?.sink()?.buffer()?.use { bufferedSink ->
                         file.source().buffer().use { bufferedSource ->
-                            val byteArray = ByteArray(4096)
-                            while (bufferedSource.read(byteArray) != -1)
-                                bufferedSink.write(byteArray)
+                            val byteBuffer = ByteBuffer.allocate(8192)
+                            while (bufferedSource.read(byteBuffer) != -1) {
+                                byteBuffer.rewind()
+                                bufferedSink.write(byteBuffer)
+                                byteBuffer.flip()
+                            }
                             bufferedSink.flush()
                         }
                     }

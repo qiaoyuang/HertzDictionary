@@ -267,7 +267,10 @@ class FeaturesActivityUIComponent(private val mFeatureActivity: FeaturesActivity
                         mRVTechSelection = recyclerView {
                             layoutManager = LinearLayoutManager(context)
                             overScrollMode = RecyclerView.OVER_SCROLL_NEVER
-                            setOnTouchListener { _, event -> this@cardView.onTouchEvent(event) }
+                            setOnTouchListener { v, event ->
+                                v.onTouchEvent(event)
+                                v.performClick()
+                            }
                         }.lparams(matchParent, wrapContent) {
                             marginStart = dip(16)
                             marginEnd = dip(16)
