@@ -1,10 +1,11 @@
 plugins {
     kotlin("multiplatform")
+    kotlin("plugin.serialization")
+    kotlin("kapt")
     id("com.android.library")
     id("kotlin-android-extensions")
-    id("org.jetbrains.kotlin.plugin.serialization")
-    id("kotlin-kapt")
 }
+
 group = "com.w10group.hertzdictionary"
 version = "1.0"
 
@@ -22,7 +23,14 @@ val ktorVersion = "1.4.0"
 val roomVersion = "2.2.5"
 
 kotlin {
-    android()
+    sourceSets {
+        all {
+            languageSettings.useExperimentalAnnotation("kotlin.RequiresOptIn")
+        }
+    }
+    android("android") {
+        // publishLibraryVariants("release", "debug")
+    }
     iosX64("ios") {
         binaries {
             framework {
@@ -68,14 +76,14 @@ kotlin {
                 implementation("io.ktor:ktor-client-ios:$ktorVersion")
             }
         }
-        /*val commonTest by getting {
+        val commonTest by getting {
             dependencies {
                 implementation(kotlin("test-common"))
                 implementation(kotlin("test-annotations-common"))
             }
         }
         val androidTest by getting
-        val iosTest by getting*/
+        val iosTest by getting
     }
 }
 
@@ -132,9 +140,7 @@ android {
 }*/
 
 dependencies {
-    kapt {
-        "androidx.room:room-compiler:$roomVersion"
-    }
+    "kapt"("androidx.room:room-compiler:$roomVersion")
 }
 
 /*configurations {
