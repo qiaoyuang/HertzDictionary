@@ -16,7 +16,7 @@ repositories {
     mavenCentral()
 }
 
-val kotlinVersion = "1.4.0"
+val kotlinVersion = "1.4.10"
 val coroutinesVersion = "1.3.9"
 val serializationVersion = "1.0.0-RC"
 val ktorVersion = "1.4.0"
