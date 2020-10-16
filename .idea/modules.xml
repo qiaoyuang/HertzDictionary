@@ -2,23 +2,14 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/HertzDictionary.iml" filepath="$PROJECT_DIR$/HertzDictionary.iml" group="HertzDictionary" />
-      <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" group="HertzDictionary/app" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/data/com.w10group.hertzdictionary-data_commonMain.iml" filepath="$PROJECT_DIR$/.idea/modules/data/com.w10group.hertzdictionary-data_commonMain.iml" group="data" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/data/com.w10group.hertzdictionary-data_commonTest.iml" filepath="$PROJECT_DIR$/.idea/modules/data/com.w10group.hertzdictionary-data_commonTest.iml" group="data" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/data/com.w10group.hertzdictionary-data_iosMain.iml" filepath="$PROJECT_DIR$/.idea/modules/data/com.w10group.hertzdictionary-data_iosMain.iml" group="data" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/data/com.w10group.hertzdictionary-data_iosTest.iml" filepath="$PROJECT_DIR$/.idea/modules/data/com.w10group.hertzdictionary-data_iosTest.iml" group="data" />
-      <module fileurl="file://$PROJECT_DIR$/data/com.w10group.hertzdictionary.data.commonMain.iml" filepath="$PROJECT_DIR$/data/com.w10group.hertzdictionary.data.commonMain.iml" />
-      <module fileurl="file://$PROJECT_DIR$/data/com.w10group.hertzdictionary.data.commonTest.iml" filepath="$PROJECT_DIR$/data/com.w10group.hertzdictionary.data.commonTest.iml" />
-      <module fileurl="file://$PROJECT_DIR$/data/com.w10group.hertzdictionary.data.iosMain.iml" filepath="$PROJECT_DIR$/data/com.w10group.hertzdictionary.data.iosMain.iml" />
-      <module fileurl="file://$PROJECT_DIR$/data/com.w10group.hertzdictionary.data.iosTest.iml" filepath="$PROJECT_DIR$/data/com.w10group.hertzdictionary.data.iosTest.iml" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/mpp/mpp.iml" filepath="$PROJECT_DIR$/.idea/modules/mpp/mpp.iml" group="HertzDictionary/mpp" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/mpp/mpp_commonMain.iml" filepath="$PROJECT_DIR$/.idea/modules/mpp/mpp_commonMain.iml" group="mpp" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/mpp/mpp_commonTest.iml" filepath="$PROJECT_DIR$/.idea/modules/mpp/mpp_commonTest.iml" group="mpp" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/mpp/mpp_iosMain.iml" filepath="$PROJECT_DIR$/.idea/modules/mpp/mpp_iosMain.iml" group="mpp" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/mpp/mpp_iosTest.iml" filepath="$PROJECT_DIR$/.idea/modules/mpp/mpp_iosTest.iml" group="mpp" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/project-HertzDictionary.iml" filepath="$PROJECT_DIR$/.idea/modules/project-HertzDictionary.iml" group="HertzDictionary" />
-      <module fileurl="file://$PROJECT_DIR$/project.HertzDictionary.iml" filepath="$PROJECT_DIR$/project.HertzDictionary.iml" group="HertzDictionary" />
+      <module fileurl="file://$PROJECT_DIR$/HertzDictionary.iml" filepath="$PROJECT_DIR$/HertzDictionary.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/HertzDictionary.app.iml" filepath="$PROJECT_DIR$/.idea/modules/app/HertzDictionary.app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/mpp/HertzDictionary.mpp.iml" filepath="$PROJECT_DIR$/.idea/modules/mpp/HertzDictionary.mpp.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/mpp/HertzDictionary.mpp.androidAndroidTestRelease.iml" filepath="$PROJECT_DIR$/.idea/modules/mpp/HertzDictionary.mpp.androidAndroidTestRelease.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/mpp/HertzDictionary.mpp.commonMain.iml" filepath="$PROJECT_DIR$/.idea/modules/mpp/HertzDictionary.mpp.commonMain.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/mpp/HertzDictionary.mpp.commonTest.iml" filepath="$PROJECT_DIR$/.idea/modules/mpp/HertzDictionary.mpp.commonTest.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/mpp/HertzDictionary.mpp.iosMain.iml" filepath="$PROJECT_DIR$/.idea/modules/mpp/HertzDictionary.mpp.iosMain.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/mpp/HertzDictionary.mpp.iosTest.iml" filepath="$PROJECT_DIR$/.idea/modules/mpp/HertzDictionary.mpp.iosTest.iml" />
     </modules>
   </component>
 </project>
