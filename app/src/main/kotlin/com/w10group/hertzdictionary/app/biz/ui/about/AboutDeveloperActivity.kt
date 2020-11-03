@@ -2,7 +2,6 @@ package com.w10group.hertzdictionary.app.biz.ui.about
 
 import android.os.Bundle
 import android.view.MenuItem
-import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import com.w10group.hertzdictionary.app.biz.manager.ImageManagerService
 import com.w10group.hertzdictionary.app.core.architecture.BaseActivity
@@ -30,9 +29,9 @@ class AboutDeveloperActivity : BaseActivity<AboutDeveloperActivity>() {
             ImageManagerService loadAvatar uiComponent.mIMAvatar
         }
         getViewModel<AboutDeveloperViewModel> {
-            textList.observe(implementer, Observer {
+            textList.observe(implementer) {
                 uiComponent.updateTextView(it)
-            })
+            }
             updateData()
         }
     }

@@ -2,7 +2,6 @@ package com.w10group.hertzdictionary.app.biz.ui.licence
 
 import android.os.Bundle
 import android.view.MenuItem
-import androidx.lifecycle.Observer
 import com.w10group.hertzdictionary.app.core.architecture.BaseActivity
 
 /**
@@ -20,9 +19,9 @@ class LicenceActivity : BaseActivity<LicenceActivity>() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         getViewModel<LicenceViewModel> {
-            kvList.observe(implementer, Observer {
+            kvList.observe(implementer) {
                 uiComponent.setAdapter(OSLAdapter(implementer, it))
-            })
+            }
             updateData()
         }
     }

@@ -5,7 +5,6 @@ import android.content.Context
 import android.os.Bundle
 import android.view.*
 import android.view.inputmethod.InputMethodManager
-import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import com.w10group.hertzdictionary.app.R
 import com.w10group.hertzdictionary.app.core.CoilDownloader
@@ -65,7 +64,7 @@ class MainActivity : BaseActivity<MainActivity>() {
             CoilDownloader checkCacheAndClear application
         }
         viewModel = getViewModel {
-            allWordList.observe(implementer, Observer {
+            allWordList.observe(implementer) {
                 with(uiComponent) {
                     lifecycleScope.launch { loadBackgroundImageView() }
                     mAdapter = WordListAdapter(implementer, it) { word ->
@@ -74,39 +73,40 @@ class MainActivity : BaseActivity<MainActivity>() {
                     }
                     setAdapter(mAdapter)
                 }
-            })
+            }
 
-            inquireResult.observe(implementer, Observer {
+            inquireResult.observe(implementer) {
                 when (it) {
                     is InquireResponseSuccess -> uiComponent.displayInquireResult(it.inquireResult, it.word)
                     is InquireResponseError -> {
                         progressDialog!!.dismiss()
                         uiComponent.snackBar(R.string.network_error)
                     }
+                    is InquireResponseEmpty -> Unit
                 }
-            })
+            }
 
-            otherTranslationAndRelateWords.observe(implementer, Observer {
+            otherTranslationAndRelateWords.observe(implementer) {
                 it?.let {
                     val (otherTranslation, relatedWords) = it
                     uiComponent displayOtherTranslation otherTranslation
                     uiComponent displayRelatedWords relatedWords
                 }
-            })
+            }
 
-            recyclerViewAdjustmentCoordinate.observe(implementer, Observer {
+            recyclerViewAdjustmentCoordinate.observe(implementer) {
                 it?.let {
                     coordinate[0] = it[0]
                     coordinate[1] = it[1]
                     viewModel.updateCurveData(curveStatus)
                 }
-            })
+            }
 
-            curveData.observe(implementer, Observer {
+            curveData.observe(implementer) {
                 val (timeList, valueList) = it
                 uiComponent.updateCurveView(timeList, valueList)
                 progressDialog?.dismiss()
-            })
+            }
 
             updateAllWordList()
         }

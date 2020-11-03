@@ -2,7 +2,6 @@ package com.w10group.hertzdictionary.app.biz.ui.statistics
 
 import android.os.Bundle
 import android.view.MenuItem
-import androidx.lifecycle.Observer
 import com.w10group.hertzdictionary.app.core.architecture.BaseActivity
 
 /**
@@ -22,9 +21,9 @@ class StatisticsActivity : BaseActivity<StatisticsActivity>() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         viewModel = getAndroidViewModel {
-            uiUpdateData.observe(implementer, Observer {
+            uiUpdateData.observe(implementer) {
                 uiComponent.updateUI(it)
-            })
+            }
         }
     }
 

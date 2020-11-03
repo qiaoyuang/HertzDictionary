@@ -2,7 +2,6 @@ package com.w10group.hertzdictionary.app.biz.ui.features
 
 import android.os.Bundle
 import android.view.MenuItem
-import androidx.lifecycle.Observer
 import com.w10group.hertzdictionary.app.core.architecture.BaseActivity
 
 /**
@@ -20,12 +19,12 @@ class FeaturesActivity : BaseActivity<FeaturesActivity>() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         getViewModel<FeaturesViewModel> {
-            textList.observe(implementer, Observer {
+            textList.observe(implementer) {
                 uiComponent.updateTextView(it)
-            })
-            kvList.observe(implementer, Observer {
+            }
+            kvList.observe(implementer) {
                 uiComponent.setTechSelectionData(it)
-            })
+            }
             updateData()
         }
     }
