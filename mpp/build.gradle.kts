@@ -17,9 +17,9 @@ repositories {
 }
 
 val kotlinVersion = "1.4.10"
-val coroutinesVersion = "1.3.9"
-val serializationVersion = "1.0.0-RC"
-val ktorVersion = "1.4.0"
+val coroutinesVersion = "1.4.1"
+val serializationVersion = "1.0.1"
+val ktorVersion = "1.4.2"
 val roomVersion = "2.2.5"
 
 kotlin {
@@ -66,8 +66,8 @@ kotlin {
                 compileOnly("javax.annotation:javax.annotation-api:1.3.2")
 
                 // Square
-                implementation("com.squareup.okio:okio:2.8.0")
-                implementation("com.squareup.okhttp3:okhttp:4.8.1")
+                implementation("com.squareup.okio:okio:2.9.0")
+                implementation("com.squareup.okhttp3:okhttp:4.9.0")
             }
         }
         val iosMain by getting {
