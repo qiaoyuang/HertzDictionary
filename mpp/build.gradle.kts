@@ -3,7 +3,7 @@ plugins {
     kotlin("plugin.serialization")
     kotlin("kapt")
     id("com.android.library")
-    id("kotlin-android-extensions")
+    id("kotlin-parcelize")
 }
 
 group = "com.w10group.hertzdictionary"
@@ -16,10 +16,10 @@ repositories {
     mavenCentral()
 }
 
-val kotlinVersion = "1.4.10"
-val coroutinesVersion = "1.4.1"
+val kotlinVersion = "1.4.30"
+val coroutinesVersion = "1.4.2"
 val serializationVersion = "1.0.1"
-val ktorVersion = "1.4.2"
+val ktorVersion = "1.5.1"
 val roomVersion = "2.2.5"
 
 kotlin {
@@ -89,7 +89,7 @@ kotlin {
 
 android {
     compileSdkVersion(30)
-    buildToolsVersion("30.0.2")
+    buildToolsVersion("30.0.3")
     defaultConfig {
         minSdkVersion(23)
         targetSdkVersion(30)
@@ -124,20 +124,6 @@ android {
         }
     }
 }
-
-/*task myIosTest {
-    val device = project.findProperty("iosDevice")?.toString() ?: "iPhone 8"
-    dependsOn kotlin.targets.ios.binaries.getTest('DEBUG').linkTaskNam
-    group = JavaBasePlugin.VERIFICATION_GROUP
-    description = "Runs tests for target 'ios' on an iOS simulator"
-
-    doLast {
-        val binary = kotlin.targets.ios.binaries.getTest("DEBUG").outputFile
-        exec {
-            commandLine 'xcrun', 'simctl', 'spawn', device, binary.absolutePath
-        }
-    }
-}*/
 
 dependencies {
     "kapt"("androidx.room:room-compiler:$roomVersion")
