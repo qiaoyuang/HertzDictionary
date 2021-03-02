@@ -9,10 +9,10 @@ import android.widget.ImageView
 import androidx.appcompat.widget.AppCompatSpinner
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.Lifecycle
-import coil.api.load
+import coil.load
 import coil.request.CachePolicy
-import coil.request.RequestBuilder
-import coil.request.RequestDisposable
+import coil.request.Disposable
+import coil.request.ImageRequest
 import coil.size.Scale
 import com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView
 import com.w10group.hertzdictionary.app.R
@@ -68,7 +68,7 @@ fun getStatusBarSize(context: Context): Int {
     return context.resources.getDimensionPixelSize(resourceId)
 }
 
-fun <T : RequestBuilder<T>> RequestBuilder<T>.getCoilDefaultConfig(): RequestBuilder<T> {
+fun ImageRequest.Builder.getCoilDefaultConfig(): ImageRequest.Builder {
     dispatcher(Dispatchers.IO)
     allowHardware(true)
     allowRgb565(true)
@@ -80,7 +80,7 @@ fun <T : RequestBuilder<T>> RequestBuilder<T>.getCoilDefaultConfig(): RequestBui
     return this
 }
 
-fun ImageView.loadURL(url: String, lifecycle: Lifecycle): RequestDisposable = load(url) {
+fun ImageView.loadURL(url: String, lifecycle: Lifecycle): Disposable = load(url) {
     crossfade(true)
     lifecycle(lifecycle)
     getCoilDefaultConfig()

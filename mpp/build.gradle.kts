@@ -44,6 +44,7 @@ kotlin {
             dependencies {
                 // Kotlin 扩展类库
                 api(kotlin("stdlib"))
+                api("org.jetbrains.kotlinx:kotlinx-datetime:0.1.1")
                 api("org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutinesVersion")
                 implementation("org.jetbrains.kotlinx:kotlinx-serialization-core:$serializationVersion")
 
@@ -66,7 +67,7 @@ kotlin {
                 compileOnly("javax.annotation:javax.annotation-api:1.3.2")
 
                 // Square
-                implementation("com.squareup.okio:okio:2.9.0")
+                implementation("com.squareup.okio:okio:2.10.0")
                 implementation("com.squareup.okhttp3:okhttp:4.9.0")
             }
         }
@@ -128,7 +129,3 @@ android {
 dependencies {
     "kapt"("androidx.room:room-compiler:$roomVersion")
 }
-
-/*configurations {
-    compileClasspath()
-}*/

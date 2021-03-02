@@ -6,7 +6,7 @@ import android.widget.ImageView
 import androidx.core.content.edit
 import androidx.lifecycle.Lifecycle
 import coil.Coil
-import coil.request.GetRequest
+import coil.request.ImageRequest
 import com.w10group.hertzdictionary.app.core.view.getCoilDefaultConfig
 import com.w10group.hertzdictionary.app.core.view.loadURL
 import com.w10group.hertzdictionary.manager.getBackgroundUrl
@@ -38,7 +38,7 @@ object ImageManagerService {
     private lateinit var todayURL: String
 
     suspend infix fun loadAvatar(imageView: ImageView) {
-        val getRequest = GetRequest
+        val getRequest = ImageRequest
             .Builder(imageView.context)
             .getCoilDefaultConfig()
             .data(AVATAR_URL)

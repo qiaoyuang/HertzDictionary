@@ -1,3 +1,5 @@
+@file:Suppress("DEPRECATION")
+
 package com.w10group.hertzdictionary.app.biz.ui.main
 
 import android.app.ProgressDialog
@@ -21,7 +23,6 @@ import org.jetbrains.anko.progressDialog
  * 主界面 Activity
  */
 
-@Suppress("DEPRECATION")
 class MainActivity : BaseActivity<MainActivity>() {
 
     companion object {
