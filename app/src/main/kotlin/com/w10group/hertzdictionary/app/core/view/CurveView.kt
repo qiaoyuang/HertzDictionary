@@ -28,10 +28,10 @@ class CurveView : View {
     /**
      * 颜色
      */
-    private val darkBlue = ContextCompat.getColor(context, R.color.pool_curve_blue_dark)
-    private val lightBlue = ContextCompat.getColor(context, R.color.pool_curve_blue_light)
-    private val windowBackground = ContextCompat.getColor(context, R.color.pool_curve_window_background)
-    private val white = Color.WHITE
+    var contourColor = ContextCompat.getColor(context, R.color.pool_curve_blue_dark)
+    var fillingBlue = ContextCompat.getColor(context, R.color.pool_curve_blue_light)
+    var windowBackgroundColor = ContextCompat.getColor(context, R.color.pool_curve_window_background)
+    var viewBackgroundColor = Color.WHITE
 
     /**
      * dp 以及 sp 值
@@ -72,14 +72,14 @@ class CurveView : View {
     // 浅蓝色图形画笔
     private val mGraphicsPaint = Paint().apply {
         isAntiAlias = true
-        color = lightBlue
+        color = fillingBlue
         pathEffect = CornerPathEffect(dp4)
     }
 
     // 深蓝色曲线画笔
     private val mCurvePaint = Paint().apply {
         isAntiAlias = true
-        color = darkBlue
+        color = contourColor
         style = Paint.Style.STROKE
         pathEffect = CornerPathEffect(dp4)
         strokeWidth = dp2
@@ -94,7 +94,7 @@ class CurveView : View {
     // 点击处竖线画笔
     private val mVerticalLinePaint = Paint().apply {
         isAntiAlias = true
-        color = darkBlue
+        color = contourColor
         strokeWidth = dp1
     }
 
@@ -143,6 +143,9 @@ class CurveView : View {
 
     private val mDefaultUnit = context.getString(R.string.default_unit)
 
+    // 真实宽度
+    private inline val realWidth get() = width - dp4
+
     // 设置数据
     fun setData(xList: List<Long>, yList: List<Int>) {
         time.clear()
@@ -179,7 +182,7 @@ class CurveView : View {
         val time2 = time[position].fmtMonthDay()
         val time3 = time[position shl 1].fmtMonthDay()
         val y = (height * 9 / 10).toFloat()
-        val fWidth = width.toFloat()
+        val fWidth = realWidth
         val x1 = fWidth / 10
         val x2 = x1 * 4 - dp16
         val x3 = x1 * 7 - dp24
@@ -193,7 +196,7 @@ class CurveView : View {
 
     // 第二步：绘制 Y 轴坐标参数（查询频数）
     private fun Canvas.drawYText() {
-        val maxValue = value.max()!!
+        val maxValue = value.maxOrNull()!!
         val value1 = "0"
         val (value2, value3, value4) = if (maxValue == 0)
             Triple("1", "2", "3")
@@ -216,16 +219,16 @@ class CurveView : View {
     private fun Canvas.drawUnit() {
         val x = width.toFloat() - dp32
         val y = dp24
-        mUnitPaint.color = darkBlue
+        mUnitPaint.color = contourColor
         drawText(mDefaultUnit, x, y, mUnitPaint)
-        mUnitPaint.color = lightBlue
+        mUnitPaint.color = fillingBlue
         drawRoundRect(x - dp4, y - dp12, x + dp28, y + dp4, 10f, 10f, mUnitPaint)
     }
 
     // 第四步：绘制横向虚线
     private fun Canvas.drawDottedLine() {
-        val startX = (width / 10).toFloat()
-        val stopX = width.toFloat()
+        val stopX = realWidth
+        val startX = realWidth / 10
         fun drawLine(y: Float) = drawLine(startX, y, stopX, y, mDashLinePaint)
         val y1 = (height / 5).toFloat()
         val y2 = y1 * 2
@@ -245,11 +248,12 @@ class CurveView : View {
             drawPath(mCurvePath, mCurvePaint)
             return
         }
-        val x0 = (width / 10).toFloat()
+        val width = realWidth
+        val x0 = width / 10
         val y0 = (height / 5 * 4).toFloat()
         if (value.all { it == 0 }) {
             mCurvePath.moveTo(x0, y0)
-            mCurvePath.lineTo(width.toFloat(), y0)
+            mCurvePath.lineTo(width, y0)
             drawPath(mCurvePath, mCurvePaint)
             return
         }
@@ -262,7 +266,7 @@ class CurveView : View {
             mGraphicsPath.lineTo(x, y)
             mCurvePath.lineTo(x, y)
         }
-        mGraphicsPath.lineTo(width.toFloat(), y0)
+        mGraphicsPath.lineTo(width, y0)
         mGraphicsPath.close()
         drawPath(mGraphicsPath, mGraphicsPaint)
         drawPath(mCurvePath, mCurvePaint)
@@ -286,22 +290,22 @@ class CurveView : View {
             val offset = dp16
             val windowHeight = dp48
             val binaryOffset = offset / 2
-            val windowX = if (x < width shr 1) x + binaryOffset else x - windowWidth - offset
+            val windowX = if (x < realWidth / 2) x + binaryOffset else x - windowWidth - offset
             val windowY = if (y < height shr 1) y + binaryOffset else y - windowHeight - offset
 
             // 绘制竖线
             drawLine(x, startY, x, endY, mVerticalLinePaint)
             // 绘制白边蓝心圆
-            mTouchPaint.color = white
+            mTouchPaint.color = viewBackgroundColor
             drawCircle(x, y, radius * 1.5f, mTouchPaint)
-            mTouchPaint.color = darkBlue
+            mTouchPaint.color = contourColor
             drawCircle(x, y, radius, mTouchPaint)
 
             // 绘制深色背景
-            mTouchPaint.color = windowBackground
+            mTouchPaint.color = windowBackgroundColor
             drawRoundRect(windowX, windowY, windowX + windowWidth, windowY + windowHeight, dp4, dp4, mTouchPaint)
             // 绘制时间文字
-            mTouchPaint.color = white
+            mTouchPaint.color = viewBackgroundColor
             val drawX = windowX + offset / 2
             val drawY = windowY + offset
             drawText(touchTimeText, drawX, drawY, mTouchPaint)
@@ -316,11 +320,11 @@ class CurveView : View {
         val diff = time[index] - time.first()
         val maxDiff = time.last() - time.first()
         val diffScale = diff.toFloat() / maxDiff.toFloat()
-        val offset = width.toFloat() / 10
+        val offset = realWidth / 10
         val maxWidth = offset * 9
         val x = diffScale * maxWidth + offset
         // 计算查询频数
-        val max = value.max()!!.toFloat()
+        val max = value.maxOrNull()!!.toFloat()
         val baseHeight = height.toFloat() / 5
         val y = if (max == 0f) baseHeight * 4 else (max - value[index]) / max * (baseHeight * 3) + baseHeight
         return floatArrayOf(x, y)
@@ -329,7 +333,7 @@ class CurveView : View {
     // 给定横坐标 X，计算出对应的时间与值的 index
     private fun getTimeTemp(): Int {
         // 获取 realTime 的过程本质上就是 valueToCoordinate 函数计算 x 过程的逆运算
-        val offset = width.toFloat() / 10
+        val offset = realWidth / 10
         val maxWidth = offset * 9
         val diffScale = (touchX - offset) / maxWidth
         val maxDiff = time.last() - time.first()
@@ -337,7 +341,7 @@ class CurveView : View {
         // 得到触摸点对应的大概的时间戳值
         val touchTime = diff + time.first()
         // 获得 time 中与 touchTime 差值的绝对值最小的值
-        val realTime = time.minBy { abs(it - touchTime) }
+        val realTime = time.minByOrNull { abs(it - touchTime) }
         return if (realTime != null) time.indexOf(realTime) else -1
     }
 

@@ -16,11 +16,11 @@ repositories {
     mavenCentral()
 }
 
-val kotlinVersion = "1.4.30"
+val kotlinVersion = "1.4.31"
 val coroutinesVersion = "1.4.2"
-val serializationVersion = "1.0.1"
-val ktorVersion = "1.5.1"
-val roomVersion = "2.2.5"
+val serializationVersion = "1.1.0"
+val ktorVersion = "1.5.2"
+val roomVersion = "2.2.6"
 
 kotlin {
     sourceSets {
@@ -44,7 +44,7 @@ kotlin {
             dependencies {
                 // Kotlin 扩展类库
                 api(kotlin("stdlib"))
-                api("org.jetbrains.kotlinx:kotlinx-datetime:0.1.1")
+                // api("org.jetbrains.kotlinx:kotlinx-datetime:0.1.1")
                 api("org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutinesVersion")
                 implementation("org.jetbrains.kotlinx:kotlinx-serialization-core:$serializationVersion")
 

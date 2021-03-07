@@ -12,12 +12,14 @@ import io.ktor.client.request.parameter
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.withContext
+import kotlin.native.concurrent.ThreadLocal
 
 /**
  * Created by Qiao Yuang on 2018/11/20.
  * 单词查询存储计算等管理服务，第四版
  */
 
+@ThreadLocal
 object WordManagerService {
 
     private const val BASE_URL = "http://translate.google.cn/translate_a/single"

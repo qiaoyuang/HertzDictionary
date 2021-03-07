@@ -2,13 +2,14 @@
 
 buildscript {
     ext {
-        kotlin_version = '1.4.30'
+        kotlin_version = '1.4.31'
         anko_version = '0.10.8'
-        lifecycle_version = "2.2.0"
+        lifecycle_version = "2.3.0"
     }
     repositories {
         google()
         jcenter()
+        mavenCentral()
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:4.1.2'
