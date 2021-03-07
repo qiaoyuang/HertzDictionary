@@ -28,10 +28,10 @@ class CurveView : View {
     /**
      * 颜色
      */
-    var contourColor = ContextCompat.getColor(context, R.color.pool_curve_blue_dark)
-    var fillingBlue = ContextCompat.getColor(context, R.color.pool_curve_blue_light)
-    var windowBackgroundColor = ContextCompat.getColor(context, R.color.pool_curve_window_background)
-    var viewBackgroundColor = Color.WHITE
+    private val darkBlue = ContextCompat.getColor(context, R.color.pool_curve_blue_dark)
+    private val lightBlue = ContextCompat.getColor(context, R.color.pool_curve_blue_light)
+    private val windowBackground = ContextCompat.getColor(context, R.color.pool_curve_window_background)
+    private val white = Color.WHITE
 
     /**
      * dp 以及 sp 值
@@ -72,14 +72,14 @@ class CurveView : View {
     // 浅蓝色图形画笔
     private val mGraphicsPaint = Paint().apply {
         isAntiAlias = true
-        color = fillingBlue
+        color = lightBlue
         pathEffect = CornerPathEffect(dp4)
     }
 
     // 深蓝色曲线画笔
     private val mCurvePaint = Paint().apply {
         isAntiAlias = true
-        color = contourColor
+        color = darkBlue
         style = Paint.Style.STROKE
         pathEffect = CornerPathEffect(dp4)
         strokeWidth = dp2
@@ -94,7 +94,7 @@ class CurveView : View {
     // 点击处竖线画笔
     private val mVerticalLinePaint = Paint().apply {
         isAntiAlias = true
-        color = contourColor
+        color = darkBlue
         strokeWidth = dp1
     }
 
@@ -144,7 +144,7 @@ class CurveView : View {
     private val mDefaultUnit = context.getString(R.string.default_unit)
 
     // 真实宽度
-    private inline val realWidth get() = width - dp4
+    private var realWidth = 0f
 
     // 设置数据
     fun setData(xList: List<Long>, yList: List<Int>) {
@@ -158,6 +158,11 @@ class CurveView : View {
         touchY = 0f
         isPathEmpty = true
         invalidate()
+    }
+
+    override fun onLayout(changed: Boolean, left: Int, top: Int, right: Int, bottom: Int) {
+        super.onLayout(changed, left, top, right, bottom)
+        realWidth = width - dp4 * 1.5f
     }
 
     override fun onDraw(canvas: Canvas) = canvas whenTimeAndValueNotEmpty {
@@ -219,9 +224,9 @@ class CurveView : View {
     private fun Canvas.drawUnit() {
         val x = width.toFloat() - dp32
         val y = dp24
-        mUnitPaint.color = contourColor
+        mUnitPaint.color = darkBlue
         drawText(mDefaultUnit, x, y, mUnitPaint)
-        mUnitPaint.color = fillingBlue
+        mUnitPaint.color = lightBlue
         drawRoundRect(x - dp4, y - dp12, x + dp28, y + dp4, 10f, 10f, mUnitPaint)
     }
 
@@ -296,16 +301,16 @@ class CurveView : View {
             // 绘制竖线
             drawLine(x, startY, x, endY, mVerticalLinePaint)
             // 绘制白边蓝心圆
-            mTouchPaint.color = viewBackgroundColor
+            mTouchPaint.color = white
             drawCircle(x, y, radius * 1.5f, mTouchPaint)
-            mTouchPaint.color = contourColor
+            mTouchPaint.color = darkBlue
             drawCircle(x, y, radius, mTouchPaint)
 
             // 绘制深色背景
-            mTouchPaint.color = windowBackgroundColor
+            mTouchPaint.color = windowBackground
             drawRoundRect(windowX, windowY, windowX + windowWidth, windowY + windowHeight, dp4, dp4, mTouchPaint)
             // 绘制时间文字
-            mTouchPaint.color = viewBackgroundColor
+            mTouchPaint.color = white
             val drawX = windowX + offset / 2
             val drawY = windowY + offset
             drawText(touchTimeText, drawX, drawY, mTouchPaint)
