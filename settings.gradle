@@ -1,5 +1,4 @@
 include ':app'
-// include ':data'
 include ':mpp'
 rootProject.name='HertzDictionary'
 enableFeaturePreview('GRADLE_METADATA')
