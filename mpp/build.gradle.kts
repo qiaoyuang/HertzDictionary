@@ -12,15 +12,14 @@ version = "1.0"
 repositories {
     gradlePluginPortal()
     google()
-    jcenter()
     mavenCentral()
 }
 
-val kotlinVersion = "1.4.31"
-val coroutinesVersion = "1.4.2"
-val serializationVersion = "1.1.0"
-val ktorVersion = "1.5.2"
-val roomVersion = "2.2.6"
+val kotlinVersion = "1.5.20"
+val coroutinesVersion = "1.5.0"
+val serializationVersion = "1.2.1"
+val ktorVersion = "1.6.1"
+val roomVersion = "2.3.0"
 
 kotlin {
     sourceSets {
@@ -68,7 +67,7 @@ kotlin {
 
                 // Square
                 implementation("com.squareup.okio:okio:2.10.0")
-                implementation("com.squareup.okhttp3:okhttp:4.9.0")
+                implementation("com.squareup.okhttp3:okhttp:4.9.1")
             }
         }
         val iosMain by getting {
