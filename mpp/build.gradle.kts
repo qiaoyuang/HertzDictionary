@@ -7,7 +7,7 @@ plugins {
 }
 
 group = "com.w10group.hertzdictionary"
-version = "1.0"
+version = "1.0.0"
 
 repositories {
     gradlePluginPortal()
