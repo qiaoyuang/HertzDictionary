@@ -7,6 +7,7 @@ import com.w10group.hertzdictionary.core.currentTimestamp
 import com.w10group.hertzdictionary.data.InquireResult
 import com.w10group.hertzdictionary.database.LocalWord
 import com.w10group.hertzdictionary.database.LocalWordDAO
+import io.ktor.client.call.*
 import io.ktor.client.request.get
 import io.ktor.client.request.parameter
 import kotlinx.coroutines.async
@@ -55,7 +56,7 @@ object WordManagerService {
         parameter("dt", "rw")
         parameter("dt", "bd")
         parameter("dt", "rm")
-    }
+    }.body()
 
     // 拼接其它义项以及相关词组并返回
     suspend fun getOtherTranslationAndRelateWords(

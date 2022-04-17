@@ -18,6 +18,7 @@
             android:name=".biz.ui.main.MainActivity"
             android:launchMode="singleTask"
             android:screenOrientation="fullSensor"
+            android:exported="true"
             android:theme="@style/TransparentTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -28,19 +29,23 @@
         <activity
             android:name=".biz.ui.features.FeaturesActivity"
             android:launchMode="singleTop"
+            android:exported="false"
             android:screenOrientation="fullSensor" />
         <activity
             android:name=".biz.ui.about.AboutDeveloperActivity"
             android:launchMode="singleTop"
             android:screenOrientation="fullSensor"
+            android:exported="false"
             android:theme="@style/TransparentTheme" />
         <activity
             android:name=".biz.ui.licence.LicenceActivity"
             android:launchMode="singleTop"
+            android:exported="false"
             android:screenOrientation="fullSensor" />
         <activity
             android:name=".biz.ui.statistics.StatisticsActivity"
             android:launchMode="singleTop"
+            android:exported="false"
             android:screenOrientation="fullSensor" />
     </application>
 

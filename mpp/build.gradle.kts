@@ -15,11 +15,11 @@ repositories {
     mavenCentral()
 }
 
-val kotlinVersion = "1.5.20"
-val coroutinesVersion = "1.5.0"
-val serializationVersion = "1.2.1"
-val ktorVersion = "1.6.1"
-val roomVersion = "2.3.0"
+val kotlinVersion = "1.6.20"
+val coroutinesVersion = "1.6.1"
+val serializationVersion = "1.3.2"
+val ktorVersion = "2.0.0"
+val roomVersion = "2.4.2"
 
 kotlin {
     sourceSets {
@@ -45,11 +45,12 @@ kotlin {
                 api(kotlin("stdlib"))
                 // api("org.jetbrains.kotlinx:kotlinx-datetime:0.1.1")
                 api("org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutinesVersion")
-                implementation("org.jetbrains.kotlinx:kotlinx-serialization-core:$serializationVersion")
+                implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:$serializationVersion")
 
                 // Ktor
                 implementation("io.ktor:ktor-client-core:$ktorVersion")
-                implementation("io.ktor:ktor-client-serialization:$ktorVersion")
+                implementation("io.ktor:ktor-serialization-kotlinx-json:$ktorVersion")
+                implementation("io.ktor:ktor-client-content-negotiation:$ktorVersion")
             }
         }
         val androidMain by getting {
@@ -66,8 +67,8 @@ kotlin {
                 compileOnly("javax.annotation:javax.annotation-api:1.3.2")
 
                 // Square
-                implementation("com.squareup.okio:okio:2.10.0")
-                implementation("com.squareup.okhttp3:okhttp:4.9.1")
+                implementation("com.squareup.okio:okio:3.0.0")
+                implementation("com.squareup.okhttp3:okhttp:4.9.3")
             }
         }
         val iosMain by getting {
@@ -88,15 +89,13 @@ kotlin {
 }
 
 android {
-    compileSdkVersion(30)
-    buildToolsVersion("30.0.3")
+    compileSdk = 31
+    buildToolsVersion = "32.1.0-rc1"
     defaultConfig {
-        minSdkVersion(23)
-        targetSdkVersion(30)
-        versionCode = 1
-        versionName = "1.0"
+        minSdk = 23
+        targetSdk = 31
+        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         multiDexEnabled = true
-        testInstrumentationRunner = "android.support.test.runner.AndroidJUnitRunner"
         javaCompileOptions {
             annotationProcessorOptions {
                 arguments(mutableMapOf("room.schemaLocation" to "$projectDir/schemas",

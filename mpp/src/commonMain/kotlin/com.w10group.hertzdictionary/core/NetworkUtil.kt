@@ -3,8 +3,8 @@ package com.w10group.hertzdictionary.core
 import io.ktor.client.HttpClient
 import io.ktor.client.HttpClientConfig
 import io.ktor.client.engine.HttpClientEngineConfig
-import io.ktor.client.features.json.JsonFeature
-import io.ktor.client.features.json.serializer.KotlinxSerializer
+import io.ktor.client.plugins.contentnegotiation.*
+import io.ktor.serialization.kotlinx.json.*
 import kotlinx.serialization.json.Json
 
 /**
@@ -27,8 +27,8 @@ import kotlinx.serialization.json.Json
 }*/
 
 internal fun <T : HttpClientEngineConfig> HttpClientConfig<T>.configJson() =
-        install(JsonFeature) {
-            serializer = KotlinxSerializer(KJson)
+        install(ContentNegotiation) {
+                json(KJson)
         }
 
 val KJson = Json {

@@ -21,4 +21,4 @@ private const val OPEN_SOURCE_FILE_NAME = "licence.txt"
 suspend fun readOpenSourceFile(): List<KV> = readFileToKV(OPEN_SOURCE_FILE_NAME)
 
 private const val GET_BACKGROUND_URL = "http://guolin.tech/api/bing_pic"
-suspend fun getBackgroundUrl(): String = CLIENT.get(GET_BACKGROUND_URL)
+suspend fun getBackgroundUrl(): String = CLIENT.get(GET_BACKGROUND_URL).toString()

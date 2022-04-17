@@ -6,6 +6,9 @@
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/HertzDictionary.app.iml" filepath="$PROJECT_DIR$/.idea/modules/app/HertzDictionary.app.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/mpp/HertzDictionary.mpp.iml" filepath="$PROJECT_DIR$/.idea/modules/mpp/HertzDictionary.mpp.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/mpp/HertzDictionary.mpp.androidAndroidTestRelease.iml" filepath="$PROJECT_DIR$/.idea/modules/mpp/HertzDictionary.mpp.androidAndroidTestRelease.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/mpp/HertzDictionary.mpp.androidTestFixtures.iml" filepath="$PROJECT_DIR$/.idea/modules/mpp/HertzDictionary.mpp.androidTestFixtures.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/mpp/HertzDictionary.mpp.androidTestFixturesDebug.iml" filepath="$PROJECT_DIR$/.idea/modules/mpp/HertzDictionary.mpp.androidTestFixturesDebug.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/mpp/HertzDictionary.mpp.androidTestFixturesRelease.iml" filepath="$PROJECT_DIR$/.idea/modules/mpp/HertzDictionary.mpp.androidTestFixturesRelease.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/mpp/HertzDictionary.mpp.commonMain.iml" filepath="$PROJECT_DIR$/.idea/modules/mpp/HertzDictionary.mpp.commonMain.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/mpp/HertzDictionary.mpp.commonTest.iml" filepath="$PROJECT_DIR$/.idea/modules/mpp/HertzDictionary.mpp.commonTest.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/mpp/HertzDictionary.mpp.iosMain.iml" filepath="$PROJECT_DIR$/.idea/modules/mpp/HertzDictionary.mpp.iosMain.iml" />
