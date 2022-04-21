@@ -9,7 +9,7 @@
             android:icon="@drawable/ic_insert_chart_grey600_24dp"
             android:title="@string/statistics" />
 
-        <item
+        <!--<item
             android:id="@+id/main_menu_more_features"
             android:icon="@drawable/ic_extension_grey600_24dp"
             android:title="@string/more_features" />
@@ -17,7 +17,7 @@
         <item
             android:id="@+id/main_menu_mine"
             android:icon="@drawable/ic_account_circle_grey600_24dp"
-            android:title="@string/mine" />
+            android:title="@string/mine" />-->
 
         <item
             android:id="@+id/main_menu_licence"

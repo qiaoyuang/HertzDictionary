@@ -338,8 +338,8 @@ class MainActivityUIComponent(private val mMainActivity: MainActivity) : AnkoCom
                     it.isCheckable = false
                     when (it.itemId) {
                         R.id.main_menu_statistics -> startActivity<StatisticsActivity>()
-                        R.id.main_menu_more_features -> startActivity<FeaturesActivity>()
-                        R.id.main_menu_mine -> startActivity<AboutDeveloperActivity>()
+                        // R.id.main_menu_more_features -> startActivity<FeaturesActivity>()
+                        // R.id.main_menu_mine -> startActivity<AboutDeveloperActivity>()
                         R.id.main_menu_licence -> startActivity<LicenceActivity>()
                     }
                     true
